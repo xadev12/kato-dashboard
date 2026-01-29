@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-01-29T17:53:41.041Z",
+  "lastUpdated": "2026-01-29T18:07:23.247Z",
   "projects": [
     {
       "id": "move-pwa-setup",
@@ -192,6 +192,13 @@
   ],
   "activity": [
     {
+      "id": "activity-1769710043243",
+      "type": "infrastructure",
+      "message": "Ported Move PWA Supabase credentials to parking app backend (.env.local created)",
+      "timestamp": "2026-01-29T18:07:23.243Z",
+      "project_id": "parking-app-mvp"
+    },
+    {
       "id": "activity-1769709221036",
       "type": "infrastructure",
       "message": "Spawned 5 specialist sub-agents for Parking App MVP (Opus 4.5 + high thinking)",
@@ -321,13 +328,6 @@
       "project_id": "move-pwa-setup",
       "message": "Saved Supabase credentials to 1Password (Private vault)",
       "timestamp": "2026-01-29T08:48:00.000Z"
-    },
-    {
-      "id": "activity-6",
-      "type": "database",
-      "project_id": "move-pwa-setup",
-      "message": "Created move_goals and activity_logs tables in Supabase",
-      "timestamp": "2026-01-29T08:47:00.000Z"
     }
   ],
   "subAgents": [
