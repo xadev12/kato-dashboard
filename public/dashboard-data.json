@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-01-29T09:52:55.822Z",
+  "lastUpdated": "2026-01-29T10:09:46.367Z",
   "projects": [
     {
       "id": "move-pwa-setup",
@@ -191,6 +191,20 @@
     }
   ],
   "activity": [
+    {
+      "id": "activity-1769681386361",
+      "type": "automation",
+      "message": "Integrated Readwise Reader API for morning reading curation",
+      "timestamp": "2026-01-29T10:09:46.361Z",
+      "project_id": "morning-reading-automation"
+    },
+    {
+      "id": "activity-1769680491452",
+      "type": "code",
+      "message": "Fixed project detail bug - now correctly fetches from JSON data source",
+      "timestamp": "2026-01-29T09:54:51.452Z",
+      "project_id": "kato-dashboard-redesign"
+    },
     {
       "id": "activity-1769680375816",
       "type": "design",
