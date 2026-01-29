@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-01-29T17:47:56.388Z",
+  "lastUpdated": "2026-01-29T17:53:41.041Z",
   "projects": [
     {
       "id": "move-pwa-setup",
@@ -192,6 +192,12 @@
   ],
   "activity": [
     {
+      "id": "activity-1769709221036",
+      "type": "infrastructure",
+      "message": "Spawned 5 specialist sub-agents for Parking App MVP (Opus 4.5 + high thinking)",
+      "timestamp": "2026-01-29T17:53:41.036Z"
+    },
+    {
       "id": "activity-1769708876384",
       "type": "infrastructure",
       "message": "Sub-agent factory system ready - 5 specialists with official skills loaded",
@@ -322,14 +328,48 @@
       "project_id": "move-pwa-setup",
       "message": "Created move_goals and activity_logs tables in Supabase",
       "timestamp": "2026-01-29T08:47:00.000Z"
-    },
-    {
-      "id": "activity-5",
-      "type": "setup",
-      "project_id": "move-pwa-setup",
-      "message": "Created Supabase project (Singapore region)",
-      "timestamp": "2026-01-29T08:45:00.000Z"
     }
   ],
-  "subAgents": []
+  "subAgents": [
+    {
+      "id": "agent-1769709220842",
+      "label": "Backend Specialist",
+      "task": "Database, API, LTA integration",
+      "status": "running",
+      "progress": 0,
+      "started_at": "2026-01-29T17:53:40.842Z"
+    },
+    {
+      "id": "agent-1769709220883",
+      "label": "Data Engineer",
+      "task": "Seed 2,500+ carparks",
+      "status": "running",
+      "progress": 0,
+      "started_at": "2026-01-29T17:53:40.883Z"
+    },
+    {
+      "id": "agent-1769709220922",
+      "label": "Frontend Specialist",
+      "task": "Search UI + navigation",
+      "status": "running",
+      "progress": 0,
+      "started_at": "2026-01-29T17:53:40.922Z"
+    },
+    {
+      "id": "agent-1769709220960",
+      "label": "Design Specialist",
+      "task": "Design system + mockups",
+      "status": "running",
+      "progress": 0,
+      "started_at": "2026-01-29T17:53:40.960Z"
+    },
+    {
+      "id": "agent-1769709220998",
+      "label": "QA Specialist",
+      "task": "Testing + validation",
+      "status": "running",
+      "progress": 0,
+      "started_at": "2026-01-29T17:53:40.998Z"
+    }
+  ]
 }
