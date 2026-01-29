@@ -1,0 +1,270 @@
+{
+  "lastUpdated": "2026-01-29T09:34:31.209Z",
+  "projects": [
+    {
+      "id": "move-pwa-setup",
+      "name": "Move PWA - Complete Setup",
+      "description": "Daily move goal tracker with Ring integration, Supabase backend, and Vercel deployment",
+      "status": "in_progress",
+      "priority": "high",
+      "progress": 85,
+      "repo_url": "https://github.com/xadev12/move-pwa",
+      "created_at": "2026-01-29T08:00:00.000Z",
+      "updated_at": "2026-01-29T09:23:00.000Z",
+      "tasks": [
+        {
+          "id": "task-1",
+          "title": "Authorize 1Password CLI",
+          "status": "done",
+          "completed_at": "2026-01-29T08:41:00.000Z"
+        },
+        {
+          "id": "task-2",
+          "title": "Create Supabase project",
+          "status": "done",
+          "completed_at": "2026-01-29T08:45:00.000Z"
+        },
+        {
+          "id": "task-3",
+          "title": "Set up database schema",
+          "status": "done",
+          "completed_at": "2026-01-29T08:47:00.000Z"
+        },
+        {
+          "id": "task-4",
+          "title": "Save credentials to 1Password",
+          "status": "done",
+          "completed_at": "2026-01-29T08:48:00.000Z"
+        },
+        {
+          "id": "task-5",
+          "title": "Fix TypeScript import errors",
+          "status": "done",
+          "completed_at": "2026-01-29T08:50:00.000Z"
+        },
+        {
+          "id": "task-6",
+          "title": "Deploy to Vercel",
+          "status": "done",
+          "completed_at": "2026-01-29T09:15:00.000Z"
+        },
+        {
+          "id": "task-7",
+          "title": "Configure environment variables in Vercel",
+          "status": "in_progress"
+        },
+        {
+          "id": "task-8",
+          "title": "Verify deployment works",
+          "status": "backlog"
+        }
+      ]
+    },
+    {
+      "id": "kato-dashboard-redesign",
+      "name": "Kato Dashboard - Redesign & Features",
+      "description": "Enhanced dashboard with search, filters, refined aesthetics, and real-time progress tracking",
+      "status": "in_progress",
+      "priority": "high",
+      "progress": 86,
+      "repo_url": "https://github.com/xadev12/kato-dashboard",
+      "created_at": "2026-01-29T08:15:00.000Z",
+      "updated_at": "2026-01-29T09:34:26.295Z",
+      "tasks": [
+        {
+          "id": "task-1",
+          "title": "Upgrade visual aesthetics (remove emojis)",
+          "status": "done",
+          "completed_at": "2026-01-29T08:58:00.000Z"
+        },
+        {
+          "id": "task-2",
+          "title": "Add search functionality",
+          "status": "done",
+          "completed_at": "2026-01-29T09:05:00.000Z"
+        },
+        {
+          "id": "task-3",
+          "title": "Add filter buttons",
+          "status": "done",
+          "completed_at": "2026-01-29T09:06:00.000Z"
+        },
+        {
+          "id": "task-4",
+          "title": "Refine card designs",
+          "status": "done",
+          "completed_at": "2026-01-29T09:10:00.000Z"
+        },
+        {
+          "id": "task-5",
+          "title": "Add priority indicators",
+          "status": "done",
+          "completed_at": "2026-01-29T09:12:00.000Z"
+        },
+        {
+          "id": "task-6",
+          "title": "Implement real-time progress tracking system",
+          "status": "done",
+          "completed_at": "2026-01-29T09:34:26.294Z"
+        },
+        {
+          "id": "task-7",
+          "title": "Test auto-refresh functionality",
+          "status": "backlog"
+        }
+      ]
+    },
+    {
+      "id": "morning-reading-automation",
+      "name": "Morning Reading Automation",
+      "description": "Daily cron job to search and bookmark interesting tweets for Readwise Reader sync",
+      "status": "done",
+      "priority": "medium",
+      "progress": 100,
+      "created_at": "2026-01-29T08:25:00.000Z",
+      "updated_at": "2026-01-29T08:31:00.000Z",
+      "tasks": [
+        {
+          "id": "task-1",
+          "title": "Install bird (X/Twitter CLI)",
+          "status": "done",
+          "completed_at": "2026-01-29T08:11:00.000Z"
+        },
+        {
+          "id": "task-2",
+          "title": "Create search script for quality tweets",
+          "status": "done",
+          "completed_at": "2026-01-29T08:24:00.000Z"
+        },
+        {
+          "id": "task-3",
+          "title": "Set up cron job for 8 AM daily",
+          "status": "done",
+          "completed_at": "2026-01-29T08:31:00.000Z"
+        },
+        {
+          "id": "task-4",
+          "title": "Document workflow in HEARTBEAT.md",
+          "status": "done",
+          "completed_at": "2026-01-29T08:31:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "twitter-follow-automation",
+      "name": "Twitter Follow Automation",
+      "description": "Follow all accounts from @xavliew's following list using bird CLI",
+      "status": "in_progress",
+      "priority": "low",
+      "progress": 30,
+      "created_at": "2026-01-29T08:11:00.000Z",
+      "updated_at": "2026-01-29T08:25:00.000Z",
+      "tasks": [
+        {
+          "id": "task-1",
+          "title": "Get @xavliew's following list",
+          "status": "done",
+          "completed_at": "2026-01-29T08:12:00.000Z"
+        },
+        {
+          "id": "task-2",
+          "title": "Follow first batch (15 accounts)",
+          "status": "done",
+          "completed_at": "2026-01-29T08:25:00.000Z"
+        },
+        {
+          "id": "task-3",
+          "title": "Handle rate limits",
+          "status": "done",
+          "completed_at": "2026-01-29T08:25:00.000Z"
+        },
+        {
+          "id": "task-4",
+          "title": "Continue following remaining accounts",
+          "status": "backlog",
+          "note": "Rate limited - can resume tomorrow or manually"
+        }
+      ]
+    }
+  ],
+  "activity": [
+    {
+      "id": "activity-1769679271203",
+      "type": "automation",
+      "message": "Built helper script for progress updates",
+      "timestamp": "2026-01-29T09:34:31.203Z",
+      "project_id": "kato-dashboard-redesign"
+    },
+    {
+      "id": "activity-12",
+      "type": "update",
+      "project_id": "kato-dashboard-redesign",
+      "message": "Building real-time progress tracking system",
+      "timestamp": "2026-01-29T09:23:00.000Z"
+    },
+    {
+      "id": "activity-11",
+      "type": "deployment",
+      "project_id": "move-pwa-setup",
+      "message": "Deployed Move PWA to Vercel (env vars pending)",
+      "timestamp": "2026-01-29T09:15:00.000Z"
+    },
+    {
+      "id": "activity-10",
+      "type": "code",
+      "project_id": "kato-dashboard-redesign",
+      "message": "Added search and filter functionality",
+      "timestamp": "2026-01-29T09:05:00.000Z"
+    },
+    {
+      "id": "activity-9",
+      "type": "design",
+      "project_id": "kato-dashboard-redesign",
+      "message": "Upgraded dashboard aesthetics - removed emojis, refined cards",
+      "timestamp": "2026-01-29T08:58:00.000Z"
+    },
+    {
+      "id": "activity-8",
+      "type": "config",
+      "project_id": "move-pwa-setup",
+      "message": "Fixed TypeScript import errors for Supabase types",
+      "timestamp": "2026-01-29T08:50:00.000Z"
+    },
+    {
+      "id": "activity-7",
+      "type": "security",
+      "project_id": "move-pwa-setup",
+      "message": "Saved Supabase credentials to 1Password (Private vault)",
+      "timestamp": "2026-01-29T08:48:00.000Z"
+    },
+    {
+      "id": "activity-6",
+      "type": "database",
+      "project_id": "move-pwa-setup",
+      "message": "Created move_goals and activity_logs tables in Supabase",
+      "timestamp": "2026-01-29T08:47:00.000Z"
+    },
+    {
+      "id": "activity-5",
+      "type": "setup",
+      "project_id": "move-pwa-setup",
+      "message": "Created Supabase project (Singapore region)",
+      "timestamp": "2026-01-29T08:45:00.000Z"
+    },
+    {
+      "id": "activity-4",
+      "type": "automation",
+      "project_id": "morning-reading-automation",
+      "message": "Set up daily 8 AM cron job for tweet bookmarking",
+      "timestamp": "2026-01-29T08:31:00.000Z"
+    },
+    {
+      "id": "activity-3",
+      "type": "social",
+      "project_id": "twitter-follow-automation",
+      "message": "Followed 15 accounts from @xavliew (rate limited)",
+      "timestamp": "2026-01-29T08:25:00.000Z"
+    }
+  ],
+  "subAgents": []
+}

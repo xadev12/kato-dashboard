@@ -19,8 +19,8 @@ export interface Task {
   title: string
   description: string
   status: TaskStatus
-  assigned_to: string | null
-  priority: 'low' | 'medium' | 'high'
+  assigned_to?: string | null
+  priority?: 'low' | 'medium' | 'high'
   created_at: string
   completed_at: string | null
 }

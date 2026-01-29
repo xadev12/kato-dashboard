@@ -12,7 +12,8 @@ export function ProjectDetail() {
   const { id } = useParams<{ id: string }>()
   const [project, setProject] = useState<Project | null>(null)
   const [loading, setLoading] = useState(true)
-  const { tasks, loading: tasksLoading, refetch } = useTasks(id)
+  const { tasks, loading: tasksLoading } = useTasks()
+  const projectTasks = tasks.filter(t => t.project_id === id)
 
   useEffect(() => {
     if (id) {
@@ -25,7 +26,7 @@ export function ProjectDetail() {
 
   const handleStatusChange = async (taskId: string, newStatus: TaskStatus) => {
     await updateTaskStatus(taskId, newStatus)
-    refetch()
+    // Auto-refresh will pick up changes
   }
 
   if (loading) {
@@ -49,9 +50,9 @@ export function ProjectDetail() {
   }
 
   const tasksByStatus = {
-    todo: tasks.filter(t => t.status === 'todo'),
-    in_progress: tasks.filter(t => t.status === 'in_progress'),
-    done: tasks.filter(t => t.status === 'done'),
+    todo: projectTasks.filter(t => t.status === 'todo'),
+    in_progress: projectTasks.filter(t => t.status === 'in_progress'),
+    done: projectTasks.filter(t => t.status === 'done'),
   }
 
   const columns = [

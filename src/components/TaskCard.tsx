@@ -25,7 +25,7 @@ export function TaskCard({ task, onStatusChange }: Props) {
       onClick={() => onStatusChange?.(task.id, nextStatus[task.status])}
     >
       <div className="flex items-start gap-3">
-        <div className={`mt-1.5 h-2 w-2 rounded-full flex-shrink-0 ${priorityDot[task.priority]}`} />
+        <div className={`mt-1.5 h-2 w-2 rounded-full flex-shrink-0 ${priorityDot[task.priority || 'low']}`} />
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-2">
             <p className={`text-sm font-medium ${task.status === 'done' ? 'text-gray-500 line-through' : 'text-gray-200'}`}>
