@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-01-29T18:07:23.247Z",
+  "lastUpdated": "2026-01-29T19:50:33.851Z",
   "projects": [
     {
       "id": "move-pwa-setup",
@@ -192,6 +192,12 @@
   ],
   "activity": [
     {
+      "id": "activity-1769716233846",
+      "type": "code",
+      "message": "2-hour check: All 5 specialists complete. Blocked on manual integration (DB setup + API keys).",
+      "timestamp": "2026-01-29T19:50:33.846Z"
+    },
+    {
       "id": "activity-1769710043243",
       "type": "infrastructure",
       "message": "Ported Move PWA Supabase credentials to parking app backend (.env.local created)",
@@ -321,13 +327,6 @@
       "project_id": "move-pwa-setup",
       "message": "Fixed TypeScript import errors for Supabase types",
       "timestamp": "2026-01-29T08:50:00.000Z"
-    },
-    {
-      "id": "activity-7",
-      "type": "security",
-      "project_id": "move-pwa-setup",
-      "message": "Saved Supabase credentials to 1Password (Private vault)",
-      "timestamp": "2026-01-29T08:48:00.000Z"
     }
   ],
   "subAgents": [
@@ -335,41 +334,46 @@
       "id": "agent-1769709220842",
       "label": "Backend Specialist",
       "task": "Database, API, LTA integration",
-      "status": "running",
-      "progress": 0,
-      "started_at": "2026-01-29T17:53:40.842Z"
+      "status": "complete",
+      "progress": 100,
+      "started_at": "2026-01-29T17:53:40.842Z",
+      "completed_at": "2026-01-29T19:50:33.656Z"
     },
     {
       "id": "agent-1769709220883",
       "label": "Data Engineer",
       "task": "Seed 2,500+ carparks",
-      "status": "running",
-      "progress": 0,
-      "started_at": "2026-01-29T17:53:40.883Z"
+      "status": "complete",
+      "progress": 100,
+      "started_at": "2026-01-29T17:53:40.883Z",
+      "completed_at": "2026-01-29T19:50:33.697Z"
     },
     {
       "id": "agent-1769709220922",
       "label": "Frontend Specialist",
       "task": "Search UI + navigation",
-      "status": "running",
-      "progress": 0,
-      "started_at": "2026-01-29T17:53:40.922Z"
+      "status": "complete",
+      "progress": 100,
+      "started_at": "2026-01-29T17:53:40.922Z",
+      "completed_at": "2026-01-29T19:50:33.734Z"
     },
     {
       "id": "agent-1769709220960",
       "label": "Design Specialist",
       "task": "Design system + mockups",
-      "status": "running",
-      "progress": 0,
-      "started_at": "2026-01-29T17:53:40.960Z"
+      "status": "complete",
+      "progress": 100,
+      "started_at": "2026-01-29T17:53:40.960Z",
+      "completed_at": "2026-01-29T19:50:33.772Z"
     },
     {
       "id": "agent-1769709220998",
       "label": "QA Specialist",
       "task": "Testing + validation",
-      "status": "running",
-      "progress": 0,
-      "started_at": "2026-01-29T17:53:40.998Z"
+      "status": "complete",
+      "progress": 100,
+      "started_at": "2026-01-29T17:53:40.998Z",
+      "completed_at": "2026-01-29T19:50:33.809Z"
     }
   ]
 }
