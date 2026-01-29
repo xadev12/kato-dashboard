@@ -2,10 +2,40 @@ import { supabase, isSupabaseConfigured } from './supabase'
 import { mockProjects, mockTasks, mockActivity, mockAgentStatus } from '../data/mock'
 import type { Project, Task, ActivityLog, AgentStatus, ProjectStatus, TaskStatus } from '../types'
 
+// Shared fetch function for dashboard data
+const fetchDashboardData = async () => {
+  try {
+    const response = await fetch('/dashboard-data.json')
+    if (!response.ok) {
+      throw new Error('Failed to fetch dashboard data')
+    }
+    return await response.json()
+  } catch (error) {
+    console.error('Error fetching dashboard data:', error)
+    return null
+  }
+}
+
 // ---- Projects ----
 
 export async function getProjects(): Promise<Project[]> {
-  if (!isSupabaseConfigured) return mockProjects
+  if (!isSupabaseConfigured) {
+    // Use JSON file instead of mockProjects
+    const data = await fetchDashboardData()
+    if (data && data.projects) {
+      return data.projects.map((p: any) => ({
+        id: p.id,
+        name: p.name,
+        description: p.description,
+        status: p.status,
+        progress: p.progress,
+        repo_url: p.repo_url,
+        created_at: p.created_at,
+        updated_at: p.updated_at
+      }))
+    }
+    return mockProjects
+  }
 
   const { data, error } = await supabase!
     .from('projects')
@@ -20,7 +50,26 @@ export async function getProjects(): Promise<Project[]> {
 }
 
 export async function getProject(id: string): Promise<Project | null> {
-  if (!isSupabaseConfigured) return mockProjects.find(p => p.id === id) || null
+  if (!isSupabaseConfigured) {
+    // Use JSON file instead of mockProjects
+    const data = await fetchDashboardData()
+    if (data && data.projects) {
+      const project = data.projects.find((p: any) => p.id === id)
+      if (project) {
+        return {
+          id: project.id,
+          name: project.name,
+          description: project.description,
+          status: project.status,
+          progress: project.progress,
+          repo_url: project.repo_url,
+          created_at: project.created_at,
+          updated_at: project.updated_at
+        }
+      }
+    }
+    return mockProjects.find(p => p.id === id) || null
+  }
 
   const { data, error } = await supabase!
     .from('projects')

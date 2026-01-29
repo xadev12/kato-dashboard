@@ -15,8 +15,6 @@ export function ProjectDetail() {
   const { tasks, loading: tasksLoading } = useTasks()
   const projectTasks = tasks.filter(t => t.project_id === id)
 
-  console.log('ProjectDetail:', { id, totalTasks: tasks.length, projectTasks: projectTasks.length, tasks: projectTasks })
-
   useEffect(() => {
     if (id) {
       getProject(id).then(p => {
