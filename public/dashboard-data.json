@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-01-29T10:09:46.367Z",
+  "lastUpdated": "2026-01-29T10:54:54.157Z",
   "projects": [
     {
       "id": "move-pwa-setup",
@@ -191,6 +191,20 @@
     }
   ],
   "activity": [
+    {
+      "id": "activity-1769684094151",
+      "type": "documentation",
+      "message": "Updated all core workspace .md files with Jan 2026 accomplishments",
+      "timestamp": "2026-01-29T10:54:54.151Z",
+      "project_id": "kato-dashboard-redesign"
+    },
+    {
+      "id": "activity-1769682394253",
+      "type": "security",
+      "message": "Set up 1Password service account for zero-approval automation",
+      "timestamp": "2026-01-29T10:26:34.253Z",
+      "project_id": "morning-reading-automation"
+    },
     {
       "id": "activity-1769681386361",
       "type": "automation",
