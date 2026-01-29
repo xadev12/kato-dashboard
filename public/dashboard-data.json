@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-01-29T11:40:14.623Z",
+  "lastUpdated": "2026-01-29T17:47:56.388Z",
   "projects": [
     {
       "id": "move-pwa-setup",
@@ -192,6 +192,19 @@
   ],
   "activity": [
     {
+      "id": "activity-1769708876384",
+      "type": "infrastructure",
+      "message": "Sub-agent factory system ready - 5 specialists with official skills loaded",
+      "timestamp": "2026-01-29T17:47:56.384Z"
+    },
+    {
+      "id": "activity-1769708876341",
+      "type": "automation",
+      "message": "Enabled auto-sync every 10 minutes - dashboard stays near real-time",
+      "timestamp": "2026-01-29T17:47:56.341Z",
+      "project_id": "kato-dashboard-redesign"
+    },
+    {
       "id": "activity-1769686814617",
       "type": "infrastructure",
       "message": "Started sub-agent factory system - installed specialist skills",
@@ -316,20 +329,6 @@
       "project_id": "move-pwa-setup",
       "message": "Created Supabase project (Singapore region)",
       "timestamp": "2026-01-29T08:45:00.000Z"
-    },
-    {
-      "id": "activity-4",
-      "type": "automation",
-      "project_id": "morning-reading-automation",
-      "message": "Set up daily 8 AM cron job for tweet bookmarking",
-      "timestamp": "2026-01-29T08:31:00.000Z"
-    },
-    {
-      "id": "activity-3",
-      "type": "social",
-      "project_id": "twitter-follow-automation",
-      "message": "Followed 15 accounts from @xavliew (rate limited)",
-      "timestamp": "2026-01-29T08:25:00.000Z"
     }
   ],
   "subAgents": []
