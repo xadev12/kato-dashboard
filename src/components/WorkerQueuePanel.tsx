@@ -70,8 +70,8 @@ const WorkerItemRow = memo(function WorkerItemRow({ worker, isActive }: { worker
 })
 
 export const WorkerQueuePanel = memo(function WorkerQueuePanel({ workers }: Props) {
-  const totalWorkers = workers.active.length + workers.queue.length
-  
+  const totalWorkers = workers.active.length + workers.queue.length + workers.recent.length
+
   if (totalWorkers === 0) {
     return (
       <div className="rounded-xl border border-white/[0.06] bg-[#111111] p-6">
@@ -107,6 +107,11 @@ export const WorkerQueuePanel = memo(function WorkerQueuePanel({ workers }: Prop
               {workers.queue.length} Queued
             </span>
           )}
+          {workers.recent.length > 0 && (
+            <span className="px-2 py-1 rounded-md bg-gray-500/10 text-gray-400 text-xs font-medium border border-gray-500/20">
+              {workers.recent.length} Recent
+            </span>
+          )}
         </div>
       </div>
       
@@ -127,6 +132,16 @@ export const WorkerQueuePanel = memo(function WorkerQueuePanel({ workers }: Prop
             <span className="text-[10px] uppercase tracking-wider text-gray-500 font-medium">Queued</span>
             {workers.queue.map((worker, idx) => (
               <WorkerItemRow key={`queue-${idx}`} worker={worker} />
+            ))}
+          </div>
+        )}
+        
+        {/* Recent (completed) workers */}
+        {workers.recent.length > 0 && (
+          <div className="space-y-2">
+            <span className="text-[10px] uppercase tracking-wider text-gray-500 font-medium">Recent</span>
+            {workers.recent.map((worker, idx) => (
+              <WorkerItemRow key={`recent-${idx}`} worker={worker} />
             ))}
           </div>
         )}
