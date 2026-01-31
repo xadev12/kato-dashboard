@@ -1,12 +1,13 @@
 {
   "schemaVersion": "2.0",
-  "lastUpdated": "2026-02-01T01:10:00.000Z",
+  "lastUpdated": "2026-02-01T03:55:00.000Z",
   "agents": {
     "queens": [
       {"id": "main", "name": "Kato", "type": "queen", "status": "idle", "currentTask": null},
       {"id": "product", "name": "Product Owner", "type": "queen", "status": "idle", "currentTask": null},
       {"id": "devops", "name": "DevOps Engineer", "type": "queen", "status": "idle", "currentTask": null},
-      {"id": "business", "name": "Business Strategist", "type": "queen", "status": "idle", "currentTask": null}
+      {"id": "business", "name": "Business Strategist", "type": "queen", "status": "idle", "currentTask": null},
+      {"id": "brain", "name": "Second Brain Keeper", "type": "queen", "status": "idle", "currentTask": null}
     ],
     "workers": {
       "active": [],
