@@ -19,13 +19,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 </div>
                 <span className="text-lg font-semibold text-white">Kato</span>
               </Link>
-              <nav className="hidden sm:flex items-center gap-1">
+              <nav className="hidden sm:flex items-center gap-1 p-1 bg-white/[0.03] rounded-lg border border-white/[0.06]">
                 <Link
                   to="/"
-                  className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                  className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200 ${
                     isAgentDashboard
-                      ? 'bg-violet-500/10 text-violet-400 border border-violet-500/20'
-                      : 'text-gray-400 hover:text-white hover:bg-gray-800/50'
+                      ? 'bg-gradient-to-r from-violet-500/20 to-purple-500/10 text-violet-300 border border-violet-500/20 shadow-sm'
+                      : 'text-gray-400 hover:text-white hover:bg-white/[0.03]'
                   }`}
                 >
                   <span className="flex items-center gap-1.5">
@@ -34,13 +34,15 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 </Link>
                 <Link
                   to="/legacy"
-                  className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                  className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200 ${
                     isLegacyDashboard
-                      ? 'bg-gray-800 text-white'
-                      : 'text-gray-400 hover:text-white hover:bg-gray-800/50'
+                      ? 'bg-gradient-to-r from-amber-500/20 to-orange-500/10 text-amber-300 border border-amber-500/20 shadow-sm'
+                      : 'text-gray-400 hover:text-white hover:bg-white/[0.03]'
                   }`}
                 >
-                  Legacy
+                  <span className="flex items-center gap-1.5">
+                    <span>📋</span> Kanban
+                  </span>
                 </Link>
               </nav>
             </div>
