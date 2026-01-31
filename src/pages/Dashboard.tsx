@@ -38,7 +38,7 @@ export function Dashboard() {
     const total = projects.length
     const inProgress = projects.filter(p => p.status === 'in_progress').length
     const done = projects.filter(p => p.status === 'done').length
-    const backlog = projects.filter(p => p.status === 'backlog').length
+    const notStarted = projects.filter(p => p.status === 'not_started').length
     
     const tasksDone = tasks.filter(t => t.status === 'done').length
     const tasksTotal = tasks.length
@@ -52,7 +52,7 @@ export function Dashboard() {
       total,
       inProgress,
       done,
-      backlog,
+      notStarted,
       tasksDone,
       tasksTotal,
       tasksInProgress,
@@ -95,10 +95,10 @@ export function Dashboard() {
               count={projects.length}
             />
             <FilterButton
-              active={statusFilter === 'backlog'}
-              onClick={() => setStatusFilter('backlog')}
-              label="Backlog"
-              count={stats.backlog}
+              active={statusFilter === 'not_started'}
+              onClick={() => setStatusFilter('not_started')}
+              label="Not Started"
+              count={stats.notStarted}
             />
             <FilterButton
               active={statusFilter === 'in_progress'}
@@ -140,7 +140,7 @@ export function Dashboard() {
         <StatCard
           label="Completed"
           value={stats.done}
-          subtitle={`${stats.backlog} in backlog`}
+          subtitle={`${stats.notStarted} pending`}
           delay={150}
         />
       </div>

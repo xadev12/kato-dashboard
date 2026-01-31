@@ -50,13 +50,13 @@ export function ProjectDetail() {
   }
 
   const tasksByStatus = {
-    todo: projectTasks.filter(t => t.status === 'todo'),
+    queued: projectTasks.filter(t => t.status === 'queued'),
     in_progress: projectTasks.filter(t => t.status === 'in_progress'),
     done: projectTasks.filter(t => t.status === 'done'),
   }
 
   const columns = [
-    { key: 'todo' as const, label: 'Todo', icon: '○' },
+    { key: 'queued' as const, label: 'Queued', icon: '○' },
     { key: 'in_progress' as const, label: 'In Progress', icon: '◐' },
     { key: 'done' as const, label: 'Done', icon: '●' },
   ]

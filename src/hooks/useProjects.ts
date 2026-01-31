@@ -1,11 +1,9 @@
 import { useState, useEffect } from 'react'
-import type { Project, Task } from '../types'
+import type { Project, Task, DashboardData, QueenAgent, Workers, DashboardMeta } from '../types'
 
 // Fetch data from JSON file (in production, this would be an API)
-const fetchDashboardData = async () => {
+const fetchDashboardData = async (): Promise<DashboardData | null> => {
   try {
-    // In development, Vite serves files from public/
-    // We'll copy dashboard-data.json to public/ folder
     const response = await fetch('/dashboard-data.json')
     if (!response.ok) {
       throw new Error('Failed to fetch dashboard data')
@@ -25,18 +23,7 @@ export const useProjects = () => {
     const loadData = async () => {
       const data = await fetchDashboardData()
       if (data && data.projects) {
-        // Transform data to match Project type
-        const mappedProjects = data.projects.map((p: any) => ({
-          id: p.id,
-          name: p.name,
-          description: p.description,
-          status: p.status,
-          progress: p.progress,
-          repo_url: p.repo_url,
-          created_at: p.created_at,
-          updated_at: p.updated_at
-        }))
-        setProjects(mappedProjects)
+        setProjects(data.projects)
       }
       setLoading(false)
     }
@@ -61,17 +48,12 @@ export const useTasks = () => {
       if (data && data.projects) {
         // Extract all tasks from all projects
         const allTasks: Task[] = []
-        data.projects.forEach((project: any) => {
+        data.projects.forEach((project: Project) => {
           if (project.tasks) {
-            project.tasks.forEach((task: any) => {
+            project.tasks.forEach((task: Task) => {
               allTasks.push({
-                id: task.id,
-                project_id: project.id,
-                title: task.title,
-                description: task.note || '',
-                status: task.status,
-                created_at: project.created_at,
-                completed_at: task.completed_at || null
+                ...task,
+                project_id: project.id
               })
             })
           }
@@ -91,6 +73,58 @@ export const useTasks = () => {
   return { tasks, loading }
 }
 
+// New hook for agent data
+export const useAgents = () => {
+  const [queens, setQueens] = useState<QueenAgent[]>([])
+  const [workers, setWorkers] = useState<Workers>({ active: [], queue: [], recent: [] })
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const loadData = async () => {
+      const data = await fetchDashboardData()
+      if (data && data.agents) {
+        setQueens(data.agents.queens)
+        setWorkers(data.agents.workers)
+      }
+      setLoading(false)
+    }
+
+    loadData()
+
+    // Auto-refresh every 5 seconds for agents (more frequent)
+    const interval = setInterval(loadData, 5000)
+    return () => clearInterval(interval)
+  }, [])
+
+  return { queens, workers, loading }
+}
+
+// Hook for dashboard meta/stats
+export const useDashboardMeta = () => {
+  const [meta, setMeta] = useState<DashboardMeta | null>(null)
+  const [lastUpdated, setLastUpdated] = useState<string>('')
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const loadData = async () => {
+      const data = await fetchDashboardData()
+      if (data) {
+        setMeta(data.meta)
+        setLastUpdated(data.lastUpdated)
+      }
+      setLoading(false)
+    }
+
+    loadData()
+
+    // Auto-refresh every 10 seconds
+    const interval = setInterval(loadData, 10000)
+    return () => clearInterval(interval)
+  }, [])
+
+  return { meta, lastUpdated, loading }
+}
+
 // New hook for activity feed
 export const useActivity = () => {
   const [activities, setActivities] = useState<any[]>([])
@@ -99,8 +133,8 @@ export const useActivity = () => {
   useEffect(() => {
     const loadData = async () => {
       const data = await fetchDashboardData()
-      if (data && data.activity) {
-        setActivities(data.activity)
+      if (data && (data as any).activity) {
+        setActivities((data as any).activity)
       }
       setLoading(false)
     }
@@ -115,7 +149,7 @@ export const useActivity = () => {
   return { activities, loading }
 }
 
-// Hook for sub-agents
+// Hook for sub-agents (legacy compatibility)
 export const useSubAgents = () => {
   const [subAgents, setSubAgents] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
@@ -123,8 +157,8 @@ export const useSubAgents = () => {
   useEffect(() => {
     const loadData = async () => {
       const data = await fetchDashboardData()
-      if (data && data.subAgents) {
-        setSubAgents(data.subAgents)
+      if (data && (data as any).subAgents) {
+        setSubAgents((data as any).subAgents)
       }
       setLoading(false)
     }

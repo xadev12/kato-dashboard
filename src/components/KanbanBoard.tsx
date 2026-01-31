@@ -1,4 +1,4 @@
-import { memo, useMemo } from 'react'
+import { memo } from 'react'
 import type { Project, Task } from '../types'
 import { ProjectCard } from './ProjectCard'
 
@@ -9,8 +9,8 @@ interface Props {
 
 const columns = [
   { 
-    key: 'backlog' as const, 
-    label: 'Backlog', 
+    key: 'not_started' as const, 
+    label: 'Not Started', 
     icon: (
       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
@@ -26,7 +26,7 @@ const columns = [
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
       </svg>
     ),
-    color: 'text-blue-500'
+    color: 'text-amber-500'
   },
   { 
     key: 'done' as const, 
@@ -40,19 +40,8 @@ const columns = [
   },
 ]
 
-export const KanbanBoard = memo(function KanbanBoard({ projects, tasks }: Props) {
-  // Build task count map once (js-index-maps)
-  const taskCountMap = useMemo(() => {
-    const map = new Map<string, { total: number; done: number }>()
-    projects.forEach(p => {
-      const projectTasks = tasks.filter(t => t.project_id === p.id)
-      map.set(p.id, {
-        total: projectTasks.length,
-        done: projectTasks.filter(t => t.status === 'done').length,
-      })
-    })
-    return map
-  }, [projects, tasks])
+export const KanbanBoard = memo(function KanbanBoard({ projects }: Props) {
+  // Projects now have tasks embedded, no need for separate task mapping
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -87,10 +76,7 @@ export const KanbanBoard = memo(function KanbanBoard({ projects, tasks }: Props)
                   className="animate-fade-in"
                   style={{ animationDelay: `${(colIndex * 50) + (idx * 30)}ms` }}
                 >
-                  <ProjectCard
-                    project={project}
-                    taskCount={taskCountMap.get(project.id)}
-                  />
+                  <ProjectCard project={project} />
                 </div>
               ))}
               {colProjects.length === 0 && (

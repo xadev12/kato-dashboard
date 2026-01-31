@@ -7,16 +7,16 @@ interface Props {
 }
 
 const priorityDot: Record<string, string> = {
-  high: 'bg-red-400',
+  high: 'bg-rose-400',
   medium: 'bg-amber-400',
   low: 'bg-gray-500',
 }
 
 export function TaskCard({ task, onStatusChange }: Props) {
-  const nextStatus: Record<string, Task['status']> = {
-    todo: 'in_progress',
+  const nextStatus: Record<Task['status'], Task['status']> = {
+    queued: 'in_progress',
     in_progress: 'done',
-    done: 'todo',
+    done: 'queued',
   }
 
   return (

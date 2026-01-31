@@ -29,6 +29,9 @@ export async function getProjects(): Promise<Project[]> {
         description: p.description,
         status: p.status,
         progress: p.progress,
+        priority: p.priority || 'medium',
+        assignedQueen: p.assignedQueen || null,
+        tasks: p.tasks || [],
         repo_url: p.repo_url,
         created_at: p.created_at,
         updated_at: p.updated_at
@@ -62,6 +65,9 @@ export async function getProject(id: string): Promise<Project | null> {
           description: project.description,
           status: project.status,
           progress: project.progress,
+          priority: project.priority || 'medium',
+          assignedQueen: project.assignedQueen || null,
+          tasks: project.tasks || [],
           repo_url: project.repo_url,
           created_at: project.created_at,
           updated_at: project.updated_at
