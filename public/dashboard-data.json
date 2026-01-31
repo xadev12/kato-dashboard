@@ -1,5 +1,21 @@
 {
-  "lastUpdated": "2026-01-29T19:50:33.851Z",
+  "schemaVersion": "2.0",
+  "lastUpdated": "2026-02-01T01:10:00.000Z",
+  "agents": {
+    "queens": [
+      {"id": "main", "name": "Kato", "type": "queen", "status": "idle", "currentTask": null},
+      {"id": "product", "name": "Product Owner", "type": "queen", "status": "idle", "currentTask": null},
+      {"id": "devops", "name": "DevOps Engineer", "type": "queen", "status": "idle", "currentTask": null},
+      {"id": "business", "name": "Business Strategist", "type": "queen", "status": "idle", "currentTask": null}
+    ],
+    "workers": {
+      "active": [],
+      "queue": [],
+      "recent": [
+        {"specialist": "Frontend", "taskId": "dash-agent-ui", "completedAt": "2026-01-31T20:56:00Z"}
+      ]
+    }
+  },
   "projects": [
     {
       "id": "move-pwa-setup",
@@ -11,55 +27,16 @@
       "repo_url": "https://github.com/xadev12/move-pwa",
       "created_at": "2026-01-29T08:00:00.000Z",
       "updated_at": "2026-01-29T09:44:30.880Z",
+      "assignedQueen": null,
       "tasks": [
-        {
-          "id": "task-1",
-          "title": "Authorize 1Password CLI",
-          "status": "done",
-          "completed_at": "2026-01-29T08:41:00.000Z"
-        },
-        {
-          "id": "task-2",
-          "title": "Create Supabase project",
-          "status": "done",
-          "completed_at": "2026-01-29T08:45:00.000Z"
-        },
-        {
-          "id": "task-3",
-          "title": "Set up database schema",
-          "status": "done",
-          "completed_at": "2026-01-29T08:47:00.000Z"
-        },
-        {
-          "id": "task-4",
-          "title": "Save credentials to 1Password",
-          "status": "done",
-          "completed_at": "2026-01-29T08:48:00.000Z"
-        },
-        {
-          "id": "task-5",
-          "title": "Fix TypeScript import errors",
-          "status": "done",
-          "completed_at": "2026-01-29T08:50:00.000Z"
-        },
-        {
-          "id": "task-6",
-          "title": "Deploy to Vercel",
-          "status": "done",
-          "completed_at": "2026-01-29T09:15:00.000Z"
-        },
-        {
-          "id": "task-7",
-          "title": "Configure environment variables in Vercel",
-          "status": "done",
-          "completed_at": "2026-01-29T09:44:23.708Z"
-        },
-        {
-          "id": "task-8",
-          "title": "Verify deployment works",
-          "status": "done",
-          "completed_at": "2026-01-29T09:44:30.879Z"
-        }
+        {"id": "task-1", "title": "Authorize 1Password CLI", "status": "done", "completed_at": "2026-01-29T08:41:00.000Z", "assignedAgent": null},
+        {"id": "task-2", "title": "Create Supabase project", "status": "done", "completed_at": "2026-01-29T08:45:00.000Z", "assignedAgent": null},
+        {"id": "task-3", "title": "Set up database schema", "status": "done", "completed_at": "2026-01-29T08:47:00.000Z", "assignedAgent": null},
+        {"id": "task-4", "title": "Save credentials to 1Password", "status": "done", "completed_at": "2026-01-29T08:48:00.000Z", "assignedAgent": null},
+        {"id": "task-5", "title": "Fix TypeScript import errors", "status": "done", "completed_at": "2026-01-29T08:50:00.000Z", "assignedAgent": null},
+        {"id": "task-6", "title": "Deploy to Vercel", "status": "done", "completed_at": "2026-01-29T09:15:00.000Z", "assignedAgent": null},
+        {"id": "task-7", "title": "Configure environment variables in Vercel", "status": "done", "completed_at": "2026-01-29T09:44:23.708Z", "assignedAgent": null},
+        {"id": "task-8", "title": "Verify deployment works", "status": "done", "completed_at": "2026-01-29T09:44:30.879Z", "assignedAgent": null}
       ]
     },
     {
@@ -72,308 +49,40 @@
       "repo_url": "https://github.com/xadev12/kato-dashboard",
       "created_at": "2026-01-29T08:15:00.000Z",
       "updated_at": "2026-01-29T09:35:51.767Z",
+      "assignedQueen": "main",
       "tasks": [
-        {
-          "id": "task-1",
-          "title": "Upgrade visual aesthetics (remove emojis)",
-          "status": "done",
-          "completed_at": "2026-01-29T08:58:00.000Z"
-        },
-        {
-          "id": "task-2",
-          "title": "Add search functionality",
-          "status": "done",
-          "completed_at": "2026-01-29T09:05:00.000Z"
-        },
-        {
-          "id": "task-3",
-          "title": "Add filter buttons",
-          "status": "done",
-          "completed_at": "2026-01-29T09:06:00.000Z"
-        },
-        {
-          "id": "task-4",
-          "title": "Refine card designs",
-          "status": "done",
-          "completed_at": "2026-01-29T09:10:00.000Z"
-        },
-        {
-          "id": "task-5",
-          "title": "Add priority indicators",
-          "status": "done",
-          "completed_at": "2026-01-29T09:12:00.000Z"
-        },
-        {
-          "id": "task-6",
-          "title": "Implement real-time progress tracking system",
-          "status": "done",
-          "completed_at": "2026-01-29T09:34:26.294Z"
-        },
-        {
-          "id": "task-7",
-          "title": "Test auto-refresh functionality",
-          "status": "done",
-          "completed_at": "2026-01-29T09:35:51.766Z"
-        }
+        {"id": "task-1", "title": "Upgrade visual aesthetics (remove emojis)", "status": "done", "completed_at": "2026-01-29T08:58:00.000Z", "assignedAgent": null},
+        {"id": "task-2", "title": "Add search functionality", "status": "done", "completed_at": "2026-01-29T09:05:00.000Z", "assignedAgent": null},
+        {"id": "task-3", "title": "Add filter buttons", "status": "done", "completed_at": "2026-01-29T09:06:00.000Z", "assignedAgent": null},
+        {"id": "task-4", "title": "Refine card designs", "status": "done", "completed_at": "2026-01-29T09:10:00.000Z", "assignedAgent": null},
+        {"id": "task-5", "title": "Enhance empty states", "status": "done", "completed_at": "2026-01-29T09:35:51.766Z", "assignedAgent": null}
       ]
     },
     {
-      "id": "morning-reading-automation",
-      "name": "Morning Reading Automation",
-      "description": "Daily cron job to search and bookmark interesting tweets for Readwise Reader sync",
-      "status": "done",
-      "priority": "medium",
-      "progress": 100,
-      "created_at": "2026-01-29T08:25:00.000Z",
-      "updated_at": "2026-01-29T08:31:00.000Z",
-      "tasks": [
-        {
-          "id": "task-1",
-          "title": "Install bird (X/Twitter CLI)",
-          "status": "done",
-          "completed_at": "2026-01-29T08:11:00.000Z"
-        },
-        {
-          "id": "task-2",
-          "title": "Create search script for quality tweets",
-          "status": "done",
-          "completed_at": "2026-01-29T08:24:00.000Z"
-        },
-        {
-          "id": "task-3",
-          "title": "Set up cron job for 8 AM daily",
-          "status": "done",
-          "completed_at": "2026-01-29T08:31:00.000Z"
-        },
-        {
-          "id": "task-4",
-          "title": "Document workflow in HEARTBEAT.md",
-          "status": "done",
-          "completed_at": "2026-01-29T08:31:00.000Z"
-        }
-      ]
-    },
-    {
-      "id": "twitter-follow-automation",
-      "name": "Twitter Follow Automation",
-      "description": "Follow all accounts from @xavliew's following list using bird CLI",
+      "id": "kato-system-optimization",
+      "name": "Kato Dashboard - Agent Coordination",
+      "description": "Multi-agent task tracking, agent assignment visibility, and token-efficient coordination",
       "status": "in_progress",
-      "priority": "low",
-      "progress": 30,
-      "created_at": "2026-01-29T08:11:00.000Z",
-      "updated_at": "2026-01-29T08:25:00.000Z",
+      "priority": "high",
+      "progress": 20,
+      "repo_url": "https://github.com/xadev12/kato-dashboard",
+      "created_at": "2026-01-31T20:42:00.000Z",
+      "updated_at": "2026-01-31T20:45:00.000Z",
+      "assignedQueen": "main",
       "tasks": [
-        {
-          "id": "task-1",
-          "title": "Get @xavliew's following list",
-          "status": "done",
-          "completed_at": "2026-01-29T08:12:00.000Z"
-        },
-        {
-          "id": "task-2",
-          "title": "Follow first batch (15 accounts)",
-          "status": "done",
-          "completed_at": "2026-01-29T08:25:00.000Z"
-        },
-        {
-          "id": "task-3",
-          "title": "Handle rate limits",
-          "status": "done",
-          "completed_at": "2026-01-29T08:25:00.000Z"
-        },
-        {
-          "id": "task-4",
-          "title": "Continue following remaining accounts",
-          "status": "todo",
-          "note": "Rate limited - can resume tomorrow or manually"
-        }
+        {"id": "ko-1", "title": "Create TASKS.md coordination hub", "status": "done", "completed_at": "2026-01-31T20:45:00Z", "assignedAgent": "main"},
+        {"id": "ko-2", "title": "Extend dashboard JSON schema with agent fields", "status": "done", "completed_at": "2026-01-31T20:46:00Z", "assignedAgent": "main"},
+        {"id": "ko-3", "title": "Create sync script TASKS.md → dashboard", "status": "queued", "completed_at": null, "assignedAgent": null},
+        {"id": "ko-4", "title": "Add agent workload view to dashboard UI", "status": "queued", "completed_at": null, "assignedAgent": "Frontend Specialist"},
+        {"id": "ko-5", "title": "Document token efficiency patterns", "status": "queued", "completed_at": null, "assignedAgent": null}
       ]
     }
   ],
-  "activity": [
-    {
-      "id": "activity-1769716233846",
-      "type": "code",
-      "message": "2-hour check: All 5 specialists complete. Blocked on manual integration (DB setup + API keys).",
-      "timestamp": "2026-01-29T19:50:33.846Z"
-    },
-    {
-      "id": "activity-1769710043243",
-      "type": "infrastructure",
-      "message": "Ported Move PWA Supabase credentials to parking app backend (.env.local created)",
-      "timestamp": "2026-01-29T18:07:23.243Z",
-      "project_id": "parking-app-mvp"
-    },
-    {
-      "id": "activity-1769709221036",
-      "type": "infrastructure",
-      "message": "Spawned 5 specialist sub-agents for Parking App MVP (Opus 4.5 + high thinking)",
-      "timestamp": "2026-01-29T17:53:41.036Z"
-    },
-    {
-      "id": "activity-1769708876384",
-      "type": "infrastructure",
-      "message": "Sub-agent factory system ready - 5 specialists with official skills loaded",
-      "timestamp": "2026-01-29T17:47:56.384Z"
-    },
-    {
-      "id": "activity-1769708876341",
-      "type": "automation",
-      "message": "Enabled auto-sync every 10 minutes - dashboard stays near real-time",
-      "timestamp": "2026-01-29T17:47:56.341Z",
-      "project_id": "kato-dashboard-redesign"
-    },
-    {
-      "id": "activity-1769686814617",
-      "type": "infrastructure",
-      "message": "Started sub-agent factory system - installed specialist skills",
-      "timestamp": "2026-01-29T11:40:14.617Z",
-      "project_id": "kato-dashboard-redesign"
-    },
-    {
-      "id": "activity-1769684094151",
-      "type": "documentation",
-      "message": "Updated all core workspace .md files with Jan 2026 accomplishments",
-      "timestamp": "2026-01-29T10:54:54.151Z",
-      "project_id": "kato-dashboard-redesign"
-    },
-    {
-      "id": "activity-1769682394253",
-      "type": "security",
-      "message": "Set up 1Password service account for zero-approval automation",
-      "timestamp": "2026-01-29T10:26:34.253Z",
-      "project_id": "morning-reading-automation"
-    },
-    {
-      "id": "activity-1769681386361",
-      "type": "automation",
-      "message": "Integrated Readwise Reader API for morning reading curation",
-      "timestamp": "2026-01-29T10:09:46.361Z",
-      "project_id": "morning-reading-automation"
-    },
-    {
-      "id": "activity-1769680491452",
-      "type": "code",
-      "message": "Fixed project detail bug - now correctly fetches from JSON data source",
-      "timestamp": "2026-01-29T09:54:51.452Z",
-      "project_id": "kato-dashboard-redesign"
-    },
-    {
-      "id": "activity-1769680375816",
-      "type": "design",
-      "message": "Complete UI redesign with glassmorphism & modern patterns",
-      "timestamp": "2026-01-29T09:52:55.816Z",
-      "project_id": "move-pwa-setup"
-    },
-    {
-      "id": "activity-1769680021854",
-      "type": "code",
-      "message": "Fixed CSS styling - added PostCSS config for Tailwind v4",
-      "timestamp": "2026-01-29T09:47:01.854Z",
-      "project_id": "move-pwa-setup"
-    },
-    {
-      "id": "activity-1769679863752",
-      "type": "deployment",
-      "message": "Production deployment successful at move-pwa.vercel.app",
-      "timestamp": "2026-01-29T09:44:23.752Z",
-      "project_id": "move-pwa-setup"
-    },
-    {
-      "id": "activity-1769679347641",
-      "type": "deployment",
-      "message": "Deployed Kato Dashboard to Vercel (kato-dashboard.vercel.app)",
-      "timestamp": "2026-01-29T09:35:47.641Z",
-      "project_id": "kato-dashboard-redesign"
-    },
-    {
-      "id": "activity-1769679271203",
-      "type": "automation",
-      "message": "Built helper script for progress updates",
-      "timestamp": "2026-01-29T09:34:31.203Z",
-      "project_id": "kato-dashboard-redesign"
-    },
-    {
-      "id": "activity-12",
-      "type": "update",
-      "project_id": "kato-dashboard-redesign",
-      "message": "Building real-time progress tracking system",
-      "timestamp": "2026-01-29T09:23:00.000Z"
-    },
-    {
-      "id": "activity-11",
-      "type": "deployment",
-      "project_id": "move-pwa-setup",
-      "message": "Deployed Move PWA to Vercel (env vars pending)",
-      "timestamp": "2026-01-29T09:15:00.000Z"
-    },
-    {
-      "id": "activity-10",
-      "type": "code",
-      "project_id": "kato-dashboard-redesign",
-      "message": "Added search and filter functionality",
-      "timestamp": "2026-01-29T09:05:00.000Z"
-    },
-    {
-      "id": "activity-9",
-      "type": "design",
-      "project_id": "kato-dashboard-redesign",
-      "message": "Upgraded dashboard aesthetics - removed emojis, refined cards",
-      "timestamp": "2026-01-29T08:58:00.000Z"
-    },
-    {
-      "id": "activity-8",
-      "type": "config",
-      "project_id": "move-pwa-setup",
-      "message": "Fixed TypeScript import errors for Supabase types",
-      "timestamp": "2026-01-29T08:50:00.000Z"
-    }
-  ],
-  "subAgents": [
-    {
-      "id": "agent-1769709220842",
-      "label": "Backend Specialist",
-      "task": "Database, API, LTA integration",
-      "status": "complete",
-      "progress": 100,
-      "started_at": "2026-01-29T17:53:40.842Z",
-      "completed_at": "2026-01-29T19:50:33.656Z"
-    },
-    {
-      "id": "agent-1769709220883",
-      "label": "Data Engineer",
-      "task": "Seed 2,500+ carparks",
-      "status": "complete",
-      "progress": 100,
-      "started_at": "2026-01-29T17:53:40.883Z",
-      "completed_at": "2026-01-29T19:50:33.697Z"
-    },
-    {
-      "id": "agent-1769709220922",
-      "label": "Frontend Specialist",
-      "task": "Search UI + navigation",
-      "status": "complete",
-      "progress": 100,
-      "started_at": "2026-01-29T17:53:40.922Z",
-      "completed_at": "2026-01-29T19:50:33.734Z"
-    },
-    {
-      "id": "agent-1769709220960",
-      "label": "Design Specialist",
-      "task": "Design system + mockups",
-      "status": "complete",
-      "progress": 100,
-      "started_at": "2026-01-29T17:53:40.960Z",
-      "completed_at": "2026-01-29T19:50:33.772Z"
-    },
-    {
-      "id": "agent-1769709220998",
-      "label": "QA Specialist",
-      "task": "Testing + validation",
-      "status": "complete",
-      "progress": 100,
-      "started_at": "2026-01-29T17:53:40.998Z",
-      "completed_at": "2026-01-29T19:50:33.809Z"
-    }
-  ]
+  "meta": {
+    "totalProjects": 3,
+    "completedProjects": 1,
+    "inProgressProjects": 2,
+    "activeAgents": 1,
+    "queuedWorkers": 1
+  }
 }
