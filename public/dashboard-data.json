@@ -10,7 +10,9 @@
       {"id": "brain", "name": "Second Brain Keeper", "type": "queen", "status": "idle", "currentTask": null}
     ],
     "workers": {
-      "active": [],
+      "active": [
+        {"specialist": "Frontend", "taskId": "compound-wealth-dashboard", "spawnedAt": "2026-02-01T03:54:00Z", "eta": "06:00"}
+      ],
       "queue": [],
       "recent": [
         {"specialist": "Frontend", "taskId": "dash-agent-ui", "completedAt": "2026-01-31T20:56:00Z"}
