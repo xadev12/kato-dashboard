@@ -1,0 +1,33 @@
+{
+  "name": "kato-dashboard-backend",
+  "version": "1.0.0",
+  "description": "Backend API for Kato Dashboard",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "seed": "tsx seed.ts",
+    "db:reset": "rm -f data/dashboard.db && npm run seed",
+    "collect": "tsx collectors/index.ts",
+    "collect:all": "tsx collectors/index.ts",
+    "collect:github": "tsx collectors/github.ts",
+    "collect:gateway": "tsx collectors/gateway.ts",
+    "collect:sessions": "tsx collectors/sessions.ts",
+    "collect:memory": "tsx collectors/memory.ts"
+  },
+  "dependencies": {
+    "better-sqlite3": "^12.0.0",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "ws": "^8.18.2"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.12",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.2",
+    "@types/ws": "^8.18.1",
+    "tsx": "^4.19.0",
+    "typescript": "^5.9.0"
+  }
+}

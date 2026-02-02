@@ -120,12 +120,12 @@ export const ActivityFeed = memo(function ActivityFeed() {
           key={activity.id}
           className="flex items-start gap-3 p-3 rounded-lg hover:bg-white/[0.02] transition-colors"
         >
-          <div className={`w-8 h-8 flex items-center justify-center rounded-lg bg-white/[0.03] ${getTypeColor(activity.type)}`}>
-            {activityIcons[activity.type] || activityIcons.update}
+          <div className={`w-8 h-8 flex items-center justify-center rounded-lg bg-white/[0.03] ${getTypeColor(activity.action_type)}`}>
+            {activityIcons[activity.action_type] || activityIcons.update}
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm text-gray-300 leading-relaxed">
-              {activity.message}
+              {activity.description}
             </p>
             <p className="text-xs text-gray-600 mt-1">
               {formatTimestamp(activity.timestamp)}

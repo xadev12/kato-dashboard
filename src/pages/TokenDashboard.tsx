@@ -1,41 +1,50 @@
 import { useState, useEffect } from 'react'
-import type { AgentTokenMetrics, DailyTokenStat, ModelTokenMetrics, TokenStats } from '../types'
 
-// Sample token metrics data (fallback)
-const sampleMetrics: TokenStats = {
-  period: 'week',
-  generatedAt: new Date().toISOString(),
-  totalTokensUsed: 2450000,
-  totalCost: 18.45,
-  avgTokensPerTask: 15700,
-  tokenWastePercent: 12.5,
-  parallelizationEfficiency: 87,
-  sessionCount: 45,
-  dailyStats: [
-    { date: '2026-01-27', tokensUsed: 320000, tasksCompleted: 18, agentsActive: 5, cost: 2.40 },
-    { date: '2026-01-28', tokensUsed: 380000, tasksCompleted: 22, agentsActive: 5, cost: 2.85 },
-    { date: '2026-01-29', tokensUsed: 410000, tasksCompleted: 26, agentsActive: 6, cost: 3.08 },
-    { date: '2026-01-30', tokensUsed: 350000, tasksCompleted: 20, agentsActive: 5, cost: 2.63 },
-    { date: '2026-01-31', tokensUsed: 420000, tasksCompleted: 25, agentsActive: 5, cost: 3.15 },
-    { date: '2026-02-01', tokensUsed: 360000, tasksCompleted: 21, agentsActive: 4, cost: 2.70 },
-    { date: '2026-02-02', tokensUsed: 210000, tasksCompleted: 12, agentsActive: 3, cost: 1.58 },
-  ],
-  agentBreakdown: [
-    { agentId: 'main', agentName: 'Kato', tokensUsed: 680000, tasksCompleted: 52, avgTokensPerTask: 13077, successRate: 94, cost: 5.10 },
-    { agentId: 'product', agentName: 'Product Owner', tokensUsed: 420000, tasksCompleted: 28, avgTokensPerTask: 15000, successRate: 91, cost: 3.15 },
-    { agentId: 'devops', agentName: 'DevOps Engineer', tokensUsed: 310000, tasksCompleted: 22, avgTokensPerTask: 14091, successRate: 97, cost: 2.33 },
-    { agentId: 'business', agentName: 'Business Strategist', tokensUsed: 180000, tasksCompleted: 12, avgTokensPerTask: 15000, successRate: 88, cost: 1.35 },
-    { agentId: 'brain', agentName: 'Second Brain Keeper', tokensUsed: 560000, tasksCompleted: 44, avgTokensPerTask: 12727, successRate: 95, cost: 4.20 },
-  ],
-  modelBreakdown: [
-    { modelId: 'claude-opus-4-5', modelName: 'Claude Opus 4.5', tokensUsed: 1200000, inputTokens: 800000, outputTokens: 400000, cost: 12.00 },
-    { modelId: 'kimi-code', modelName: 'Kimi Code', tokensUsed: 850000, inputTokens: 600000, outputTokens: 250000, cost: 4.25 },
-    { modelId: 'gpt-4o', modelName: 'GPT-4o', tokensUsed: 400000, inputTokens: 280000, outputTokens: 120000, cost: 2.20 },
-  ],
+// Types for real token data
+interface TokenEntry {
+  date: string
+  tokensUsed: number
+  cost: number
+  requests: number
+  agentsActive: number
+}
+
+interface AgentBreakdown {
+  agentId: string
+  agentName: string
+  tokensUsed: number
+  cost: number
+  requests: number
+  avgTokensPerRequest: number
+  successRate: number
+}
+
+interface ModelBreakdown {
+  modelId: string
+  modelName: string
+  tokensUsed: number
+  cost: number
+  requests: number
+  percentage: string
+}
+
+interface TokenStats {
+  period: string
+  generatedAt: string
+  totalTokensUsed: number
+  totalCost: number
+  totalRequests: number
+  avgTokensPerRequest: number
+  tokenWastePercent: number
+  parallelizationEfficiency: number
+  dailyStats: TokenEntry[]
+  agentBreakdown: AgentBreakdown[]
+  modelBreakdown: ModelBreakdown[]
 }
 
 // Format numbers
 function formatNumber(num: number): string {
+  if (!num) return '0'
   if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`
   if (num >= 1000) return `${(num / 1000).toFixed(1)}k`
   return num.toString()
@@ -43,59 +52,84 @@ function formatNumber(num: number): string {
 
 // Format currency
 function formatCurrency(num: number): string {
-  return `$${num.toFixed(2)}`
+  return `$${(num || 0).toFixed(2)}`
 }
 
 // Format tokens
 function formatTokens(num: number): string {
-  return num.toLocaleString()
+  return (num || 0).toLocaleString()
 }
 
 export function TokenDashboard() {
-  const [selectedPeriod, setSelectedPeriod] = useState<'day' | 'week' | 'month'>('week')
-  const [metrics, setMetrics] = useState<TokenStats>(sampleMetrics)
+  const [metrics, setMetrics] = useState<TokenStats | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [lastUpdated, setLastUpdated] = useState<string | null>(null)
 
-  // Fetch real data from dashboard-data.json
+  // Fetch real data from token-stats.json
   useEffect(() => {
     async function fetchData() {
       try {
         setLoading(true)
-        const response = await fetch('/dashboard-data.json')
+        const response = await fetch('/token-stats.json')
         if (!response.ok) {
-          throw new Error('Failed to load dashboard data')
+          throw new Error('Failed to load token stats')
         }
-        const data = await response.json()
-        
-        if (data.tokenStats) {
-          setMetrics(data.tokenStats)
-        }
-        if (data.lastUpdated) {
-          setLastUpdated(data.lastUpdated)
-        }
+        const data: TokenStats = await response.json()
+        setMetrics(data)
         setError(null)
       } catch (err) {
         console.error('Error loading token stats:', err)
-        setError('Using sample data - real stats unavailable')
-        // Keep using sampleMetrics as fallback
+        setError('Failed to load token data')
       } finally {
         setLoading(false)
       }
     }
 
     fetchData()
-  }, [selectedPeriod])
+    
+    // Refresh every 30 seconds
+    const interval = setInterval(fetchData, 30000)
+    return () => clearInterval(interval)
+  }, [])
 
-  // Calculate trend (comparing last day to average)
+  if (loading) {
+    return (
+      <div className="space-y-6 pb-8">
+        <div className="flex items-center gap-3">
+          <h1 className="text-3xl font-bold text-white">Token Efficiency</h1>
+          <div className="w-5 h-5 border-2 border-violet-500/30 border-t-violet-500 rounded-full animate-spin" />
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="h-24 bg-white/5 rounded-xl animate-pulse" />
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  if (error || !metrics) {
+    return (
+      <div className="space-y-6 pb-8">
+        <h1 className="text-3xl font-bold text-white">Token Efficiency</h1>
+        <div className="rounded-xl border border-rose-500/20 bg-rose-500/10 p-6 text-rose-200">
+          <p>{error || 'No token data available'}</p>
+          <p className="text-sm text-rose-300/60 mt-2">
+            Run: node scripts/token-logger.js --once
+          </p>
+        </div>
+      </div>
+    )
+  }
+
+  // Calculate trends
   const avgDailyTokens = metrics.totalTokensUsed / (metrics.dailyStats.length || 1)
   const lastDayTokens = metrics.dailyStats[metrics.dailyStats.length - 1]?.tokensUsed || 0
-  const tokenTrend = ((lastDayTokens - avgDailyTokens) / avgDailyTokens) * 100
+  const tokenTrend = avgDailyTokens > 0 ? ((lastDayTokens - avgDailyTokens) / avgDailyTokens) * 100 : 0
 
   const avgDailyCost = metrics.totalCost / (metrics.dailyStats.length || 1)
   const lastDayCost = metrics.dailyStats[metrics.dailyStats.length - 1]?.cost || 0
-  const costTrend = ((lastDayCost - avgDailyCost) / avgDailyCost) * 100
+  const costTrend = avgDailyCost > 0 ? ((lastDayCost - avgDailyCost) / avgDailyCost) * 100 : 0
 
   return (
     <div className="space-y-6 animate-fade-in pb-8">
@@ -104,39 +138,18 @@ export function TokenDashboard() {
         <div className="space-y-2">
           <div className="flex items-center gap-3">
             <h1 className="text-3xl font-bold text-white">Token Efficiency</h1>
-            {loading && (
-              <div className="w-5 h-5 border-2 border-violet-500/30 border-t-violet-500 rounded-full animate-spin" />
-            )}
+            <span className="px-2 py-0.5 text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded">
+              LIVE
+            </span>
           </div>
           <p className="text-sm text-gray-400">
-            Track token usage, cost estimates, and parallelization efficiency
+            Real-time token usage and cost tracking from OpenClaw gateway
           </p>
-          {lastUpdated && (
+          {metrics.generatedAt && (
             <p className="text-xs text-gray-500">
-              Last updated: {new Date(lastUpdated).toLocaleString()}
+              Last updated: {new Date(metrics.generatedAt).toLocaleString()}
             </p>
           )}
-          {error && (
-            <p className="text-xs text-amber-400/80">{error}</p>
-          )}
-        </div>
-        
-        {/* Period Selector */}
-        <div className="flex items-center gap-1 p-1 bg-white/[0.03] rounded-lg border border-white/[0.06]">
-          {(['day', 'week', 'month'] as const).map((period) => (
-            <button
-              key={period}
-              onClick={() => setSelectedPeriod(period)}
-              disabled={loading}
-              className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200 capitalize ${
-                selectedPeriod === period
-                  ? 'bg-violet-600 text-white'
-                  : 'text-gray-400 hover:text-gray-200 hover:bg-white/[0.03] disabled:opacity-50'
-              }`}
-            >
-              {period}
-            </button>
-          ))}
         </div>
       </div>
 
@@ -149,7 +162,6 @@ export function TokenDashboard() {
           icon="tokens"
           color="violet"
           trend={tokenTrend}
-          loading={loading}
         />
         <MetricCard
           label="Est. Cost"
@@ -159,26 +171,20 @@ export function TokenDashboard() {
           color="emerald"
           trend={costTrend}
           inverseTrend
-          loading={loading}
         />
         <MetricCard
-          label="Token Waste"
-          value={`${metrics.tokenWastePercent}%`}
-          subValue="of total usage"
-          icon="waste"
-          color="rose"
-          trend={-2.3}
-          inverseTrend
-          loading={loading}
-        />
-        <MetricCard
-          label="Parallelization"
-          value={`${metrics.parallelizationEfficiency}%`}
-          subValue="efficiency"
-          icon="parallel"
+          label="Total Requests"
+          value={formatNumber(metrics.totalRequests)}
+          subValue="API calls"
+          icon="requests"
           color="amber"
-          trend={5.1}
-          loading={loading}
+        />
+        <MetricCard
+          label="Avg per Request"
+          value={formatNumber(metrics.avgTokensPerRequest)}
+          subValue="tokens"
+          icon="avg"
+          color="blue"
         />
       </div>
 
@@ -192,12 +198,10 @@ export function TokenDashboard() {
               Daily Token Usage
             </h3>
             <span className="text-xs text-gray-500">
-              {metrics.dailyStats.length > 0 && 
-                `${metrics.dailyStats.length} days • ${formatCurrency(metrics.totalCost)} total`
-              }
+              {metrics.dailyStats.length} days
             </span>
           </div>
-          <TokenUsageChart data={metrics.dailyStats} loading={loading} />
+          <TokenUsageChart data={metrics.dailyStats} />
         </div>
 
         {/* Model Breakdown */}
@@ -209,7 +213,7 @@ export function TokenDashboard() {
             </h3>
             <span className="text-xs text-gray-500">By provider</span>
           </div>
-          <ModelBreakdown models={metrics.modelBreakdown || []} loading={loading} />
+          <ModelBreakdown models={metrics.modelBreakdown} />
         </div>
       </div>
 
@@ -221,10 +225,10 @@ export function TokenDashboard() {
             Per-Agent Breakdown
           </h3>
           <span className="text-xs text-gray-500">
-            {metrics.sessionCount > 0 && `${metrics.sessionCount} sessions`}
+            {metrics.totalRequests.toLocaleString()} total requests
           </span>
         </div>
-        <AgentBreakdownTable agents={metrics.agentBreakdown} loading={loading} />
+        <AgentBreakdownTable agents={metrics.agentBreakdown} />
       </div>
 
       {/* Daily Stats Table */}
@@ -235,7 +239,7 @@ export function TokenDashboard() {
             Daily Breakdown
           </h3>
         </div>
-        <DailyStatsTable stats={metrics.dailyStats} loading={loading} />
+        <DailyStatsTable stats={metrics.dailyStats} />
       </div>
     </div>
   )
@@ -250,7 +254,6 @@ function MetricCard({
   color,
   trend,
   inverseTrend,
-  loading,
 }: { 
   label: string
   value: string
@@ -259,39 +262,13 @@ function MetricCard({
   color: string
   trend?: number
   inverseTrend?: boolean
-  loading?: boolean
 }) {
-  const colorClasses: Record<string, { bg: string; text: string; border: string; icon: string }> = {
-    violet: { 
-      bg: 'bg-violet-500/10', 
-      text: 'text-violet-400', 
-      border: 'border-violet-500/20',
-      icon: 'text-violet-400'
-    },
-    amber: { 
-      bg: 'bg-amber-500/10', 
-      text: 'text-amber-400', 
-      border: 'border-amber-500/20',
-      icon: 'text-amber-400'
-    },
-    rose: { 
-      bg: 'bg-rose-500/10', 
-      text: 'text-rose-400', 
-      border: 'border-rose-500/20',
-      icon: 'text-rose-400'
-    },
-    emerald: { 
-      bg: 'bg-emerald-500/10', 
-      text: 'text-emerald-400', 
-      border: 'border-emerald-500/20',
-      icon: 'text-emerald-400'
-    },
-    blue: { 
-      bg: 'bg-blue-500/10', 
-      text: 'text-blue-400', 
-      border: 'border-blue-500/20',
-      icon: 'text-blue-400'
-    },
+  const colorClasses: Record<string, { text: string; icon: string }> = {
+    violet: { text: 'text-violet-400', icon: 'text-violet-400' },
+    amber: { text: 'text-amber-400', icon: 'text-amber-400' },
+    rose: { text: 'text-rose-400', icon: 'text-rose-400' },
+    emerald: { text: 'text-emerald-400', icon: 'text-emerald-400' },
+    blue: { text: 'text-blue-400', icon: 'text-blue-400' },
   }
   const colors = colorClasses[color] || colorClasses.violet
 
@@ -305,10 +282,10 @@ function MetricCard({
         return <TokensIcon className={`w-5 h-5 ${colors.icon}`} />
       case 'cost':
         return <CostIcon className={`w-5 h-5 ${colors.icon}`} />
-      case 'waste':
-        return <WasteIcon className={`w-5 h-5 ${colors.icon}`} />
-      case 'parallel':
-        return <ParallelIcon className={`w-5 h-5 ${colors.icon}`} />
+      case 'requests':
+        return <RequestsIcon className={`w-5 h-5 ${colors.icon}`} />
+      case 'avg':
+        return <AvgIcon className={`w-5 h-5 ${colors.icon}`} />
       default:
         return <ChartIcon className={`w-5 h-5 ${colors.icon}`} />
     }
@@ -316,45 +293,31 @@ function MetricCard({
 
   return (
     <div className="group relative overflow-hidden rounded-xl border border-white/[0.06] bg-[#111111] p-5 transition-all duration-200 hover:border-white/[0.1]">
-      <div className={`absolute inset-0 bg-gradient-to-br ${colors.bg} opacity-0 transition-opacity duration-200 group-hover:opacity-100`} />
+      <div className="absolute inset-0 bg-gradient-to-br from-violet-500/5 to-transparent opacity-0 transition-opacity duration-200 group-hover:opacity-100" />
       <div className="relative z-10">
         <div className="flex items-center gap-2 mb-3">
           <IconComponent />
           <span className="text-xs uppercase tracking-wider text-gray-500 font-medium">{label}</span>
         </div>
-        {loading ? (
-          <div className="h-8 w-24 bg-white/5 rounded animate-pulse" />
-        ) : (
-          <>
-            <div className={`text-2xl sm:text-3xl font-bold ${colors.text} mb-1`}>{value}</div>
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-gray-500">{subValue}</span>
-              {trend !== undefined && (
-                <span className={`text-xs font-medium ${trendColor} flex items-center gap-0.5`}>
-                  {trendIcon} {Math.abs(trend).toFixed(1)}%
-                </span>
-              )}
-            </div>
-          </>
-        )}
+        <div className={`text-2xl sm:text-3xl font-bold ${colors.text} mb-1`}>{value}</div>
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-gray-500">{subValue}</span>
+          {trend !== undefined && (
+            <span className={`text-xs font-medium ${trendColor} flex items-center gap-0.5`}>
+              {trendIcon} {Math.abs(trend).toFixed(1)}%
+            </span>
+          )}
+        </div>
       </div>
     </div>
   )
 }
 
 // Token Usage Chart Component
-function TokenUsageChart({ data, loading }: { data: DailyTokenStat[]; loading?: boolean }) {
-  if (loading) {
-    return (
-      <div className="h-64 flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-violet-500/30 border-t-violet-500 rounded-full animate-spin" />
-      </div>
-    )
-  }
-
+function TokenUsageChart({ data }: { data: TokenEntry[] }) {
   if (data.length === 0) {
     return (
-      <div className="h-64 flex items-center justify-center text-gray-500">
+      <div className="h-56 flex items-center justify-center text-gray-500">
         No data available
       </div>
     )
@@ -369,7 +332,6 @@ function TokenUsageChart({ data, loading }: { data: DailyTokenStat[]; loading?: 
   return (
     <div className="relative h-56 overflow-x-auto">
       <svg viewBox={`0 0 ${totalWidth} ${chartHeight + 40}`} className="min-w-full h-full" preserveAspectRatio="none">
-        {/* Grid lines */}
         {[0, 0.25, 0.5, 0.75, 1].map((ratio, i) => (
           <line
             key={i}
@@ -383,7 +345,6 @@ function TokenUsageChart({ data, loading }: { data: DailyTokenStat[]; loading?: 
           />
         ))}
 
-        {/* Bars */}
         {data.map((day, i) => {
           const barHeight = maxTokens > 0 ? (day.tokensUsed / maxTokens) * (chartHeight - 30) : 0
           const x = gap + i * (barWidth + gap)
@@ -391,7 +352,6 @@ function TokenUsageChart({ data, loading }: { data: DailyTokenStat[]; loading?: 
 
           return (
             <g key={day.date}>
-              {/* Bar */}
               <rect
                 x={x}
                 y={y}
@@ -402,7 +362,6 @@ function TokenUsageChart({ data, loading }: { data: DailyTokenStat[]; loading?: 
                 className="transition-all duration-300 hover:opacity-80"
               />
               
-              {/* Value label */}
               {barHeight > 20 && (
                 <text
                   x={x + barWidth / 2}
@@ -416,7 +375,6 @@ function TokenUsageChart({ data, loading }: { data: DailyTokenStat[]; loading?: 
                 </text>
               )}
               
-              {/* Date label */}
               <text
                 x={x + barWidth / 2}
                 y={chartHeight + 18}
@@ -430,7 +388,6 @@ function TokenUsageChart({ data, loading }: { data: DailyTokenStat[]; loading?: 
           )
         })}
 
-        {/* Gradient definition */}
         <defs>
           <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
             <stop offset="0%" stopColor="#8b5cf6" stopOpacity="0.9" />
@@ -443,15 +400,7 @@ function TokenUsageChart({ data, loading }: { data: DailyTokenStat[]; loading?: 
 }
 
 // Model Breakdown Component
-function ModelBreakdown({ models, loading }: { models: ModelTokenMetrics[]; loading?: boolean }) {
-  if (loading) {
-    return (
-      <div className="h-56 flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin" />
-      </div>
-    )
-  }
-
+function ModelBreakdown({ models }: { models: ModelBreakdown[] }) {
   if (!models || models.length === 0) {
     return (
       <div className="h-56 flex items-center justify-center text-gray-500 text-sm">
@@ -462,29 +411,22 @@ function ModelBreakdown({ models, loading }: { models: ModelTokenMetrics[]; load
 
   const totalTokens = models.reduce((sum, m) => sum + m.tokensUsed, 0)
 
-  // Model color mapping
   const modelColors: Record<string, string> = {
-    'claude-opus-4-5': '#f97316', // orange
-    'claude-sonnet-4-5': '#f97316',
-    'claude-haiku': '#f97316',
-    'kimi-code': '#8b5cf6', // violet
-    'kimi-chat': '#8b5cf6',
-    'gpt-4o': '#10b981', // emerald
-    'gpt-4o-mini': '#10b981',
-    'gemini-2.5-pro': '#3b82f6', // blue
-    'gemini-2.5-flash': '#3b82f6',
+    'claude': '#f97316',
+    'kimi': '#8b5cf6',
+    'gpt': '#10b981',
+    'gemini': '#3b82f6',
   }
 
   const getModelColor = (modelId: string) => {
     for (const [key, color] of Object.entries(modelColors)) {
-      if (modelId.includes(key)) return color
+      if (modelId.toLowerCase().includes(key)) return color
     }
-    return '#6b7280' // gray default
+    return '#6b7280'
   }
 
   return (
     <div className="space-y-4">
-      {/* Donut chart */}
       <div className="flex items-center justify-center h-32">
         <div className="relative w-28 h-28">
           <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90">
@@ -514,44 +456,30 @@ function ModelBreakdown({ models, loading }: { models: ModelTokenMetrics[]; load
         </div>
       </div>
 
-      {/* Legend */}
       <div className="space-y-2">
-        {models.map((model) => {
-          const percentage = totalTokens > 0 ? ((model.tokensUsed / totalTokens) * 100).toFixed(1) : '0.0'
-          return (
-            <div key={model.modelId} className="flex items-center justify-between text-sm">
-              <div className="flex items-center gap-2">
-                <div 
-                  className="w-2.5 h-2.5 rounded-full" 
-                  style={{ backgroundColor: getModelColor(model.modelId) }}
-                />
-                <span className="text-gray-300">{model.modelName}</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <span className="text-gray-500 text-xs">{percentage}%</span>
-                <span className="text-emerald-400 font-medium">{formatCurrency(model.cost)}</span>
-              </div>
+        {models.map((model) => (
+          <div key={model.modelId} className="flex items-center justify-between text-sm">
+            <div className="flex items-center gap-2">
+              <div 
+                className="w-2.5 h-2.5 rounded-full" 
+                style={{ backgroundColor: getModelColor(model.modelId) }}
+              />
+              <span className="text-gray-300">{model.modelName}</span>
             </div>
-          )
-        })}
+            <div className="flex items-center gap-3">
+              <span className="text-gray-500 text-xs">{model.percentage}%</span>
+              <span className="text-emerald-400 font-medium">{formatCurrency(model.cost)}</span>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   )
 }
 
 // Agent Breakdown Table
-function AgentBreakdownTable({ agents, loading }: { agents: AgentTokenMetrics[]; loading?: boolean }) {
+function AgentBreakdownTable({ agents }: { agents: AgentBreakdown[] }) {
   const sortedAgents = [...agents].sort((a, b) => b.tokensUsed - a.tokensUsed)
-
-  if (loading) {
-    return (
-      <div className="space-y-3">
-        {[1, 2, 3].map((i) => (
-          <div key={i} className="h-12 bg-white/5 rounded animate-pulse" />
-        ))}
-      </div>
-    )
-  }
 
   return (
     <div className="overflow-x-auto -mx-2 px-2">
@@ -561,8 +489,8 @@ function AgentBreakdownTable({ agents, loading }: { agents: AgentTokenMetrics[];
             <th className="text-left py-3 px-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Agent</th>
             <th className="text-right py-3 px-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Tokens</th>
             <th className="text-right py-3 px-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Cost</th>
-            <th className="text-right py-3 px-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Tasks</th>
-            <th className="text-right py-3 px-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Avg/Task</th>
+            <th className="text-right py-3 px-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Requests</th>
+            <th className="text-right py-3 px-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Avg/Req</th>
             <th className="text-right py-3 px-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Success</th>
           </tr>
         </thead>
@@ -576,10 +504,10 @@ function AgentBreakdownTable({ agents, loading }: { agents: AgentTokenMetrics[];
                 <span className="text-violet-400 font-medium text-sm">{formatNumber(agent.tokensUsed)}</span>
               </td>
               <td className="py-3 px-3 text-right">
-                <span className="text-emerald-400 font-medium text-sm">{formatCurrency(agent.cost || 0)}</span>
+                <span className="text-emerald-400 font-medium text-sm">{formatCurrency(agent.cost)}</span>
               </td>
-              <td className="py-3 px-3 text-right text-gray-400 text-sm">{agent.tasksCompleted}</td>
-              <td className="py-3 px-3 text-right text-gray-400 text-sm">{formatNumber(agent.avgTokensPerTask)}</td>
+              <td className="py-3 px-3 text-right text-gray-400 text-sm">{agent.requests.toLocaleString()}</td>
+              <td className="py-3 px-3 text-right text-gray-400 text-sm">{formatNumber(agent.avgTokensPerRequest)}</td>
               <td className="py-3 px-3 text-right">
                 <span className={`text-xs font-medium px-2 py-1 rounded ${
                   agent.successRate >= 95 ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 
@@ -598,17 +526,7 @@ function AgentBreakdownTable({ agents, loading }: { agents: AgentTokenMetrics[];
 }
 
 // Daily Stats Table
-function DailyStatsTable({ stats, loading }: { stats: DailyTokenStat[]; loading?: boolean }) {
-  if (loading) {
-    return (
-      <div className="space-y-3">
-        {[1, 2, 3].map((i) => (
-          <div key={i} className="h-10 bg-white/5 rounded animate-pulse" />
-        ))}
-      </div>
-    )
-  }
-
+function DailyStatsTable({ stats }: { stats: TokenEntry[] }) {
   return (
     <div className="overflow-x-auto -mx-2 px-2">
       <table className="w-full min-w-[400px]">
@@ -617,7 +535,7 @@ function DailyStatsTable({ stats, loading }: { stats: DailyTokenStat[]; loading?
             <th className="text-left py-3 px-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
             <th className="text-right py-3 px-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Tokens</th>
             <th className="text-right py-3 px-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Cost</th>
-            <th className="text-right py-3 px-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Tasks</th>
+            <th className="text-right py-3 px-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Requests</th>
             <th className="text-right py-3 px-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Agents</th>
           </tr>
         </thead>
@@ -633,9 +551,9 @@ function DailyStatsTable({ stats, loading }: { stats: DailyTokenStat[]; loading?
                 <span className="text-violet-400 font-medium text-sm">{formatNumber(stat.tokensUsed)}</span>
               </td>
               <td className="py-3 px-3 text-right">
-                <span className="text-emerald-400 font-medium text-sm">{formatCurrency(stat.cost || 0)}</span>
+                <span className="text-emerald-400 font-medium text-sm">{formatCurrency(stat.cost)}</span>
               </td>
-              <td className="py-3 px-3 text-right text-gray-400 text-sm">{stat.tasksCompleted}</td>
+              <td className="py-3 px-3 text-right text-gray-400 text-sm">{stat.requests.toLocaleString()}</td>
               <td className="py-3 px-3 text-right text-gray-400 text-sm">{stat.agentsActive}</td>
             </tr>
           ))}
@@ -677,20 +595,20 @@ function CostIcon({ className }: { className?: string }) {
   )
 }
 
-function WasteIcon({ className }: { className?: string }) {
+function RequestsIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
-      <line x1="12" y1="9" x2="12" y2="13" />
-      <line x1="12" y1="17" x2="12.01" y2="17" />
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
     </svg>
   )
 }
 
-function ParallelIcon({ className }: { className?: string }) {
+function AvgIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+      <line x1="18" y1="20" x2="18" y2="10" />
+      <line x1="12" y1="20" x2="12" y2="4" />
+      <line x1="6" y1="20" x2="6" y2="14" />
     </svg>
   )
 }

@@ -1,0 +1,8 @@
+{
+  "githubToken": null,
+  "githubRepos": [
+    "xadev12/kato-dashboard",
+    "xadev12/move-pwa"
+  ],
+  "collectInterval": 3600
+}
