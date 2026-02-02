@@ -1,10 +1,18 @@
 import { Link, useLocation } from 'react-router-dom'
 import { AgentIndicator } from './AgentIndicator'
 
+const navItems = [
+  { path: '/', label: 'Agent View', icon: '🤖' },
+  { path: '/actions', label: 'My Actions', icon: '⚠️', badge: true },
+  { path: '/roster', label: 'Roster', icon: '👥' },
+  { path: '/memory', label: 'Memory', icon: '🧠' },
+  { path: '/tokens', label: 'Tokens', icon: '💎' },
+  { path: '/legacy', label: 'Kanban', icon: '📋' },
+]
+
 export function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation()
-  const isAgentDashboard = location.pathname === '/'
-  const isLegacyDashboard = location.pathname === '/legacy'
+  const currentPath = location.pathname
 
   return (
     <div className="min-h-screen bg-gray-950">
@@ -12,42 +20,58 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <header className="sticky top-0 z-50 border-b border-gray-800 bg-gray-950/80 backdrop-blur-xl">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-14 items-center justify-between">
-            <div className="flex items-center gap-6">
+            <div className="flex items-center gap-4">
               <Link to="/" className="flex items-center gap-2.5">
                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-violet-600 to-purple-600 text-sm font-bold text-white">
                   K
                 </div>
                 <span className="text-lg font-semibold text-white">Kato</span>
               </Link>
-              <nav className="hidden sm:flex items-center gap-1 p-1 bg-white/[0.03] rounded-lg border border-white/[0.06]">
-                <Link
-                  to="/"
-                  className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200 ${
-                    isAgentDashboard
-                      ? 'bg-gradient-to-r from-violet-500/20 to-purple-500/10 text-violet-300 border border-violet-500/20 shadow-sm'
-                      : 'text-gray-400 hover:text-white hover:bg-white/[0.03]'
-                  }`}
-                >
-                  <span className="flex items-center gap-1.5">
-                    <span>🤖</span> Agent View
-                  </span>
-                </Link>
-                <Link
+              
+              {/* Desktop Navigation */}
+              <nav className="hidden lg:flex items-center gap-1 p-1 bg-white/[0.03] rounded-lg border border-white/[0.06] ml-4">
+                {navItems.slice(0, 5).map((item) => (
+                  <NavLink
+                    key={item.path}
+                    to={item.path}
+                    active={currentPath === item.path}
+                    label={item.label}
+                    icon={item.icon}
+                    badge={item.badge}
+                    isNew={['/actions', '/roster', '/memory', '/tokens'].includes(item.path)}
+                  />
+                ))}
+              </nav>
+
+              {/* Legacy Link - Desktop */}
+              <nav className="hidden lg:flex items-center gap-1 p-1 bg-white/[0.03] rounded-lg border border-white/[0.06] ml-2">
+                <NavLink
                   to="/legacy"
-                  className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200 ${
-                    isLegacyDashboard
-                      ? 'bg-gradient-to-r from-amber-500/20 to-orange-500/10 text-amber-300 border border-amber-500/20 shadow-sm'
-                      : 'text-gray-400 hover:text-white hover:bg-white/[0.03]'
-                  }`}
-                >
-                  <span className="flex items-center gap-1.5">
-                    <span>📋</span> Kanban
-                  </span>
-                </Link>
+                  active={currentPath === '/legacy'}
+                  label="Kanban"
+                  icon="📋"
+                />
               </nav>
             </div>
+            
             <AgentIndicator />
           </div>
+          
+          {/* Mobile Navigation */}
+          <nav className="lg:hidden flex items-center gap-1 py-2 overflow-x-auto scrollbar-hide">
+            {navItems.map((item) => (
+              <NavLink
+                key={item.path}
+                to={item.path}
+                active={currentPath === item.path}
+                label={item.label}
+                icon={item.icon}
+                badge={item.badge}
+                isNew={['/actions', '/roster', '/memory', '/tokens'].includes(item.path)}
+                mobile
+              />
+            ))}
+          </nav>
         </div>
       </header>
 
@@ -56,5 +80,49 @@ export function Layout({ children }: { children: React.ReactNode }) {
         {children}
       </main>
     </div>
+  )
+}
+
+// Nav Link Component
+function NavLink({ 
+  to, 
+  active, 
+  label, 
+  icon, 
+  badge, 
+  isNew,
+  mobile 
+}: { 
+  to: string
+  active: boolean
+  label: string
+  icon: string
+  badge?: boolean
+  isNew?: boolean
+  mobile?: boolean
+}) {
+  return (
+    <Link
+      to={to}
+      className={`${mobile ? 'flex-shrink-0' : ''} px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap ${
+        active
+          ? 'bg-gradient-to-r from-violet-500/20 to-purple-500/10 text-violet-300 border border-violet-500/20 shadow-sm'
+          : 'text-gray-400 hover:text-white hover:bg-white/[0.03]'
+      }`}
+    >
+      <span>{icon}</span>
+      <span>{label}</span>
+      {isNew && !active && (
+        <span className="px-1 py-0.5 rounded text-[9px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/20">
+          NEW
+        </span>
+      )}
+      {badge && (
+        <span className="relative flex h-2 w-2">
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-rose-400 opacity-75"></span>
+          <span className="relative inline-flex h-2 w-2 rounded-full bg-rose-500"></span>
+        </span>
+      )}
+    </Link>
   )
 }

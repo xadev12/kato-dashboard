@@ -40,6 +40,9 @@ function formatTimeAgo(dateString: string): string {
 const WorkerItemRow = memo(function WorkerItemRow({ worker, isActive }: { worker: WorkerItem; isActive?: boolean }) {
   const icon = getSpecialistIcon(worker.specialist)
   
+  // Handle different timestamp fields in the data
+  const timestamp = (worker as any).spawnedAt || (worker as any).completedAt || (worker as any).queuedAt || new Date().toISOString()
+  
   return (
     <div className={`flex items-center gap-3 p-3 rounded-lg border transition-all duration-200 ${
       isActive 
@@ -63,7 +66,7 @@ const WorkerItemRow = memo(function WorkerItemRow({ worker, isActive }: { worker
       </div>
       
       <span className="text-xs text-gray-600 tabular-nums">
-        {formatTimeAgo(worker.queuedAt)}
+        {formatTimeAgo(timestamp)}
       </span>
     </div>
   )

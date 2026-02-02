@@ -52,6 +52,10 @@ const queenColors: Record<string, { gradient: string; glow: string }> = {
   business: {
     gradient: 'from-blue-500/20 to-cyan-500/10',
     glow: 'group-hover:shadow-blue-500/10'
+  },
+  brain: {
+    gradient: 'from-pink-500/20 to-rose-500/10',
+    glow: 'group-hover:shadow-pink-500/10'
   }
 }
 
@@ -59,6 +63,7 @@ export const AgentStatusCard = memo(function AgentStatusCard({ agent }: Props) {
   const status = statusConfig[agent.status]
   const icon = queenIcons[agent.id] || '🤖'
   const colors = queenColors[agent.id] || queenColors.main
+  const stats = agent.stats
   
   return (
     <div className={`group relative overflow-hidden rounded-xl border border-white/[0.06] bg-[#111111] p-4 transition-all duration-300 hover:border-white/[0.1] hover:shadow-lg ${colors.glow}`}>
@@ -86,7 +91,7 @@ export const AgentStatusCard = memo(function AgentStatusCard({ agent }: Props) {
         </div>
         
         {/* Current task */}
-        <div className="mt-3">
+        <div className="mt-3 mb-3">
           {agent.currentTask ? (
             <div className="space-y-1">
               <span className="text-[10px] uppercase tracking-wider text-gray-500 font-medium">Current Task</span>
@@ -98,6 +103,24 @@ export const AgentStatusCard = memo(function AgentStatusCard({ agent }: Props) {
             </div>
           )}
         </div>
+        
+        {/* Stats Row - Trading Style */}
+        {stats && (
+          <div className="grid grid-cols-3 gap-2 pt-3 border-t border-white/[0.06]">
+            <div className="text-center">
+              <div className="text-sm font-bold text-white">{stats.tasksCompleted}</div>
+              <div className="text-[10px] text-gray-500 uppercase tracking-wide">Done</div>
+            </div>
+            <div className="text-center border-x border-white/[0.06]">
+              <div className="text-sm font-bold text-emerald-400">{stats.successRate}%</div>
+              <div className="text-[10px] text-gray-500 uppercase tracking-wide">Win Rate</div>
+            </div>
+            <div className="text-center">
+              <div className="text-sm font-bold text-amber-400">{stats.currentStreak}</div>
+              <div className="text-[10px] text-gray-500 uppercase tracking-wide">Streak</div>
+            </div>
+          </div>
+        )}
         
         {/* Animated pulse for active agents */}
         {agent.status === 'active' && (

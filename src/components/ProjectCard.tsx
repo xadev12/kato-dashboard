@@ -41,7 +41,44 @@ const queenIcons: Record<string, string> = {
   main: '👑',
   product: '📋',
   devops: '🔧',
-  business: '💼'
+  business: '💼',
+  brain: '🧠'
+}
+
+// Calculate project velocity (tasks per day)
+function calculateVelocity(project: Project): number {
+  if (!project.tasks || project.tasks.length === 0) return 0
+  const completedTasks = project.tasks.filter(t => t.status === 'done').length
+  const createdDate = new Date(project.created_at)
+  const now = new Date()
+  const daysElapsed = Math.max(1, Math.floor((now.getTime() - createdDate.getTime()) / (1000 * 60 * 60 * 24)))
+  return Math.round((completedTasks / daysElapsed) * 10) / 10
+}
+
+// Calculate ROI score (impact / effort)
+function calculateROI(project: Project): string {
+  const impact = project.impact || 5
+  const effort = project.effort || 5
+  const roi = (impact / effort).toFixed(1)
+  return `${roi}x`
+}
+
+// Get ROI badge color based on score
+function getROIColor(project: Project): string {
+  const impact = project.impact || 5
+  const effort = project.effort || 5
+  const roi = impact / effort
+  if (roi >= 1.5) return 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20'
+  if (roi >= 1.0) return 'text-amber-400 bg-amber-500/10 border-amber-500/20'
+  return 'text-rose-400 bg-rose-500/10 border-rose-500/20'
+}
+
+// Format time invested
+function formatTime(hours: number | undefined): string {
+  if (!hours) return '~0h'
+  if (hours < 1) return `${Math.round(hours * 60)}m`
+  if (hours < 24) return `~${Math.round(hours)}h`
+  return `~${Math.round(hours / 24)}d`
 }
 
 function formatDate(dateString: string | null): string {
@@ -92,6 +129,11 @@ export const ProjectCard = memo(function ProjectCard({ project }: Props) {
   const completedTasks = project.tasks?.filter(t => t.status === 'done').length || 0
   const totalTasks = project.tasks?.length || 0
   
+  // Calculate metrics
+  const velocity = calculateVelocity(project)
+  const roi = calculateROI(project)
+  const roiColorClass = getROIColor(project)
+  
   // Show first 3 tasks when not expanded
   const visibleTasks = expanded ? project.tasks : project.tasks?.slice(0, 3)
   const hasMoreTasks = project.tasks && project.tasks.length > 3
@@ -133,13 +175,30 @@ export const ProjectCard = memo(function ProjectCard({ project }: Props) {
           )}
         </div>
         
-        {/* Progress */}
+        {/* Progress & ROI Metrics */}
         <div className="space-y-2 mb-4">
           <div className="flex items-center justify-between text-xs">
             <span className="text-gray-500">{project.progress}% complete</span>
             <span className="text-gray-600 tabular-nums">{completedTasks}/{totalTasks} tasks</span>
           </div>
           <ProgressBar value={project.progress} variant={project.priority} />
+          
+          {/* ROI & Velocity Badges - Trading Style */}
+          <div className="flex items-center gap-2 pt-2">
+            <span className={`px-2 py-0.5 rounded text-[10px] font-medium border ${roiColorClass}`}>
+              {roi} ROI
+            </span>
+            {velocity > 0 && (
+              <span className="px-2 py-0.5 rounded text-[10px] font-medium text-violet-400 bg-violet-500/10 border border-violet-500/20">
+                {velocity} tasks/day
+              </span>
+            )}
+            {project.timeInvested !== undefined && (
+              <span className="px-2 py-0.5 rounded text-[10px] font-medium text-gray-400 bg-white/[0.03] border border-white/[0.06]">
+                {formatTime(project.timeInvested)}
+              </span>
+            )}
+          </div>
         </div>
         
         {/* Tasks List */}

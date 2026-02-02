@@ -17,10 +17,26 @@ export function AgentDashboard() {
   const [searchQuery, setSearchQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState<FilterType>('all')
   const [agentFilter, setAgentFilter] = useState<QueenType | null>(null)
+  const [focusMode, setFocusMode] = useState(false)
 
   const loading = projectsLoading || agentsLoading || metaLoading
+  
+  // Toggle focus mode
+  const toggleFocusMode = () => {
+    if (focusMode) {
+      // Turn off focus mode
+      setFocusMode(false)
+      setAgentFilter(null)
+      setStatusFilter('all')
+    } else {
+      // Turn on focus mode
+      setFocusMode(true)
+      setAgentFilter('main')
+      setStatusFilter('in_progress')
+    }
+  }
 
-  // Filter projects based on search, status, and agent
+  // Filter projects based on search, status, agent, and focus mode
   const filteredProjects = useMemo(() => {
     let filtered = projects
 
@@ -40,9 +56,15 @@ export function AgentDashboard() {
     if (agentFilter) {
       filtered = filtered.filter(p => p.assignedQueen === agentFilter)
     }
+    
+    // Focus mode: also filter by high/medium priority and sort by progress
+    if (focusMode) {
+      filtered = filtered.filter(p => p.priority === 'high' || p.priority === 'medium')
+      filtered = [...filtered].sort((a, b) => b.progress - a.progress)
+    }
 
     return filtered
-  }, [projects, searchQuery, statusFilter, agentFilter])
+  }, [projects, searchQuery, statusFilter, agentFilter, focusMode])
 
   // Active queen agents count
   const activeQueens = queens.filter(q => q.status === 'active').length
@@ -155,6 +177,11 @@ export function AgentDashboard() {
               <span className="text-sm font-normal text-gray-500">
                 ({filteredProjects.length} of {projects.length})
               </span>
+              {focusMode && (
+                <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 text-xs border border-emerald-500/20">
+                  Focus Mode
+                </span>
+              )}
             </h2>
           </div>
           
@@ -168,6 +195,26 @@ export function AgentDashboard() {
             </div>
             
             <div className="flex flex-wrap items-center gap-2">
+              {/* Focus Mode Button */}
+              <button
+                onClick={toggleFocusMode}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-150 border flex items-center gap-1.5 ${
+                  focusMode
+                    ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
+                    : 'bg-white/[0.03] text-gray-400 border-white/[0.06] hover:bg-white/[0.05] hover:text-gray-300'
+                }`}
+              >
+                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={focusMode 
+                    ? "M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                    : "M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
+                  } />
+                </svg>
+                {focusMode ? 'Focus On' : 'Focus'}
+              </button>
+              
+              <div className="w-px h-6 bg-white/[0.1] mx-1" />
+              
               {/* Status filters */}
               <FilterButton
                 active={statusFilter === 'all'}
@@ -202,6 +249,7 @@ export function AgentDashboard() {
                 <option value="product">📋 Product</option>
                 <option value="devops">🔧 DevOps</option>
                 <option value="business">💼 Business</option>
+                <option value="brain">🧠 Brain</option>
               </select>
             </div>
           </div>
