@@ -10,7 +10,18 @@ interface ApiResponse<T> {
   refetch: () => void
 }
 
-// Generic fetch hook
+// Fallback data from JSON file when API is unavailable
+async function fetchFallbackData(): Promise<any> {
+  try {
+    const response = await fetch('/dashboard-data.json')
+    if (!response.ok) throw new Error('Fallback fetch failed')
+    return await response.json()
+  } catch {
+    return null
+  }
+}
+
+// Generic fetch hook with fallback
 export function useApi<T>(endpoint: string, options?: RequestInit, pollInterval = 10000): ApiResponse<T> {
   const [data, setData] = useState<T | null>(null)
   const [loading, setLoading] = useState(true)
@@ -19,21 +30,57 @@ export function useApi<T>(endpoint: string, options?: RequestInit, pollInterval 
   const fetchData = useCallback(async () => {
     try {
       setLoading(true)
+      
+      // Try API first
       const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         ...options,
         headers: {
           'Content-Type': 'application/json',
           ...options?.headers,
         },
-      })
+      }).catch(() => null)
 
-      if (!response.ok) {
-        throw new Error(`API error: ${response.status}`)
+      if (response && response.ok) {
+        const result = await response.json()
+        setData(result)
+        setError(null)
+        return
       }
 
-      const result = await response.json()
-      setData(result)
-      setError(null)
+      // Fallback to JSON file for deployed version
+      const fallback = await fetchFallbackData()
+      if (fallback) {
+        // Transform fallback data based on endpoint
+        const path = endpoint.replace(/^\//, '').split('?')[0]
+        switch (path) {
+          case 'projects':
+            setData({ projects: fallback.projects } as T)
+            break
+          case 'agents':
+            setData({ agents: fallback.agents?.queens || [] } as T)
+            break
+          case 'workers':
+            setData(fallback.agents?.workers || { active: [], queue: [], recent: [] } as T)
+            break
+          case 'dashboard':
+            setData({ 
+              meta: fallback.meta,
+              lastUpdated: fallback.lastUpdated 
+            } as T)
+            break
+          case 'tokens':
+            setData(fallback.tokenStats || null as T)
+            break
+          case 'activity':
+            setData({ activities: fallback.recentActivity || [] } as T)
+            break
+          default:
+            setData(fallback as T)
+        }
+        setError(null)
+      } else {
+        throw new Error('API unavailable and no fallback data')
+      }
     } catch (err) {
       setError(err instanceof Error ? err : new Error('Unknown error'))
       console.error(`Error fetching ${endpoint}:`, err)

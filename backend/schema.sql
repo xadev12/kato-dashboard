@@ -165,6 +165,30 @@ CREATE TABLE IF NOT EXISTS project_contexts (
   FOREIGN KEY (agent_id) REFERENCES agents(id) ON DELETE CASCADE
 );
 
+-- GitHub webhook events table
+CREATE TABLE IF NOT EXISTS github_events (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  event_id TEXT UNIQUE, -- GitHub delivery ID
+  event_type TEXT NOT NULL,
+  repository TEXT NOT NULL,
+  repository_url TEXT,
+  action TEXT,
+  payload TEXT NOT NULL, -- JSON payload
+  signature_valid BOOLEAN NOT NULL DEFAULT 0,
+  processed BOOLEAN NOT NULL DEFAULT 0,
+  project_id TEXT,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE SET NULL
+);
+
+-- Add GitHub tracking columns to projects table (if not exists)
+ALTER TABLE projects ADD COLUMN last_commit_date DATETIME;
+ALTER TABLE projects ADD COLUMN commit_count INTEGER DEFAULT 0;
+ALTER TABLE projects ADD COLUMN open_prs_count INTEGER DEFAULT 0;
+ALTER TABLE projects ADD COLUMN open_issues_count INTEGER DEFAULT 0;
+ALTER TABLE projects ADD COLUMN last_release_date DATETIME;
+ALTER TABLE projects ADD COLUMN recent_activity TEXT; -- JSON array of recent events
+
 -- Indexes for performance
 CREATE INDEX IF NOT EXISTS idx_tasks_project_id ON tasks(project_id);
 CREATE INDEX IF NOT EXISTS idx_tasks_status ON tasks(status);
@@ -175,6 +199,9 @@ CREATE INDEX IF NOT EXISTS idx_tokens_date ON tokens(date);
 CREATE INDEX IF NOT EXISTS idx_activity_timestamp ON activity(timestamp);
 CREATE INDEX IF NOT EXISTS idx_memory_agent ON memory(agent_id);
 CREATE INDEX IF NOT EXISTS idx_workers_status ON workers(status);
+CREATE INDEX IF NOT EXISTS idx_github_events_repository ON github_events(repository);
+CREATE INDEX IF NOT EXISTS idx_github_events_type ON github_events(event_type);
+CREATE INDEX IF NOT EXISTS idx_github_events_created ON github_events(created_at);
 
 -- Trigger to update updated_at on projects
 CREATE TRIGGER IF NOT EXISTS update_projects_timestamp 

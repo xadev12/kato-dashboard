@@ -37,12 +37,12 @@ const statusConfig = {
   done: { color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20', label: 'Done' }
 }
 
-const queenIcons: Record<string, string> = {
-  main: '👑',
-  product: '📋',
-  devops: '🔧',
-  business: '💼',
-  brain: '🧠'
+const queenLabels: Record<string, string> = {
+  main: 'Main',
+  product: 'Product',
+  devops: 'DevOps',
+  business: 'Business',
+  brain: 'Brain'
 }
 
 // Calculate project velocity (tasks per day)
@@ -124,7 +124,7 @@ export const ProjectCard = memo(function ProjectCard({ project }: Props) {
   const [expanded, setExpanded] = useState(false)
   const priority = priorityConfig[project.priority]
   const status = statusConfig[project.status]
-  const queenIcon = project.assignedQueen ? queenIcons[project.assignedQueen] : null
+  const queenLabel = project.assignedQueen ? queenLabels[project.assignedQueen] : null
   
   const completedTasks = project.tasks?.filter(t => t.status === 'done').length || 0
   const totalTasks = project.tasks?.length || 0
@@ -168,9 +168,9 @@ export const ProjectCard = memo(function ProjectCard({ project }: Props) {
           <span className={`px-2 py-1 rounded-md ${priority.bg} ${priority.color} ${priority.border} border text-[10px] font-medium uppercase tracking-wide`}>
             {priority.label} Priority
           </span>
-          {queenIcon && (
+          {queenLabel && (
             <span className="px-2 py-1 rounded-md bg-white/[0.03] border border-white/[0.06] text-[10px] text-gray-400">
-              {queenIcon} {project.assignedQueen}
+              {queenLabel}
             </span>
           )}
         </div>

@@ -8,6 +8,10 @@ import { fileURLToPath } from 'url'
 import fs from 'fs'
 import { exec } from 'child_process'
 import { promisify } from 'util'
+import crypto from 'crypto'
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 const execAsync = promisify(exec)
 
@@ -17,8 +21,302 @@ const __dirname = path.dirname(__filename)
 const app = express()
 const PORT = process.env.PORT || 3001
 
+// Brave Search API configuration
+const BRAVE_API_KEY = process.env.BRAVE_API_KEY
+const BRAVE_API_URL = 'https://api.search.brave.com/res/v1/web/search'
+
+// GitHub Webhook configuration
+const GITHUB_WEBHOOK_SECRET = process.env.GITHUB_WEBHOOK_SECRET
+
+// Validate webhook signature
+function verifyGitHubSignature(payload: string, signature: string): boolean {
+  if (!GITHUB_WEBHOOK_SECRET) {
+    console.error('[GitHub Webhook] GITHUB_WEBHOOK_SECRET not configured')
+    return false
+  }
+  
+  const hmac = crypto.createHmac('sha256', GITHUB_WEBHOOK_SECRET)
+  const digest = 'sha256=' + hmac.update(payload).digest('hex')
+  
+  try {
+    return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(digest))
+  } catch {
+    return false
+  }
+}
+
+// Find project by repository URL
+function findProjectByRepo(repoUrl: string): { id: string; repo_url: string } | null {
+  // Normalize URL for matching
+  const normalizedUrl = repoUrl.toLowerCase().replace(/\.git$/, '').replace(/\/$/, '')
+  
+  const projects = db.prepare('SELECT id, repo_url FROM projects WHERE repo_url IS NOT NULL').all() as { id: string; repo_url: string }[]
+  
+  for (const project of projects) {
+    if (project.repo_url) {
+      const normalizedProjectUrl = project.repo_url.toLowerCase().replace(/\.git$/, '').replace(/\/$/, '')
+      if (normalizedUrl === normalizedProjectUrl || normalizedUrl.includes(normalizedProjectUrl) || normalizedProjectUrl.includes(normalizedUrl)) {
+        return project
+      }
+    }
+  }
+  
+  return null
+}
+
+// Update project progress based on GitHub activity
+function updateProjectFromGitHubEvent(projectId: string, eventType: string, payload: any): void {
+  const now = new Date().toISOString()
+  
+  // Calculate progress increment based on event type
+  let progressIncrement = 0
+  let activityDescription = ''
+  
+  switch (eventType) {
+    case 'push':
+      progressIncrement = 2
+      const commitCount = payload.commits?.length || 1
+      activityDescription = `Pushed ${commitCount} commit${commitCount > 1 ? 's' : ''} to repository`
+      
+      // Update commit count and last commit date
+      db.prepare(`
+        UPDATE projects 
+        SET commit_count = COALESCE(commit_count, 0) + ?,
+            last_commit_date = ?
+        WHERE id = ?
+      `).run(commitCount, now, projectId)
+      break
+      
+    case 'pull_request':
+      const prAction = payload.action
+      if (prAction === 'opened') {
+        progressIncrement = 5
+        activityDescription = `Pull request opened: ${payload.pull_request?.title || 'Unknown'}`
+        db.prepare('UPDATE projects SET open_prs_count = COALESCE(open_prs_count, 0) + 1 WHERE id = ?').run(projectId)
+      } else if (prAction === 'closed' && payload.pull_request?.merged) {
+        progressIncrement = 10
+        activityDescription = `Pull request merged: ${payload.pull_request?.title || 'Unknown'}`
+        db.prepare('UPDATE projects SET open_prs_count = MAX(0, COALESCE(open_prs_count, 0) - 1), progress = MIN(100, progress + 5) WHERE id = ?').run(projectId)
+      } else if (prAction === 'closed') {
+        progressIncrement = 3
+        activityDescription = `Pull request closed: ${payload.pull_request?.title || 'Unknown'}`
+        db.prepare('UPDATE projects SET open_prs_count = MAX(0, COALESCE(open_prs_count, 0) - 1) WHERE id = ?').run(projectId)
+      }
+      break
+      
+    case 'issues':
+      const issueAction = payload.action
+      if (issueAction === 'opened') {
+        activityDescription = `Issue opened: ${payload.issue?.title || 'Unknown'}`
+        db.prepare('UPDATE projects SET open_issues_count = COALESCE(open_issues_count, 0) + 1 WHERE id = ?').run(projectId)
+      } else if (issueAction === 'closed') {
+        progressIncrement = 3
+        activityDescription = `Issue closed: ${payload.issue?.title || 'Unknown'}`
+        db.prepare('UPDATE projects SET open_issues_count = MAX(0, COALESCE(open_issues_count, 0) - 1), progress = MIN(100, progress + 2) WHERE id = ?').run(projectId)
+      }
+      break
+      
+    case 'release':
+      if (payload.action === 'published') {
+        progressIncrement = 15
+        activityDescription = `Release published: ${payload.release?.tag_name || 'Unknown'}`
+        db.prepare('UPDATE projects SET last_release_date = ? WHERE id = ?').run(now, projectId)
+        // Mark project as nearly complete on release
+        db.prepare('UPDATE projects SET progress = MIN(100, progress + 10), status = CASE WHEN progress >= 90 THEN \'done\' ELSE status END WHERE id = ?').run(projectId)
+      }
+      break
+  }
+  
+  // Update project progress
+  if (progressIncrement > 0) {
+    db.prepare('UPDATE projects SET progress = MIN(100, progress + ?) WHERE id = ?').run(progressIncrement, projectId)
+  }
+  
+  // Update recent activity
+  const currentActivity = db.prepare('SELECT recent_activity FROM projects WHERE id = ?').get(projectId) as { recent_activity: string | null } | undefined
+  let activityList = []
+  try {
+    activityList = JSON.parse(currentActivity?.recent_activity || '[]')
+  } catch {
+    activityList = []
+  }
+  
+  // Add new activity to the beginning, keep last 10
+  activityList.unshift({
+    type: eventType,
+    description: activityDescription,
+    timestamp: now
+  })
+  activityList = activityList.slice(0, 10)
+  
+  db.prepare('UPDATE projects SET recent_activity = ? WHERE id = ?').run(JSON.stringify(activityList), projectId)
+  
+  // Log to activity feed
+  if (activityDescription) {
+    logActivity('commit', activityDescription, projectId, null, null, { eventType, payload: { action: payload.action } })
+  }
+  
+  // Broadcast update to WebSocket clients
+  broadcastUpdate({
+    type: 'github_webhook',
+    projectId,
+    eventType,
+    timestamp: now
+  })
+}
+
+// Log webhook attempt
+function logWebhookAttempt(eventId: string, eventType: string, repository: string, signatureValid: boolean, error?: string): void {
+  console.log(`[GitHub Webhook] ${eventId} | ${eventType} | ${repository} | Valid: ${signatureValid}${error ? ' | Error: ' + error : ''}`)
+}
+
+// Simple in-memory rate limiter for Brave Search
+// Brave free tier: 1 query/second, 2000/month
+const rateLimiter = {
+  lastRequest: 0,
+  minInterval: 1000, // 1 second between requests
+  monthlyCount: 0,
+  monthlyLimit: 2000,
+  
+  canRequest(): boolean {
+    const now = Date.now()
+    return (now - this.lastRequest >= this.minInterval) && (this.monthlyCount < this.monthlyLimit)
+  },
+  
+  recordRequest(): void {
+    this.lastRequest = Date.now()
+    this.monthlyCount++
+  },
+  
+  getRetryAfter(): number {
+    const now = Date.now()
+    return Math.ceil((this.minInterval - (now - this.lastRequest)) / 1000)
+  }
+}
+
 // Middleware
 app.use(cors())
+
+// Error handling middleware
+const asyncHandler = (fn: Function) => (req: express.Request, res: express.Response, next: express.NextFunction) => {
+  Promise.resolve(fn(req, res, next)).catch(next)
+}
+
+// POST /api/webhook/github - GitHub webhook endpoint (must be before express.json() middleware)
+app.post('/api/webhook/github', express.raw({ type: 'application/json' }), asyncHandler(async (req: express.Request, res: express.Response) => {
+  const eventType = req.headers['x-github-event'] as string
+  const eventId = req.headers['x-github-delivery'] as string
+  const signature = req.headers['x-hub-signature-256'] as string
+  
+  // Get raw body for signature verification
+  const rawBody = req.body as Buffer
+  const payloadString = rawBody.toString('utf-8')
+  
+  // Parse payload
+  let payload: any
+  try {
+    payload = JSON.parse(payloadString)
+  } catch {
+    logWebhookAttempt(eventId || 'unknown', eventType || 'unknown', 'unknown', false, 'Invalid JSON payload')
+    return res.status(400).json({ 
+      success: false, 
+      error: 'Invalid JSON payload',
+      timestamp: new Date().toISOString()
+    })
+  }
+  
+  const repository = payload.repository?.name || payload.repository?.full_name || 'unknown'
+  const repositoryUrl = payload.repository?.html_url || payload.repository?.url
+  
+  // Check if webhook secret is configured
+  if (!GITHUB_WEBHOOK_SECRET) {
+    logWebhookAttempt(eventId || 'unknown', eventType || 'unknown', repository, false, 'Webhook secret not configured')
+    console.error('[GitHub Webhook] GITHUB_WEBHOOK_SECRET environment variable not set')
+    return res.status(500).json({ 
+      success: false, 
+      error: 'Webhook secret not configured on server',
+      timestamp: new Date().toISOString()
+    })
+  }
+  
+  // Verify signature
+  const signatureValid = signature ? verifyGitHubSignature(payloadString, signature) : false
+  
+  // Log the attempt
+  logWebhookAttempt(eventId || 'unknown', eventType || 'unknown', repository, signatureValid)
+  
+  // Store the event in database
+  const stmt = db.prepare(`
+    INSERT INTO github_events (event_id, event_type, repository, repository_url, action, payload, signature_valid)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+  `)
+  
+  let eventDbId: number
+  try {
+    const result = stmt.run(
+      eventId || crypto.randomUUID(),
+      eventType || 'unknown',
+      repository,
+      repositoryUrl,
+      payload.action || null,
+      payloadString,
+      signatureValid ? 1 : 0
+    )
+    eventDbId = result.lastInsertRowid as number
+  } catch (err) {
+    console.error('[GitHub Webhook] Failed to store event:', err)
+  }
+  
+  // Reject if signature is invalid
+  if (!signatureValid) {
+    return res.status(401).json({ 
+      success: false, 
+      error: 'Invalid webhook signature',
+      timestamp: new Date().toISOString()
+    })
+  }
+  
+  // Only process supported events
+  const supportedEvents = ['push', 'pull_request', 'issues', 'release']
+  if (!supportedEvents.includes(eventType)) {
+    return res.status(200).json({ 
+      success: true, 
+      event: eventType,
+      repository,
+      message: 'Event type not processed',
+      timestamp: new Date().toISOString()
+    })
+  }
+  
+  // Find matching project
+  const project = repositoryUrl ? findProjectByRepo(repositoryUrl) : null
+  
+  if (project) {
+    // Update project based on event
+    updateProjectFromGitHubEvent(project.id, eventType, payload)
+    
+    // Mark event as processed
+    db.prepare('UPDATE github_events SET processed = 1, project_id = ? WHERE id = ?').run(project.id, eventDbId!)
+    
+    res.status(200).json({
+      success: true,
+      event: eventType,
+      repository,
+      projectUpdated: project.id,
+      timestamp: new Date().toISOString()
+    })
+  } else {
+    res.status(200).json({
+      success: true,
+      event: eventType,
+      repository,
+      message: 'No matching project found',
+      timestamp: new Date().toISOString()
+    })
+  }
+}))
+
+// Global JSON parsing middleware (after webhook route)
 app.use(express.json())
 
 // Request logging middleware
@@ -27,15 +325,54 @@ app.use((req, res, next) => {
   next()
 })
 
-// Error handling middleware
-const asyncHandler = (fn: Function) => (req: express.Request, res: express.Response, next: express.NextFunction) => {
-  Promise.resolve(fn(req, res, next)).catch(next)
-}
-
 // Health check
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() })
 })
+
+// GET /api/webhook/github/events - Get recent GitHub webhook events
+app.get('/api/webhook/github/events', asyncHandler(async (req: express.Request, res: express.Response) => {
+  const limit = parseInt(req.query.limit as string) || 50
+  const eventType = typeof req.query.type === 'string' ? req.query.type : undefined
+  const repository = typeof req.query.repository === 'string' ? req.query.repository : undefined
+  
+  let query = `
+    SELECT ge.*, p.name as project_name 
+    FROM github_events ge
+    LEFT JOIN projects p ON ge.project_id = p.id
+    WHERE 1=1
+  `
+  const params: any[] = []
+  
+  if (eventType) {
+    query += ' AND ge.event_type = ?'
+    params.push(eventType)
+  }
+  
+  if (repository) {
+    query += ' AND ge.repository LIKE ?'
+    params.push(`%${repository}%`)
+  }
+  
+  query += ' ORDER BY ge.created_at DESC LIMIT ?'
+  params.push(limit)
+  
+  const events = db.prepare(query).all(...params)
+  
+  res.json(events.map((e: any) => ({
+    id: e.id,
+    eventId: e.event_id,
+    eventType: e.event_type,
+    repository: e.repository,
+    repositoryUrl: e.repository_url,
+    action: e.action,
+    signatureValid: e.signature_valid === 1,
+    processed: e.processed === 1,
+    projectId: e.project_id,
+    projectName: e.project_name,
+    createdAt: e.created_at
+  })))
+}))
 
 // GET /api/projects - List all projects with tasks
 app.get('/api/projects', asyncHandler(async (req: express.Request, res: express.Response) => {
@@ -590,6 +927,113 @@ app.post('/api/collect/:source', asyncHandler(async (req: express.Request, res: 
   } catch (error) {
     console.error(`Collector ${source} failed:`, error)
     res.status(500).json({ error: 'Collector failed', details: (error as Error).message })
+  }
+}))
+
+// POST /api/search - Brave Search API endpoint
+app.post('/api/search', asyncHandler(async (req: express.Request, res: express.Response) => {
+  // Check if API key is configured
+  if (!BRAVE_API_KEY) {
+    return res.status(503).json({
+      error: 'Search service unavailable',
+      message: 'BRAVE_API_KEY is not configured. Please set the environment variable.'
+    })
+  }
+
+  // Validate request body
+  const { query, count = 10 } = req.body
+  
+  if (!query || typeof query !== 'string') {
+    return res.status(400).json({
+      error: 'Invalid request',
+      message: 'Query parameter is required and must be a string'
+    })
+  }
+
+  // Validate count parameter
+  const resultCount = Math.min(Math.max(1, parseInt(count as string) || 10), 20) // Max 20 results
+
+  // Check rate limit
+  if (!rateLimiter.canRequest()) {
+    return res.status(429).json({
+      error: 'Rate limit exceeded',
+      message: 'Too many search requests. Please try again later.',
+      retryAfter: rateLimiter.getRetryAfter()
+    })
+  }
+
+  try {
+    // Construct search URL
+    const searchUrl = new URL(BRAVE_API_URL)
+    searchUrl.searchParams.append('q', query)
+    searchUrl.searchParams.append('count', resultCount.toString())
+
+    console.log(`[Brave Search] Query: "${query}", Count: ${resultCount}`)
+
+    // Make request to Brave Search API
+    const response = await fetch(searchUrl.toString(), {
+      method: 'GET',
+      headers: {
+        'X-Subscription-Token': BRAVE_API_KEY,
+        'Accept': 'application/json'
+      }
+    })
+
+    // Record the request for rate limiting
+    rateLimiter.recordRequest()
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      console.error(`[Brave Search] API error: ${response.status} - ${errorText}`)
+      
+      if (response.status === 401 || response.status === 403) {
+        return res.status(503).json({
+          error: 'Search service unavailable',
+          message: 'Invalid API key or subscription issue'
+        })
+      }
+      
+      if (response.status === 429) {
+        return res.status(429).json({
+          error: 'Rate limit exceeded',
+          message: 'Brave API rate limit reached. Please try again later.'
+        })
+      }
+      
+      throw new Error(`Brave API returned ${response.status}: ${errorText}`)
+    }
+
+    const data = await response.json()
+
+    // Parse and format results
+    const results = data.web?.results?.map((result: any) => ({
+      title: result.title || '',
+      url: result.url || '',
+      description: result.description || '',
+      age: result.age || null,
+      favicon: result.profile?.img || null
+    })) || []
+
+    console.log(`[Brave Search] Found ${results.length} results for "${query}"`)
+
+    // Log activity
+    logActivity('search_performed', `Search query: "${query}" (${results.length} results)`, null, null, null, { query, resultCount: results.length })
+
+    res.json({
+      success: true,
+      query,
+      resultCount: results.length,
+      results,
+      searchTime: data.searchTime || null,
+      timestamp: new Date().toISOString()
+    })
+
+  } catch (error) {
+    console.error('[Brave Search] Error:', error)
+    res.status(500).json({
+      error: 'Search failed',
+      message: error instanceof Error ? error.message : 'An unexpected error occurred'
+    })
   }
 }))
 

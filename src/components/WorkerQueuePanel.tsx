@@ -5,23 +5,23 @@ interface Props {
   workers: Workers
 }
 
-const specialistIcons: Record<string, string> = {
-  'Frontend': '🎨',
-  'Backend': '⚙️',
-  'DevOps': '🚀',
-  'Design': '✨',
-  'QA': '🔍',
-  'Data': '📊',
-  'ML': '🧠',
-  'Security': '🔒',
-  'Default': '🔧'
+const specialistLabels: Record<string, string> = {
+  'Frontend': 'FE',
+  'Backend': 'BE',
+  'DevOps': 'DO',
+  'Design': 'DS',
+  'QA': 'QA',
+  'Data': 'DT',
+  'ML': 'ML',
+  'Security': 'SE',
+  'Default': 'WK'
 }
 
-function getSpecialistIcon(specialist: string): string {
-  const key = Object.keys(specialistIcons).find(k => 
+function getSpecialistLabel(specialist: string): string {
+  const key = Object.keys(specialistLabels).find(k =>
     specialist.toLowerCase().includes(k.toLowerCase())
   )
-  return key ? specialistIcons[key] : specialistIcons.Default
+  return key ? specialistLabels[key] : specialistLabels.Default
 }
 
 function formatTimeAgo(dateString: string): string {
@@ -38,21 +38,21 @@ function formatTimeAgo(dateString: string): string {
 }
 
 const WorkerItemRow = memo(function WorkerItemRow({ worker, isActive }: { worker: WorkerItem; isActive?: boolean }) {
-  const icon = getSpecialistIcon(worker.specialist)
-  
+  const label = getSpecialistLabel(worker.specialist)
+
   // Handle different timestamp fields in the data
   const timestamp = (worker as any).spawnedAt || (worker as any).completedAt || (worker as any).queuedAt || new Date().toISOString()
-  
+
   return (
     <div className={`flex items-center gap-3 p-3 rounded-lg border transition-all duration-200 ${
-      isActive 
-        ? 'bg-emerald-500/5 border-emerald-500/20' 
+      isActive
+        ? 'bg-emerald-500/5 border-emerald-500/20'
         : 'bg-white/[0.02] border-white/[0.04] hover:bg-white/[0.04]'
     }`}>
-      <div className={`flex h-8 w-8 items-center justify-center rounded-lg text-sm ${
+      <div className={`flex h-8 w-8 items-center justify-center rounded-lg text-xs font-medium text-gray-400 ${
         isActive ? 'bg-emerald-500/10' : 'bg-white/[0.05]'
       }`}>
-        {icon}
+        {label}
       </div>
       
       <div className="flex-1 min-w-0">
@@ -65,9 +65,14 @@ const WorkerItemRow = memo(function WorkerItemRow({ worker, isActive }: { worker
         <span className="text-xs text-gray-500 truncate block">{worker.taskId}</span>
       </div>
       
-      <span className="text-xs text-gray-600 tabular-nums">
-        {formatTimeAgo(timestamp)}
-      </span>
+      <div className="text-right">
+        <span className="text-xs text-gray-600 tabular-nums block">
+          {formatTimeAgo(timestamp)}
+        </span>
+        {(worker as any).eta && isActive && (
+          <span className="text-[10px] text-emerald-400">ETA {(worker as any).eta}</span>
+        )}
+      </div>
     </div>
   )
 })
@@ -79,7 +84,6 @@ export const WorkerQueuePanel = memo(function WorkerQueuePanel({ workers }: Prop
     return (
       <div className="rounded-xl border border-white/[0.06] bg-[#111111] p-6">
         <div className="flex items-center gap-2 mb-4">
-          <span className="text-lg">📋</span>
           <h3 className="font-semibold text-white">Worker Queue</h3>
           <span className="ml-auto text-xs text-gray-500">Empty</span>
         </div>
@@ -90,13 +94,12 @@ export const WorkerQueuePanel = memo(function WorkerQueuePanel({ workers }: Prop
       </div>
     )
   }
-  
+
   return (
     <div className="rounded-xl border border-white/[0.06] bg-[#111111] p-5">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <span className="text-lg">📋</span>
           <h3 className="font-semibold text-white">Worker Queue</h3>
         </div>
         <div className="flex items-center gap-2">

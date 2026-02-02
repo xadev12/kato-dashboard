@@ -69,8 +69,8 @@ export function AgentRoster() {
 
       {/* Queen Agents Grid */}
       <div className="space-y-6">
-        <h2 className="text-lg font-semibold text-white flex items-center gap-2">
-          <span>👑</span> Queen Agents
+        <h2 className="text-lg font-semibold text-white">
+          Queen Agents
         </h2>
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-5">
           {ALL_QUEEN_AGENTS.map((agent) => (
@@ -88,25 +88,25 @@ export function AgentRoster() {
         <SummaryStat
           label="Total Queens"
           value={ALL_QUEEN_AGENTS.length.toString()}
-          icon="👑"
+          icon=""
           color="violet"
         />
         <SummaryStat
           label="Active Sub-Agents"
           value={ALL_QUEEN_AGENTS.reduce((sum, a) => sum + a.subAgents.filter(s => s.status === 'active').length, 0).toString()}
-          icon="⚡"
+          icon=""
           color="amber"
         />
         <SummaryStat
           label="Total Sub-Agents"
           value={ALL_QUEEN_AGENTS.reduce((sum, a) => sum + a.subAgents.length, 0).toString()}
-          icon="🤖"
+          icon=""
           color="emerald"
         />
         <SummaryStat
           label="Total Spawned"
           value={ALL_QUEEN_AGENTS.reduce((sum, a) => sum + a.subAgents.reduce((s, sa) => s + sa.spawnedCount, 0), 0).toString()}
-          icon="🚀"
+          icon=""
           color="blue"
         />
       </div>
@@ -146,8 +146,8 @@ const QueenAgentCard = memo(function QueenAgentCard({
         {/* Header */}
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center gap-4">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/[0.05] text-3xl border border-white/[0.06] shadow-lg">
-              {agent.emoji}
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/[0.05] text-lg font-semibold text-gray-400 border border-white/[0.06] shadow-lg">
+              {agent.name.charAt(0)}
             </div>
             <div>
               <h3 className="font-bold text-white text-lg">{agent.name}</h3>
@@ -250,7 +250,7 @@ const SubAgentRow = memo(function SubAgentRow({
 
   return (
     <div className="flex items-center gap-3 p-2.5 bg-white/[0.03] rounded-lg border border-white/[0.06] hover:border-white/[0.1] transition-all duration-200">
-      <span className="text-lg">{subAgent.emoji}</span>
+      <span className="text-sm font-medium text-gray-400 w-6">{subAgent.name.charAt(0)}</span>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
           <span className="text-sm font-medium text-gray-200 truncate">{subAgent.name}</span>
@@ -300,8 +300,8 @@ function SpawnModal({
 
         {/* Header */}
         <div className="flex items-center gap-4 mb-6">
-          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-violet-500/10 text-4xl border border-violet-500/20">
-            {subAgent.emoji}
+          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-violet-500/10 text-xl font-semibold text-violet-300 border border-violet-500/20">
+            {subAgent.name.charAt(0)}
           </div>
           <div>
             <h3 className="text-xl font-bold text-white">Spawn {subAgent.name}</h3>
@@ -335,7 +335,7 @@ function SpawnModal({
           <div className="p-4 bg-white/[0.03] rounded-xl border border-white/[0.06]">
             <div className="text-xs text-gray-500 uppercase tracking-wider mb-1">Parent Agent</div>
             <div className="flex items-center gap-2">
-              <span className="text-lg">{agent.emoji}</span>
+              <span className="text-sm font-medium text-gray-400 w-6">{agent.name.charAt(0)}</span>
               <span className="text-sm text-gray-200">{agent.name}</span>
             </div>
           </div>
@@ -377,7 +377,7 @@ function SummaryStat({ label, value, icon, color }: { label: string; value: stri
       <div className={`absolute inset-0 bg-gradient-to-br ${colors.bg} opacity-0 transition-opacity duration-200 group-hover:opacity-100`} />
       <div className="relative z-10">
         <div className="flex items-center gap-2 mb-2">
-          <span className="text-lg">{icon}</span>
+          {icon && <span className="text-lg">{icon}</span>}
           <span className="text-xs uppercase tracking-wider text-gray-500 font-medium">{label}</span>
         </div>
         <div className={`text-2xl font-bold ${colors.text}`}>{value}</div>

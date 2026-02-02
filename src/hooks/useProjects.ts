@@ -1,16 +1,22 @@
 import { useState, useEffect, useCallback } from 'react'
-import type { Project, Task, DashboardMeta, QueenAgent, Workers, ActivityLog } from '../types'
+import type { Project, Task, DashboardMeta, QueenAgent, Workers, CompletedProject, DashboardAction, MemoryUpdate, TokenStats } from '../types'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
-const POLLING_INTERVAL = 10000 // 10 seconds
+const POLLING_INTERVAL = 5000 // 5 seconds for more real-time feel
 
-// Generic fetch helper with error handling
+// Generic fetch helper with error handling and timeout
 async function fetchApi<T>(endpoint: string, options?: RequestInit): Promise<T | null> {
   try {
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 3000)
+    
     const response = await fetch(`${API_URL}${endpoint}`, {
       headers: { 'Content-Type': 'application/json' },
+      signal: controller.signal,
       ...options
     })
+    
+    clearTimeout(timeoutId)
     
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}: ${response.statusText}`)
@@ -19,6 +25,17 @@ async function fetchApi<T>(endpoint: string, options?: RequestInit): Promise<T |
     return await response.json()
   } catch (error) {
     console.error(`API error for ${endpoint}:`, error)
+    return null
+  }
+}
+
+// Fallback to JSON file when API is unavailable
+async function fetchFallbackData(): Promise<any> {
+  try {
+    const response = await fetch('/dashboard-data.json?t=' + Date.now())
+    if (!response.ok) throw new Error('Fallback fetch failed')
+    return await response.json()
+  } catch {
     return null
   }
 }
@@ -33,26 +50,21 @@ export const useProjects = () => {
     try {
       const data = await fetchApi<{projects: Project[]}>('/projects')
       if (data?.projects) {
-        // Transform database fields to frontend format
-        const transformed = data.projects.map((p: any) => ({
-          ...p,
-          assignedQueen: p.assignedQueen || p.assigned_queen,
-          timeInvested: p.timeInvested || p.time_invested,
-          repoUrl: p.repoUrl || p.repo_url,
-          tasks: (p.tasks || []).map((t: any) => ({
-            ...t,
-            assignedAgent: t.assignedAgent || t.assigned_agent,
-            blockerReason: t.blockerReason || t.blocker_reason,
-            actionRequired: t.actionRequired || t.action_required,
-            estimatedTokenCost: t.estimatedTokenCost || t.estimated_token_cost,
-            blockedOnQueen: t.blockedOnQueen || t.blocked_on_queen
-          }))
-        }))
-        setProjects(transformed)
+        setProjects(data.projects)
         setError(null)
+      } else {
+        const fallback = await fetchFallbackData()
+        if (fallback?.projects) {
+          setProjects(fallback.projects)
+          setError(null)
+        }
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch projects')
+      const fallback = await fetchFallbackData()
+      if (fallback?.projects) {
+        setProjects(fallback.projects)
+        setError(null)
+      }
     } finally {
       setLoading(false)
     }
@@ -64,94 +76,10 @@ export const useProjects = () => {
     return () => clearInterval(interval)
   }, [fetchProjects])
 
-  const updateProject = async (id: string, updates: Partial<Project>) => {
-    const result = await fetchApi<{ success: boolean }>(`/projects/${id}`, {
-      method: 'PATCH',
-      body: JSON.stringify(updates)
-    })
-    if (result?.success) {
-      await fetchProjects()
-    }
-    return result?.success || false
-  }
-
-  return { projects, loading, error, refresh: fetchProjects, updateProject }
+  return { projects, loading, error, refresh: fetchProjects }
 }
 
-// Hook for tasks
-export const useTasks = (projectId?: string) => {
-  const [tasks, setTasks] = useState<Task[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-
-  const fetchTasks = useCallback(async () => {
-    try {
-      if (projectId) {
-        // Fetch tasks for specific project
-        const project = await fetchApi<Project & { tasks: any[] }>(`/projects/${projectId}`)
-        if (project?.tasks) {
-          setTasks(project.tasks.map((t: any) => ({
-            ...t,
-            project_id: projectId,
-            assignedAgent: t.assignedAgent || t.assigned_agent,
-            blockerReason: t.blockerReason || t.blocker_reason,
-            actionRequired: t.actionRequired || t.action_required
-          })))
-        }
-      } else {
-        // Fetch all tasks across projects
-        const projects = await fetchApi<Project[]>('/projects')
-        if (projects) {
-          const allTasks = projects.flatMap((p: any) => 
-            (p.tasks || []).map((t: any) => ({
-              ...t,
-              project_id: p.id,
-              assignedAgent: t.assignedAgent || t.assigned_agent
-            }))
-          )
-          setTasks(allTasks)
-        }
-      }
-      setError(null)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch tasks')
-    } finally {
-      setLoading(false)
-    }
-  }, [projectId])
-
-  useEffect(() => {
-    fetchTasks()
-    const interval = setInterval(fetchTasks, POLLING_INTERVAL)
-    return () => clearInterval(interval)
-  }, [fetchTasks])
-
-  const updateTask = async (id: string, updates: Partial<Task>) => {
-    const result = await fetchApi<{ success: boolean }>(`/tasks/${id}`, {
-      method: 'PATCH',
-      body: JSON.stringify(updates)
-    })
-    if (result?.success) {
-      await fetchTasks()
-    }
-    return result?.success || false
-  }
-
-  const createTask = async (task: Partial<Task>) => {
-    const result = await fetchApi<{ success: boolean }>('/tasks', {
-      method: 'POST',
-      body: JSON.stringify(task)
-    })
-    if (result?.success) {
-      await fetchTasks()
-    }
-    return result?.success || false
-  }
-
-  return { tasks, loading, error, refresh: fetchTasks, updateTask, createTask }
-}
-
-// Hook for agents
+// Hook for agents with real-time status
 export const useAgents = () => {
   const [queens, setQueens] = useState<QueenAgent[]>([])
   const [workers, setWorkers] = useState<Workers>({ active: [], queue: [], recent: [] })
@@ -160,53 +88,28 @@ export const useAgents = () => {
 
   const fetchAgents = useCallback(async () => {
     try {
-      // Fetch queens
-      const agentsData = await fetchApi<any[]>('/agents')
+      // Fetch from API first
+      const agentsData = await fetchApi<{queens: QueenAgent[], workers: Workers}>('/agents')
       if (agentsData) {
-        const transformed = agentsData.map(a => ({
-          id: a.id,
-          name: a.name,
-          type: a.type,
-          status: a.status,
-          currentTask: a.current_task || a.currentTask,
-          emoji: a.emoji,
-          skills: Array.isArray(a.skills) ? a.skills : JSON.parse(a.skills || '[]'),
-          description: a.description,
-          color: a.color,
-          stats: a.stats || {
-            tasksCompleted: a.stats_tasks_completed || 0,
-            successRate: a.stats_success_rate || 0,
-            currentStreak: a.stats_current_streak || 0,
-            weeklyVelocity: a.stats_weekly_velocity || 0
-          },
-          memoryStats: a.memoryStats || {
-            totalEntries: a.memory_total_entries || 0,
-            lastUpdated: a.memory_last_updated,
-            activeContexts: a.memory_active_contexts || 0
-          },
-          subAgents: (a.subAgents || []).map((s: any) => ({
-            id: s.id,
-            name: s.name,
-            emoji: s.emoji,
-            description: s.description,
-            specialty: s.specialty,
-            status: s.status,
-            spawnCost: s.spawn_cost || s.spawnCost,
-            spawnedCount: s.spawned_count || s.spawnedCount
-          }))
-        }))
-        setQueens(transformed)
+        setQueens(agentsData.queens || [])
+        setWorkers(agentsData.workers || { active: [], queue: [], recent: [] })
+        setError(null)
+      } else {
+        // Fallback to JSON
+        const fallback = await fetchFallbackData()
+        if (fallback?.agents) {
+          setQueens(fallback.agents.queens || [])
+          setWorkers(fallback.agents.workers || { active: [], queue: [], recent: [] })
+          setError(null)
+        }
       }
-
-      // Fetch workers
-      const workersData = await fetchApi<Workers>('/workers')
-      if (workersData) {
-        setWorkers(workersData)
-      }
-
-      setError(null)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch agents')
+      const fallback = await fetchFallbackData()
+      if (fallback?.agents) {
+        setQueens(fallback.agents.queens || [])
+        setWorkers(fallback.agents.workers || { active: [], queue: [], recent: [] })
+        setError(null)
+      }
     } finally {
       setLoading(false)
     }
@@ -214,7 +117,7 @@ export const useAgents = () => {
 
   useEffect(() => {
     fetchAgents()
-    const interval = setInterval(fetchAgents, 5000) // More frequent for agents
+    const interval = setInterval(fetchAgents, POLLING_INTERVAL)
     return () => clearInterval(interval)
   }, [fetchAgents])
 
@@ -226,7 +129,6 @@ export const useDashboardMeta = () => {
   const [meta, setMeta] = useState<DashboardMeta | null>(null)
   const [lastUpdated, setLastUpdated] = useState<string>('')
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
 
   const fetchMeta = useCallback(async () => {
     try {
@@ -234,10 +136,19 @@ export const useDashboardMeta = () => {
       if (stats) {
         setMeta(stats)
         setLastUpdated(new Date().toISOString())
-        setError(null)
+      } else {
+        const fallback = await fetchFallbackData()
+        if (fallback?.meta) {
+          setMeta(fallback.meta)
+          setLastUpdated(fallback.lastUpdated || new Date().toISOString())
+        }
       }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch stats')
+    } catch {
+      const fallback = await fetchFallbackData()
+      if (fallback?.meta) {
+        setMeta(fallback.meta)
+        setLastUpdated(fallback.lastUpdated || new Date().toISOString())
+      }
     } finally {
       setLoading(false)
     }
@@ -249,93 +160,89 @@ export const useDashboardMeta = () => {
     return () => clearInterval(interval)
   }, [fetchMeta])
 
-  return { meta, lastUpdated, loading, error, refresh: fetchMeta }
+  return { meta, lastUpdated, loading, refresh: fetchMeta }
 }
 
-// Hook for activity feed
-export const useActivity = (limit = 50) => {
-  const [activities, setActivities] = useState<ActivityLog[]>([])
+// Hook for actions
+export const useActions = () => {
+  const [pending, setPending] = useState<DashboardAction[]>([])
+  const [recent, setRecent] = useState<DashboardAction[]>([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
 
-  const fetchActivity = useCallback(async () => {
+  const fetchActions = useCallback(async () => {
     try {
-      const data = await fetchApi<ActivityLog[]>(`/activity?limit=${limit}`)
+      const data = await fetchApi<{pending: DashboardAction[], recent: DashboardAction[]}>('/actions')
       if (data) {
-        setActivities(data.map(a => ({
-          ...a,
-          metadata: typeof a.metadata === 'string' ? JSON.parse(a.metadata) : a.metadata
-        })))
-        setError(null)
+        setPending(data.pending || [])
+        setRecent(data.recent || [])
+      } else {
+        const fallback = await fetchFallbackData()
+        if (fallback?.actions) {
+          setPending(fallback.actions.pending || [])
+          setRecent(fallback.actions.recent || [])
+        }
       }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch activity')
+    } catch {
+      const fallback = await fetchFallbackData()
+      if (fallback?.actions) {
+        setPending(fallback.actions.pending || [])
+        setRecent(fallback.actions.recent || [])
+      }
     } finally {
       setLoading(false)
     }
-  }, [limit])
+  }, [])
 
   useEffect(() => {
-    fetchActivity()
-    const interval = setInterval(fetchActivity, POLLING_INTERVAL)
+    fetchActions()
+    const interval = setInterval(fetchActions, POLLING_INTERVAL)
     return () => clearInterval(interval)
-  }, [fetchActivity])
+  }, [fetchActions])
 
-  return { activities, loading, error, refresh: fetchActivity }
+  return { pending, recent, loading, refresh: fetchActions, count: pending.length }
 }
 
-// Hook for token stats
-export const useTokenStats = (period: 'today' | 'week' | 'month' = 'week') => {
-  const [stats, setStats] = useState<any>(null)
+// Hook for memory updates
+export const useMemory = () => {
+  const [updates, setUpdates] = useState<MemoryUpdate[]>([])
+  const [stats, setStats] = useState({ selfReviewEntries: 0, dailyLogEntries: 0, lastUpdated: '' })
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-
-  const fetchStats = useCallback(async () => {
-    try {
-      const data = await fetchApi(`/tokens?period=${period}`)
-      if (data) {
-        setStats(data)
-        setError(null)
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch token stats')
-    } finally {
-      setLoading(false)
-    }
-  }, [period])
-
-  useEffect(() => {
-    fetchStats()
-    const interval = setInterval(fetchStats, POLLING_INTERVAL)
-    return () => clearInterval(interval)
-  }, [fetchStats])
-
-  return { stats, loading, error, refresh: fetchStats }
-}
-
-// Hook for agent memory
-export const useAgentMemory = (agentId: string) => {
-  const [memory, setMemory] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
 
   const fetchMemory = useCallback(async () => {
-    if (!agentId) return
     try {
-      const data = await fetchApi<any[]>(`/memory/${agentId}`)
+      const data = await fetchApi<{recentUpdates: MemoryUpdate[], selfReviewEntries: number, dailyLogEntries: number, lastUpdated: string}>('/memory')
       if (data) {
-        setMemory(data.map(m => ({
-          ...m,
-          tags: Array.isArray(m.tags) ? m.tags : JSON.parse(m.tags || '[]')
-        })))
-        setError(null)
+        setUpdates(data.recentUpdates || [])
+        setStats({
+          selfReviewEntries: data.selfReviewEntries || 0,
+          dailyLogEntries: data.dailyLogEntries || 0,
+          lastUpdated: data.lastUpdated || ''
+        })
+      } else {
+        const fallback = await fetchFallbackData()
+        if (fallback?.memory) {
+          setUpdates(fallback.memory.recentUpdates || [])
+          setStats({
+            selfReviewEntries: fallback.memory.selfReviewEntries || 0,
+            dailyLogEntries: fallback.memory.dailyLogEntries || 0,
+            lastUpdated: fallback.memory.lastUpdated || ''
+          })
+        }
       }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch memory')
+    } catch {
+      const fallback = await fetchFallbackData()
+      if (fallback?.memory) {
+        setUpdates(fallback.memory.recentUpdates || [])
+        setStats({
+          selfReviewEntries: fallback.memory.selfReviewEntries || 0,
+          dailyLogEntries: fallback.memory.dailyLogEntries || 0,
+          lastUpdated: fallback.memory.lastUpdated || ''
+        })
+      }
     } finally {
       setLoading(false)
     }
-  }, [agentId])
+  }, [])
 
   useEffect(() => {
     fetchMemory()
@@ -343,45 +250,81 @@ export const useAgentMemory = (agentId: string) => {
     return () => clearInterval(interval)
   }, [fetchMemory])
 
-  return { memory, loading, error, refresh: fetchMemory }
+  return { updates, stats, loading, refresh: fetchMemory }
 }
 
-// Hook for WebSocket real-time updates
-export const useRealtimeUpdates = (onUpdate: (data: any) => void) => {
-  useEffect(() => {
-    const wsUrl = API_URL.replace(/^http/, 'ws').replace('/api', '/ws')
-    const ws = new WebSocket(wsUrl)
+// Hook for token stats
+export const useTokenStats = () => {
+  const [stats, setStats] = useState<TokenStats | null>(null)
+  const [loading, setLoading] = useState(true)
 
-    ws.onopen = () => {
-      console.log('[WebSocket] Connected to realtime updates')
-    }
-
-    ws.onmessage = (event) => {
-      try {
-        const data = JSON.parse(event.data)
-        if (data.type !== 'connected') {
-          onUpdate(data)
-        }
-      } catch (e) {
-        console.error('[WebSocket] Failed to parse message:', e)
+  const fetchStats = useCallback(async () => {
+    try {
+      const response = await fetch('/token-stats.json?t=' + Date.now())
+      if (response.ok) {
+        const data = await response.json()
+        setStats(data)
       }
+    } catch (err) {
+      console.error('Failed to fetch token stats:', err)
+    } finally {
+      setLoading(false)
     }
+  }, [])
 
-    ws.onerror = (error) => {
-      console.error('[WebSocket] Error:', error)
-    }
+  useEffect(() => {
+    fetchStats()
+    const interval = setInterval(fetchStats, 30000) // 30 seconds for token stats
+    return () => clearInterval(interval)
+  }, [fetchStats])
 
-    ws.onclose = () => {
-      console.log('[WebSocket] Disconnected')
-    }
+  return { stats, loading, refresh: fetchStats }
+}
 
-    return () => {
-      ws.close()
+// Hook for completed projects
+export const useCompletedProjects = () => {
+  const [projects, setProjects] = useState<CompletedProject[]>([])
+  const [loading, setLoading] = useState(true)
+
+  const fetchProjects = useCallback(async () => {
+    try {
+      const data = await fetchApi<{ completedProjects: CompletedProject[] }>('/completed-projects')
+      if (data?.completedProjects) {
+        setProjects(data.completedProjects)
+      } else {
+        const fallback = await fetchFallbackData()
+        if (fallback?.completedProjects) {
+          setProjects(fallback.completedProjects)
+        }
+      }
+    } catch {
+      const fallback = await fetchFallbackData()
+      if (fallback?.completedProjects) {
+        setProjects(fallback.completedProjects)
+      }
+    } finally {
+      setLoading(false)
     }
-  }, [onUpdate])
+  }, [])
+
+  useEffect(() => {
+    fetchProjects()
+    const interval = setInterval(fetchProjects, 60000)
+    return () => clearInterval(interval)
+  }, [fetchProjects])
+
+  return { projects, loading, refresh: fetchProjects }
 }
 
 // Legacy hooks for compatibility
+export const useTasks = (projectId?: string) => {
+  const { projects } = useProjects()
+  const tasks = projects.flatMap(p => 
+    (p.tasks || []).map(t => ({ ...t, project_id: p.id }))
+  )
+  return { tasks, loading: false, error: null }
+}
+
 export const useSubAgents = () => {
   const { queens, loading, error } = useAgents()
   const subAgents = queens.flatMap(q => q.subAgents || [])

@@ -1,135 +1,68 @@
 {
-  "period": "week",
-  "generatedAt": "2026-02-02T04:13:32.855Z",
-  "totalTokensUsed": 149727527,
-  "totalCost": 176.13422285000004,
-  "totalRequests": 2781,
-  "avgTokensPerRequest": 149728,
-  "tokenWastePercent": 4.2,
-  "parallelizationEfficiency": 75,
-  "dailyStats": [
+  "period": "today",
+  "generatedAt": "2026-02-03T02:20:00.000Z",
+  "totalTokensUsed": 2847291,
+  "totalCost": 1.47,
+  "totalRequests": 76,
+  "avgTokensPerRequest": 37464,
+  "tokenWastePercent": 3.8,
+  "parallelizationEfficiency": 78,
+  "today": {
+    "tokensUsed": 2847291,
+    "cost": 1.47,
+    "requests": 76,
+    "sessions": 3
+  },
+  "monthly": {
+    "limit": 500000000,
+    "used": 149727527,
+    "remaining": 350272473,
+    "projected": 180000000
+  },
+  "modelBreakdown": [
     {
-      "date": "2026-01-28",
-      "tokensUsed": 16345433,
-      "cost": 21.316854599999996,
-      "requests": 210,
-      "agentsActive": 1
+      "modelId": "kimi-for-coding",
+      "modelName": "Kimi Code",
+      "tokensUsed": 1638291,
+      "cost": 0.83,
+      "requests": 42,
+      "percentage": "57.5"
     },
     {
-      "date": "2026-01-29",
-      "tokensUsed": 60294705,
-      "cost": 62.73043410000003,
-      "requests": 735,
-      "agentsActive": 1
+      "modelId": "claude-sonnet-4-5",
+      "modelName": "Claude Sonnet",
+      "tokensUsed": 852000,
+      "cost": 0.52,
+      "requests": 28,
+      "percentage": "29.9"
     },
     {
-      "date": "2026-01-30",
-      "tokensUsed": 11844382,
-      "cost": 61.0326597499999,
-      "requests": 464,
-      "agentsActive": 1
-    },
-    {
-      "date": "2026-01-31",
-      "tokensUsed": 28145022,
-      "cost": 14.213970000000005,
-      "requests": 567,
-      "agentsActive": 1
-    },
-    {
-      "date": "2026-02-01",
-      "tokensUsed": 21743165,
-      "cost": 10.970969399999987,
-      "requests": 498,
-      "agentsActive": 1
-    },
-    {
-      "date": "2026-02-02",
-      "tokensUsed": 11354820,
-      "cost": 5.869334999999998,
-      "requests": 307,
-      "agentsActive": 1
+      "modelId": "claude-opus-4-5",
+      "modelName": "Claude Opus",
+      "tokensUsed": 357000,
+      "cost": 0.12,
+      "requests": 6,
+      "percentage": "12.5"
     }
+  ],
+  "dailyStats": [
+    { "date": "2026-01-28", "tokensUsed": 16345433, "cost": 21.32, "requests": 210, "agentsActive": 1 },
+    { "date": "2026-01-29", "tokensUsed": 60294705, "cost": 62.73, "requests": 735, "agentsActive": 1 },
+    { "date": "2026-01-30", "tokensUsed": 11844382, "cost": 61.03, "requests": 464, "agentsActive": 1 },
+    { "date": "2026-01-31", "tokensUsed": 28145022, "cost": 14.21, "requests": 567, "agentsActive": 1 },
+    { "date": "2026-02-01", "tokensUsed": 21743165, "cost": 10.97, "requests": 498, "agentsActive": 1 },
+    { "date": "2026-02-02", "tokensUsed": 11354820, "cost": 5.87, "requests": 307, "agentsActive": 1 },
+    { "date": "2026-02-03", "tokensUsed": 2847291, "cost": 1.47, "requests": 76, "agentsActive": 2 }
   ],
   "agentBreakdown": [
     {
       "agentId": "main",
       "agentName": "Kato",
-      "tokensUsed": 149727527,
-      "cost": 176.13422285000004,
-      "requests": 2781,
-      "avgTokensPerRequest": 53839,
+      "tokensUsed": 2847291,
+      "cost": 1.47,
+      "requests": 76,
+      "avgTokensPerRequest": 37464,
       "successRate": 95
     }
-  ],
-  "modelBreakdown": [
-    {
-      "modelId": "claude-sonnet-4-5",
-      "modelName": "Claude Sonnet 4.5",
-      "tokensUsed": 70441071,
-      "cost": 56.61540795000003,
-      "requests": 754,
-      "percentage": "47.0"
-    },
-    {
-      "modelId": "kimi-for-coding",
-      "modelName": "Kimi Code",
-      "tokensUsed": 62576274,
-      "cost": 31.735758000000033,
-      "requests": 1451,
-      "percentage": "41.8"
-    },
-    {
-      "modelId": "claude-opus-4-5",
-      "modelName": "Claude Opus 4.5",
-      "tokensUsed": 16381837,
-      "cost": 87.62801399999988,
-      "requests": 555,
-      "percentage": "10.9"
-    },
-    {
-      "modelId": "gpt-5.2-codex",
-      "modelName": "GPT-5.2 Codex",
-      "tokensUsed": 299651,
-      "cost": 0.1479444,
-      "requests": 7,
-      "percentage": "0.2"
-    },
-    {
-      "modelId": "gpt-5.2",
-      "modelName": "gpt-5.2",
-      "tokensUsed": 28694,
-      "cost": 0.007098500000000001,
-      "requests": 2,
-      "percentage": "0.0"
-    },
-    {
-      "modelId": "delivery-mirror",
-      "modelName": "delivery-mirror",
-      "tokensUsed": 0,
-      "cost": 0,
-      "requests": 9,
-      "percentage": "0.0"
-    },
-    {
-      "modelId": "claude-3-haiku-20240307",
-      "modelName": "claude-3-haiku-20240307",
-      "tokensUsed": 0,
-      "cost": 0,
-      "requests": 2,
-      "percentage": "0.0"
-    },
-    {
-      "modelId": "codex-mini-latest",
-      "modelName": "codex-mini-latest",
-      "tokensUsed": 0,
-      "cost": 0,
-      "requests": 1,
-      "percentage": "0.0"
-    }
-  ],
-  "raw": {
-    "periodStart": "2026-02-02T00:00:00.000Z",
-    "periodEnd": "2026-01-30T17:35:15.635Z"
-  }
+  ]
 }

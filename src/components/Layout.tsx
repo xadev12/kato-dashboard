@@ -2,12 +2,11 @@ import { Link, useLocation } from 'react-router-dom'
 import { AgentIndicator } from './AgentIndicator'
 
 const navItems = [
-  { path: '/', label: 'Agent View', icon: '🤖' },
-  { path: '/actions', label: 'My Actions', icon: '⚠️', badge: true },
-  { path: '/roster', label: 'Roster', icon: '👥' },
-  { path: '/memory', label: 'Memory', icon: '🧠' },
-  { path: '/tokens', label: 'Tokens', icon: '💎' },
-  { path: '/legacy', label: 'Kanban', icon: '📋' },
+  { path: '/', label: 'Agent View', icon: '', badge: false },
+  { path: '/actions', label: 'My Actions', icon: '', badge: true },
+  { path: '/roster', label: 'Roster', icon: '', badge: false },
+  { path: '/memory', label: 'Memory', icon: '', badge: false },
+  { path: '/tokens', label: 'Tokens', icon: '', badge: false },
 ]
 
 export function Layout({ children }: { children: React.ReactNode }) {
@@ -30,7 +29,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
               
               {/* Desktop Navigation */}
               <nav className="hidden lg:flex items-center gap-1 p-1 bg-white/[0.03] rounded-lg border border-white/[0.06] ml-4">
-                {navItems.slice(0, 5).map((item) => (
+                {navItems.map((item) => (
                   <NavLink
                     key={item.path}
                     to={item.path}
@@ -38,7 +37,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
                     label={item.label}
                     icon={item.icon}
                     badge={item.badge}
-                    isNew={['/actions', '/roster', '/memory', '/tokens'].includes(item.path)}
                   />
                 ))}
               </nav>
@@ -49,7 +47,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
                   to="/legacy"
                   active={currentPath === '/legacy'}
                   label="Kanban"
-                  icon="📋"
+                  icon=""
                 />
               </nav>
             </div>
@@ -67,10 +65,16 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 label={item.label}
                 icon={item.icon}
                 badge={item.badge}
-                isNew={['/actions', '/roster', '/memory', '/tokens'].includes(item.path)}
                 mobile
               />
             ))}
+            <NavLink
+              to="/legacy"
+              active={currentPath === '/legacy'}
+              label="Kanban"
+              icon=""
+              mobile
+            />
           </nav>
         </div>
       </header>
@@ -90,7 +94,6 @@ function NavLink({
   label, 
   icon, 
   badge, 
-  isNew,
   mobile 
 }: { 
   to: string
@@ -98,7 +101,6 @@ function NavLink({
   label: string
   icon: string
   badge?: boolean
-  isNew?: boolean
   mobile?: boolean
 }) {
   return (
@@ -110,14 +112,14 @@ function NavLink({
           : 'text-gray-400 hover:text-white hover:bg-white/[0.03]'
       }`}
     >
-      <span>{icon}</span>
+      {icon && <span>{icon}</span>}
       <span>{label}</span>
-      {isNew && !active && (
-        <span className="px-1 py-0.5 rounded text-[9px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/20">
-          NEW
+      {badge && active && (
+        <span className="px-1 py-0.5 rounded text-[9px] font-bold bg-rose-500/20 text-rose-400 border border-rose-500/20">
+          2
         </span>
       )}
-      {badge && (
+      {badge && !active && (
         <span className="relative flex h-2 w-2">
           <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-rose-400 opacity-75"></span>
           <span className="relative inline-flex h-2 w-2 rounded-full bg-rose-500"></span>

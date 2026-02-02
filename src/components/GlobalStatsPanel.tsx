@@ -38,9 +38,15 @@ const StatItem = memo(function StatItem({ value, label, icon, color, delay = 0 }
       <div className={`absolute inset-0 bg-gradient-to-br ${color} opacity-0 transition-opacity duration-300 group-hover:opacity-100`} />
       
       <div className="relative z-10 flex items-center gap-4">
-        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/[0.05] text-2xl border border-white/[0.06] group-hover:scale-105 transition-transform duration-300">
-          {icon}
-        </div>
+        {icon ? (
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/[0.05] text-2xl border border-white/[0.06] group-hover:scale-105 transition-transform duration-300">
+            {icon}
+          </div>
+        ) : (
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/[0.05] border border-white/[0.06] group-hover:scale-105 transition-transform duration-300">
+            <div className="w-2 h-2 rounded-full bg-gray-600" />
+          </div>
+        )}
         <div>
           <div className="text-2xl font-bold text-white group-hover:text-white transition-colors">
             {value}
@@ -75,8 +81,8 @@ export const GlobalStatsPanel = memo(function GlobalStatsPanel({ meta, lastUpdat
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-white flex items-center gap-2">
-          <span>📊</span> Overview
+        <h2 className="text-lg font-semibold text-white">
+          Overview
         </h2>
         <span className="text-xs text-gray-500 flex items-center gap-1.5">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
@@ -88,28 +94,28 @@ export const GlobalStatsPanel = memo(function GlobalStatsPanel({ meta, lastUpdat
         <StatItem 
           value={meta.totalProjects} 
           label="Total Projects" 
-          icon="📁"
+          icon=""
           color="from-violet-500/10 to-purple-500/5"
           delay={0}
         />
         <StatItem 
           value={meta.activeAgents} 
           label="Active Agents" 
-          icon="🤖"
+          icon=""
           color="from-amber-500/10 to-orange-500/5"
           delay={50}
         />
         <StatItem 
           value={completedToday} 
           label="Completed Today" 
-          icon="✅"
+          icon=""
           color="from-emerald-500/10 to-teal-500/5"
           delay={100}
         />
         <StatItem 
           value={meta.queuedWorkers} 
           label="Queue Depth" 
-          icon="⏳"
+          icon=""
           color="from-rose-500/10 to-pink-500/5"
           delay={150}
         />
