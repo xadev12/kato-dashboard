@@ -321,8 +321,6 @@ function BlockedTaskCard({ task }: { task: { id: string; title: string; projectN
 
 // Recent Activity Item
 function RecentActivityItem({ action, isLast }: { action: DashboardAction; isLast: boolean }) {
-  const type = typeConfig[action.type] || typeConfig.note
-  
   return (
     <div className="flex items-start gap-3">
       <div className="flex flex-col items-center">

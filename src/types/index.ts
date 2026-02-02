@@ -36,6 +36,7 @@ export interface Task {
   actionRequired?: string
   estimatedTokenCost?: number
   blockedOnQueen?: string | null
+  progress?: number
 }
 
 export interface ActivityLog {

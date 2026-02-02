@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import type { Project, Task, DashboardMeta, QueenAgent, Workers, CompletedProject, DashboardAction, MemoryUpdate, TokenStats } from '../types'
+import type { Project, DashboardMeta, QueenAgent, Workers, CompletedProject, DashboardAction, MemoryUpdate, TokenStats } from '../types'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
 const POLLING_INTERVAL = 5000 // 5 seconds for more real-time feel
@@ -317,7 +317,7 @@ export const useCompletedProjects = () => {
 }
 
 // Legacy hooks for compatibility
-export const useTasks = (projectId?: string) => {
+export const useTasks = (_projectId?: string) => {
   const { projects } = useProjects()
   const tasks = projects.flatMap(p => 
     (p.tasks || []).map(t => ({ ...t, project_id: p.id }))
@@ -329,4 +329,45 @@ export const useSubAgents = () => {
   const { queens, loading, error } = useAgents()
   const subAgents = queens.flatMap(q => q.subAgents || [])
   return { subAgents, loading, error }
+}
+
+// Activity hook for ActivityFeed component
+export const useActivity = () => {
+  const [activities, setActivities] = useState<Array<{
+    id: string
+    type: string
+    title: string
+    description: string
+    timestamp: string
+    agent?: string
+  }>>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchActivity = async () => {
+      try {
+        const data = await fetchFallbackData()
+        if (data?.actions?.recent) {
+          setActivities(data.actions.recent.map((a: any, i: number) => ({
+            id: a.id || `act-${i}`,
+            type: a.type || 'info',
+            title: a.title || 'Activity',
+            description: a.description || '',
+            timestamp: a.createdAt || new Date().toISOString(),
+            agent: a.from || 'System'
+          })))
+        }
+      } catch (err) {
+        setError('Failed to load activity')
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchActivity()
+    const interval = setInterval(fetchActivity, POLLING_INTERVAL)
+    return () => clearInterval(interval)
+  }, [])
+
+  return { activities, loading, error }
 }

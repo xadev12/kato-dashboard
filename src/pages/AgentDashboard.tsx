@@ -5,7 +5,7 @@ import { AgentStatusCard } from '../components/AgentStatusCard'
 import { WorkerQueuePanel } from '../components/WorkerQueuePanel'
 import { GlobalStatsPanel } from '../components/GlobalStatsPanel'
 import { SearchBar } from '../components/SearchBar'
-import type { QueenType, Task, WorkerItem } from '../types'
+import type { QueenType, Task } from '../types'
 
 type FilterType = 'all' | 'in_progress' | 'done' | 'not_started'
 
