@@ -1,60 +1,21 @@
 {
   "schemaVersion": "2.0",
-  "lastUpdated": "2026-02-02T04:10:34.167Z",
+  "lastUpdated": "2026-02-01T03:55:00.000Z",
   "agents": {
     "queens": [
-      {
-        "id": "main",
-        "name": "Kato",
-        "type": "queen",
-        "status": "idle",
-        "currentTask": null
-      },
-      {
-        "id": "product",
-        "name": "Product Owner",
-        "type": "queen",
-        "status": "idle",
-        "currentTask": null
-      },
-      {
-        "id": "devops",
-        "name": "DevOps Engineer",
-        "type": "queen",
-        "status": "idle",
-        "currentTask": null
-      },
-      {
-        "id": "business",
-        "name": "Business Strategist",
-        "type": "queen",
-        "status": "idle",
-        "currentTask": null
-      },
-      {
-        "id": "brain",
-        "name": "Second Brain Keeper",
-        "type": "queen",
-        "status": "idle",
-        "currentTask": null
-      }
+      {"id": "main", "name": "Kato", "type": "queen", "status": "idle", "currentTask": null},
+      {"id": "product", "name": "Product Owner", "type": "queen", "status": "idle", "currentTask": null},
+      {"id": "devops", "name": "DevOps Engineer", "type": "queen", "status": "idle", "currentTask": null},
+      {"id": "business", "name": "Business Strategist", "type": "queen", "status": "idle", "currentTask": null},
+      {"id": "brain", "name": "Second Brain Keeper", "type": "queen", "status": "idle", "currentTask": null}
     ],
     "workers": {
       "active": [
-        {
-          "specialist": "Frontend",
-          "taskId": "compound-wealth-dashboard",
-          "spawnedAt": "2026-02-01T03:54:00Z",
-          "eta": "06:00"
-        }
+        {"specialist": "Frontend", "taskId": "compound-wealth-dashboard", "spawnedAt": "2026-02-01T03:54:00Z", "eta": "06:00"}
       ],
       "queue": [],
       "recent": [
-        {
-          "specialist": "Frontend",
-          "taskId": "dash-agent-ui",
-          "completedAt": "2026-01-31T20:56:00Z"
-        }
+        {"specialist": "Frontend", "taskId": "dash-agent-ui", "completedAt": "2026-01-31T20:56:00Z"}
       ]
     }
   },
@@ -71,62 +32,14 @@
       "updated_at": "2026-01-29T09:44:30.880Z",
       "assignedQueen": null,
       "tasks": [
-        {
-          "id": "task-1",
-          "title": "Authorize 1Password CLI",
-          "status": "done",
-          "completed_at": "2026-01-29T08:41:00.000Z",
-          "assignedAgent": null
-        },
-        {
-          "id": "task-2",
-          "title": "Create Supabase project",
-          "status": "done",
-          "completed_at": "2026-01-29T08:45:00.000Z",
-          "assignedAgent": null
-        },
-        {
-          "id": "task-3",
-          "title": "Set up database schema",
-          "status": "done",
-          "completed_at": "2026-01-29T08:47:00.000Z",
-          "assignedAgent": null
-        },
-        {
-          "id": "task-4",
-          "title": "Save credentials to 1Password",
-          "status": "done",
-          "completed_at": "2026-01-29T08:48:00.000Z",
-          "assignedAgent": null
-        },
-        {
-          "id": "task-5",
-          "title": "Fix TypeScript import errors",
-          "status": "done",
-          "completed_at": "2026-01-29T08:50:00.000Z",
-          "assignedAgent": null
-        },
-        {
-          "id": "task-6",
-          "title": "Deploy to Vercel",
-          "status": "done",
-          "completed_at": "2026-01-29T09:15:00.000Z",
-          "assignedAgent": null
-        },
-        {
-          "id": "task-7",
-          "title": "Configure environment variables in Vercel",
-          "status": "done",
-          "completed_at": "2026-01-29T09:44:23.708Z",
-          "assignedAgent": null
-        },
-        {
-          "id": "task-8",
-          "title": "Verify deployment works",
-          "status": "done",
-          "completed_at": "2026-01-29T09:44:30.879Z",
-          "assignedAgent": null
-        }
+        {"id": "task-1", "title": "Authorize 1Password CLI", "status": "done", "completed_at": "2026-01-29T08:41:00.000Z", "assignedAgent": null},
+        {"id": "task-2", "title": "Create Supabase project", "status": "done", "completed_at": "2026-01-29T08:45:00.000Z", "assignedAgent": null},
+        {"id": "task-3", "title": "Set up database schema", "status": "done", "completed_at": "2026-01-29T08:47:00.000Z", "assignedAgent": null},
+        {"id": "task-4", "title": "Save credentials to 1Password", "status": "done", "completed_at": "2026-01-29T08:48:00.000Z", "assignedAgent": null},
+        {"id": "task-5", "title": "Fix TypeScript import errors", "status": "done", "completed_at": "2026-01-29T08:50:00.000Z", "assignedAgent": null},
+        {"id": "task-6", "title": "Deploy to Vercel", "status": "done", "completed_at": "2026-01-29T09:15:00.000Z", "assignedAgent": null},
+        {"id": "task-7", "title": "Configure environment variables in Vercel", "status": "done", "completed_at": "2026-01-29T09:44:23.708Z", "assignedAgent": null},
+        {"id": "task-8", "title": "Verify deployment works", "status": "done", "completed_at": "2026-01-29T09:44:30.879Z", "assignedAgent": null}
       ]
     },
     {
@@ -141,41 +54,11 @@
       "updated_at": "2026-01-29T09:35:51.767Z",
       "assignedQueen": "main",
       "tasks": [
-        {
-          "id": "task-1",
-          "title": "Upgrade visual aesthetics (remove emojis)",
-          "status": "done",
-          "completed_at": "2026-01-29T08:58:00.000Z",
-          "assignedAgent": null
-        },
-        {
-          "id": "task-2",
-          "title": "Add search functionality",
-          "status": "done",
-          "completed_at": "2026-01-29T09:05:00.000Z",
-          "assignedAgent": null
-        },
-        {
-          "id": "task-3",
-          "title": "Add filter buttons",
-          "status": "done",
-          "completed_at": "2026-01-29T09:06:00.000Z",
-          "assignedAgent": null
-        },
-        {
-          "id": "task-4",
-          "title": "Refine card designs",
-          "status": "done",
-          "completed_at": "2026-01-29T09:10:00.000Z",
-          "assignedAgent": null
-        },
-        {
-          "id": "task-5",
-          "title": "Enhance empty states",
-          "status": "done",
-          "completed_at": "2026-01-29T09:35:51.766Z",
-          "assignedAgent": null
-        }
+        {"id": "task-1", "title": "Upgrade visual aesthetics (remove emojis)", "status": "done", "completed_at": "2026-01-29T08:58:00.000Z", "assignedAgent": null},
+        {"id": "task-2", "title": "Add search functionality", "status": "done", "completed_at": "2026-01-29T09:05:00.000Z", "assignedAgent": null},
+        {"id": "task-3", "title": "Add filter buttons", "status": "done", "completed_at": "2026-01-29T09:06:00.000Z", "assignedAgent": null},
+        {"id": "task-4", "title": "Refine card designs", "status": "done", "completed_at": "2026-01-29T09:10:00.000Z", "assignedAgent": null},
+        {"id": "task-5", "title": "Enhance empty states", "status": "done", "completed_at": "2026-01-29T09:35:51.766Z", "assignedAgent": null}
       ]
     },
     {
@@ -184,48 +67,17 @@
       "description": "Multi-agent task tracking, agent assignment visibility, and token-efficient coordination",
       "status": "in_progress",
       "priority": "high",
-      "progress": 60,
+      "progress": 20,
       "repo_url": "https://github.com/xadev12/kato-dashboard",
       "created_at": "2026-01-31T20:42:00.000Z",
-      "updated_at": "2026-02-02T04:10:34.167Z",
+      "updated_at": "2026-01-31T20:45:00.000Z",
       "assignedQueen": "main",
       "tasks": [
-        {
-          "id": "ko-1",
-          "title": "Create TASKS.md coordination hub",
-          "status": "done",
-          "completed_at": "2026-01-31T20:45:00Z",
-          "assignedAgent": "main"
-        },
-        {
-          "id": "ko-2",
-          "title": "Extend dashboard JSON schema with agent fields",
-          "status": "done",
-          "completed_at": "2026-01-31T20:46:00Z",
-          "assignedAgent": "main"
-        },
-        {
-          "id": "ko-3",
-          "title": "Create sync script TASKS.md → dashboard",
-          "status": "done",
-          "completed_at": "2026-02-02T04:10:34.167Z",
-          "assignedAgent": null,
-          "updated_at": "2026-02-02T04:10:34.167Z"
-        },
-        {
-          "id": "ko-4",
-          "title": "Add agent workload view to dashboard UI",
-          "status": "queued",
-          "completed_at": null,
-          "assignedAgent": "Frontend Specialist"
-        },
-        {
-          "id": "ko-5",
-          "title": "Document token efficiency patterns",
-          "status": "queued",
-          "completed_at": null,
-          "assignedAgent": null
-        }
+        {"id": "ko-1", "title": "Create TASKS.md coordination hub", "status": "done", "completed_at": "2026-01-31T20:45:00Z", "assignedAgent": "main"},
+        {"id": "ko-2", "title": "Extend dashboard JSON schema with agent fields", "status": "done", "completed_at": "2026-01-31T20:46:00Z", "assignedAgent": "main"},
+        {"id": "ko-3", "title": "Create sync script TASKS.md → dashboard", "status": "queued", "completed_at": null, "assignedAgent": null},
+        {"id": "ko-4", "title": "Add agent workload view to dashboard UI", "status": "queued", "completed_at": null, "assignedAgent": "Frontend Specialist"},
+        {"id": "ko-5", "title": "Document token efficiency patterns", "status": "queued", "completed_at": null, "assignedAgent": null}
       ]
     },
     {
@@ -240,262 +92,38 @@
       "updated_at": "2026-02-01T04:10:00.000Z",
       "assignedQueen": "main",
       "tasks": [
-        {
-          "id": "A1",
-          "title": "HealthKit permissions setup + entitlements",
-          "status": "done",
-          "completed_at": "2026-02-01T03:50:00.000Z",
-          "assignedAgent": "iOS Specialist",
-          "workstream": "HealthKit"
-        },
-        {
-          "id": "A2",
-          "title": "Bidirectional sync (read workouts, write metadata)",
-          "status": "done",
-          "completed_at": "2026-02-01T03:50:00.000Z",
-          "assignedAgent": "iOS Specialist",
-          "workstream": "HealthKit"
-        },
-        {
-          "id": "A3",
-          "title": "Background sync with HKObserverQuery",
-          "status": "done",
-          "completed_at": "2026-02-01T03:50:00.000Z",
-          "assignedAgent": "iOS Specialist",
-          "workstream": "HealthKit"
-        },
-        {
-          "id": "A4",
-          "title": "Workout type mapping (strength/run/sport)",
-          "status": "done",
-          "completed_at": "2026-02-01T03:50:00.000Z",
-          "assignedAgent": "iOS Specialist",
-          "workstream": "HealthKit"
-        },
-        {
-          "id": "B1",
-          "title": "Design system implementation (colors, typography, spacing)",
-          "status": "done",
-          "completed_at": "2026-02-01T03:45:00.000Z",
-          "assignedAgent": "Frontend Specialist",
-          "workstream": "Dashboard UI"
-        },
-        {
-          "id": "B2",
-          "title": "Activity cards with voice note indicators",
-          "status": "done",
-          "completed_at": "2026-02-01T03:45:00.000Z",
-          "assignedAgent": "Frontend Specialist",
-          "workstream": "Dashboard UI"
-        },
-        {
-          "id": "B3",
-          "title": "Weekly progress ring (3-segment: emerald/coral/violet)",
-          "status": "done",
-          "completed_at": "2026-02-01T03:45:00.000Z",
-          "assignedAgent": "Frontend Specialist",
-          "workstream": "Dashboard UI"
-        },
-        {
-          "id": "B4",
-          "title": "Pull-to-refresh + loading states",
-          "status": "done",
-          "completed_at": "2026-02-01T03:45:00.000Z",
-          "assignedAgent": "Frontend Specialist",
-          "workstream": "Dashboard UI"
-        },
-        {
-          "id": "C1",
-          "title": "Rule engine implementation (hardcoded rules)",
-          "status": "done",
-          "completed_at": "2026-02-01T03:50:00.000Z",
-          "assignedAgent": "Backend Specialist",
-          "workstream": "Smart Actionables"
-        },
-        {
-          "id": "C2",
-          "title": "Health metrics caching (sleep, HRV)",
-          "status": "done",
-          "completed_at": "2026-02-01T03:50:00.000Z",
-          "assignedAgent": "Backend Specialist",
-          "workstream": "Smart Actionables"
-        },
-        {
-          "id": "C3",
-          "title": "Actionable banner UI with dismiss",
-          "status": "done",
-          "completed_at": "2026-02-01T03:50:00.000Z",
-          "assignedAgent": "Backend Specialist",
-          "workstream": "Smart Actionables"
-        },
-        {
-          "id": "C4",
-          "title": "Was this helpful? feedback capture",
-          "status": "done",
-          "completed_at": "2026-02-01T03:50:00.000Z",
-          "assignedAgent": "Backend Specialist",
-          "workstream": "Smart Actionables"
-        },
-        {
-          "id": "D1",
-          "title": "AVFoundation recording setup",
-          "status": "done",
-          "completed_at": "2026-02-01T03:55:00.000Z",
-          "assignedAgent": "iOS Specialist",
-          "workstream": "Voice Notes"
-        },
-        {
-          "id": "D2",
-          "title": "Long-press gesture → modal → tap-to-record",
-          "status": "done",
-          "completed_at": "2026-02-01T03:55:00.000Z",
-          "assignedAgent": "iOS Specialist",
-          "workstream": "Voice Notes"
-        },
-        {
-          "id": "D3",
-          "title": "Waveform visualization",
-          "status": "done",
-          "completed_at": "2026-02-01T03:55:00.000Z",
-          "assignedAgent": "iOS Specialist",
-          "workstream": "Voice Notes"
-        },
-        {
-          "id": "D4",
-          "title": "Local storage + SwiftData integration",
-          "status": "done",
-          "completed_at": "2026-02-01T03:55:00.000Z",
-          "assignedAgent": "iOS Specialist",
-          "workstream": "Voice Notes"
-        },
-        {
-          "id": "E1",
-          "title": "Timer interface (start/stop)",
-          "status": "done",
-          "completed_at": "2026-02-01T03:55:00.000Z",
-          "assignedAgent": "iOS Specialist",
-          "workstream": "Team Sports"
-        },
-        {
-          "id": "E2",
-          "title": "RPE rating slider (1-10)",
-          "status": "done",
-          "completed_at": "2026-02-01T03:55:00.000Z",
-          "assignedAgent": "iOS Specialist",
-          "workstream": "Team Sports"
-        },
-        {
-          "id": "E3",
-          "title": "Auto-save to HealthKit",
-          "status": "done",
-          "completed_at": "2026-02-01T03:55:00.000Z",
-          "assignedAgent": "iOS Specialist",
-          "workstream": "Team Sports"
-        },
-        {
-          "id": "E4",
-          "title": "Background audio mode",
-          "status": "done",
-          "completed_at": "2026-02-01T03:55:00.000Z",
-          "assignedAgent": "iOS Specialist",
-          "workstream": "Team Sports"
-        },
-        {
-          "id": "F1",
-          "title": "3-screen onboarding flow",
-          "status": "done",
-          "completed_at": "2026-02-01T04:00:00.000Z",
-          "assignedAgent": "Frontend Specialist",
-          "workstream": "Polish"
-        },
-        {
-          "id": "F2",
-          "title": "Rich notifications (workout imported)",
-          "status": "done",
-          "completed_at": "2026-02-01T04:00:00.000Z",
-          "assignedAgent": "Frontend Specialist",
-          "workstream": "Polish"
-        },
-        {
-          "id": "F3",
-          "title": "PR/streak celebration animations",
-          "status": "done",
-          "completed_at": "2026-02-01T04:00:00.000Z",
-          "assignedAgent": "Frontend Specialist",
-          "workstream": "Polish"
-        },
-        {
-          "id": "F4",
-          "title": "App icons, launch screen",
-          "status": "done",
-          "completed_at": "2026-02-01T04:00:00.000Z",
-          "assignedAgent": "Frontend Specialist",
-          "workstream": "Polish"
-        },
-        {
-          "id": "G1",
-          "title": "StoreKit integration (monthly/yearly)",
-          "status": "done",
-          "completed_at": "2026-02-01T04:00:00.000Z",
-          "assignedAgent": "Business Specialist",
-          "workstream": "Move Plus"
-        },
-        {
-          "id": "G2",
-          "title": "Paywall screens",
-          "status": "done",
-          "completed_at": "2026-02-01T04:00:00.000Z",
-          "assignedAgent": "Business Specialist",
-          "workstream": "Move Plus"
-        },
-        {
-          "id": "G3",
-          "title": "Feature gating (30-day history, voice limits)",
-          "status": "done",
-          "completed_at": "2026-02-01T04:00:00.000Z",
-          "assignedAgent": "Business Specialist",
-          "workstream": "Move Plus"
-        },
-        {
-          "id": "G4",
-          "title": "Restore purchases",
-          "status": "done",
-          "completed_at": "2026-02-01T04:00:00.000Z",
-          "assignedAgent": "Business Specialist",
-          "workstream": "Move Plus"
-        },
-        {
-          "id": "H1",
-          "title": "Unit tests for rule engine",
-          "status": "done",
-          "completed_at": "2026-02-01T04:10:00.000Z",
-          "assignedAgent": "QA Specialist",
-          "workstream": "Testing"
-        },
-        {
-          "id": "H2",
-          "title": "HealthKit mocking framework",
-          "status": "done",
-          "completed_at": "2026-02-01T04:10:00.000Z",
-          "assignedAgent": "QA Specialist",
-          "workstream": "Testing"
-        },
-        {
-          "id": "H3",
-          "title": "UI tests for critical flows",
-          "status": "done",
-          "completed_at": "2026-02-01T04:10:00.000Z",
-          "assignedAgent": "QA Specialist",
-          "workstream": "Testing"
-        },
-        {
-          "id": "H4",
-          "title": "Device testing (iPhone + Apple Watch sync)",
-          "status": "done",
-          "completed_at": "2026-02-01T04:10:00.000Z",
-          "assignedAgent": "QA Specialist",
-          "workstream": "Testing"
-        }
+        {"id": "A1", "title": "HealthKit permissions setup + entitlements", "status": "done", "completed_at": "2026-02-01T03:50:00.000Z", "assignedAgent": "iOS Specialist", "workstream": "HealthKit"},
+        {"id": "A2", "title": "Bidirectional sync (read workouts, write metadata)", "status": "done", "completed_at": "2026-02-01T03:50:00.000Z", "assignedAgent": "iOS Specialist", "workstream": "HealthKit"},
+        {"id": "A3", "title": "Background sync with HKObserverQuery", "status": "done", "completed_at": "2026-02-01T03:50:00.000Z", "assignedAgent": "iOS Specialist", "workstream": "HealthKit"},
+        {"id": "A4", "title": "Workout type mapping (strength/run/sport)", "status": "done", "completed_at": "2026-02-01T03:50:00.000Z", "assignedAgent": "iOS Specialist", "workstream": "HealthKit"},
+        {"id": "B1", "title": "Design system implementation (colors, typography, spacing)", "status": "done", "completed_at": "2026-02-01T03:45:00.000Z", "assignedAgent": "Frontend Specialist", "workstream": "Dashboard UI"},
+        {"id": "B2", "title": "Activity cards with voice note indicators", "status": "done", "completed_at": "2026-02-01T03:45:00.000Z", "assignedAgent": "Frontend Specialist", "workstream": "Dashboard UI"},
+        {"id": "B3", "title": "Weekly progress ring (3-segment: emerald/coral/violet)", "status": "done", "completed_at": "2026-02-01T03:45:00.000Z", "assignedAgent": "Frontend Specialist", "workstream": "Dashboard UI"},
+        {"id": "B4", "title": "Pull-to-refresh + loading states", "status": "done", "completed_at": "2026-02-01T03:45:00.000Z", "assignedAgent": "Frontend Specialist", "workstream": "Dashboard UI"},
+        {"id": "C1", "title": "Rule engine implementation (hardcoded rules)", "status": "done", "completed_at": "2026-02-01T03:50:00.000Z", "assignedAgent": "Backend Specialist", "workstream": "Smart Actionables"},
+        {"id": "C2", "title": "Health metrics caching (sleep, HRV)", "status": "done", "completed_at": "2026-02-01T03:50:00.000Z", "assignedAgent": "Backend Specialist", "workstream": "Smart Actionables"},
+        {"id": "C3", "title": "Actionable banner UI with dismiss", "status": "done", "completed_at": "2026-02-01T03:50:00.000Z", "assignedAgent": "Backend Specialist", "workstream": "Smart Actionables"},
+        {"id": "C4", "title": "Was this helpful? feedback capture", "status": "done", "completed_at": "2026-02-01T03:50:00.000Z", "assignedAgent": "Backend Specialist", "workstream": "Smart Actionables"},
+        {"id": "D1", "title": "AVFoundation recording setup", "status": "done", "completed_at": "2026-02-01T03:55:00.000Z", "assignedAgent": "iOS Specialist", "workstream": "Voice Notes"},
+        {"id": "D2", "title": "Long-press gesture → modal → tap-to-record", "status": "done", "completed_at": "2026-02-01T03:55:00.000Z", "assignedAgent": "iOS Specialist", "workstream": "Voice Notes"},
+        {"id": "D3", "title": "Waveform visualization", "status": "done", "completed_at": "2026-02-01T03:55:00.000Z", "assignedAgent": "iOS Specialist", "workstream": "Voice Notes"},
+        {"id": "D4", "title": "Local storage + SwiftData integration", "status": "done", "completed_at": "2026-02-01T03:55:00.000Z", "assignedAgent": "iOS Specialist", "workstream": "Voice Notes"},
+        {"id": "E1", "title": "Timer interface (start/stop)", "status": "done", "completed_at": "2026-02-01T03:55:00.000Z", "assignedAgent": "iOS Specialist", "workstream": "Team Sports"},
+        {"id": "E2", "title": "RPE rating slider (1-10)", "status": "done", "completed_at": "2026-02-01T03:55:00.000Z", "assignedAgent": "iOS Specialist", "workstream": "Team Sports"},
+        {"id": "E3", "title": "Auto-save to HealthKit", "status": "done", "completed_at": "2026-02-01T03:55:00.000Z", "assignedAgent": "iOS Specialist", "workstream": "Team Sports"},
+        {"id": "E4", "title": "Background audio mode", "status": "done", "completed_at": "2026-02-01T03:55:00.000Z", "assignedAgent": "iOS Specialist", "workstream": "Team Sports"},
+        {"id": "F1", "title": "3-screen onboarding flow", "status": "done", "completed_at": "2026-02-01T04:00:00.000Z", "assignedAgent": "Frontend Specialist", "workstream": "Polish"},
+        {"id": "F2", "title": "Rich notifications (workout imported)", "status": "done", "completed_at": "2026-02-01T04:00:00.000Z", "assignedAgent": "Frontend Specialist", "workstream": "Polish"},
+        {"id": "F3", "title": "PR/streak celebration animations", "status": "done", "completed_at": "2026-02-01T04:00:00.000Z", "assignedAgent": "Frontend Specialist", "workstream": "Polish"},
+        {"id": "F4", "title": "App icons, launch screen", "status": "done", "completed_at": "2026-02-01T04:00:00.000Z", "assignedAgent": "Frontend Specialist", "workstream": "Polish"},
+        {"id": "G1", "title": "StoreKit integration (monthly/yearly)", "status": "done", "completed_at": "2026-02-01T04:00:00.000Z", "assignedAgent": "Business Specialist", "workstream": "Move Plus"},
+        {"id": "G2", "title": "Paywall screens", "status": "done", "completed_at": "2026-02-01T04:00:00.000Z", "assignedAgent": "Business Specialist", "workstream": "Move Plus"},
+        {"id": "G3", "title": "Feature gating (30-day history, voice limits)", "status": "done", "completed_at": "2026-02-01T04:00:00.000Z", "assignedAgent": "Business Specialist", "workstream": "Move Plus"},
+        {"id": "G4", "title": "Restore purchases", "status": "done", "completed_at": "2026-02-01T04:00:00.000Z", "assignedAgent": "Business Specialist", "workstream": "Move Plus"},
+        {"id": "H1", "title": "Unit tests for rule engine", "status": "done", "completed_at": "2026-02-01T04:10:00.000Z", "assignedAgent": "QA Specialist", "workstream": "Testing"},
+        {"id": "H2", "title": "HealthKit mocking framework", "status": "done", "completed_at": "2026-02-01T04:10:00.000Z", "assignedAgent": "QA Specialist", "workstream": "Testing"},
+        {"id": "H3", "title": "UI tests for critical flows", "status": "done", "completed_at": "2026-02-01T04:10:00.000Z", "assignedAgent": "QA Specialist", "workstream": "Testing"},
+        {"id": "H4", "title": "Device testing (iPhone + Apple Watch sync)", "status": "done", "completed_at": "2026-02-01T04:10:00.000Z", "assignedAgent": "QA Specialist", "workstream": "Testing"}
       ]
     }
   ],
