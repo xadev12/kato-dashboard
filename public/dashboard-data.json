@@ -1,15 +1,15 @@
 {
   "schemaVersion": "2.0",
-  "lastUpdated": "2026-02-03T08:30:00.000Z",
+  "lastUpdated": "2026-02-04T01:47:00.000Z",
   "agents": {
     "queens": [
       {"id": "main", "name": "Kato", "type": "queen", "status": "idle", "currentTask": null, "role": "AI Sentinel & Chief of Staff", "workspace": "/Users/devl/clawd", "skills": ["orchestration", "development", "workflow"]},
-      {"id": "product", "name": "Kenji", "type": "queen", "status": "idle", "currentTask": null, "role": "Product Owner", "workspace": "/Users/devl/clawd/agents/product", "skills": ["product-strategy", "user-research", "roadmap"]},
-      {"id": "devops", "name": "Yuki", "type": "queen", "status": "idle", "currentTask": null, "role": "DevOps Engineer", "workspace": "/Users/devl/clawd/agents/devops", "skills": ["deployments", "infrastructure", "monitoring"]},
+      {"id": "product", "name": "Kenji", "type": "queen", "status": "active", "currentTask": "MBTI iOS: Sprint coordination", "role": "Product Owner", "workspace": "/Users/devl/clawd/agents/product", "skills": ["product-strategy", "user-research", "roadmap"]},
+      {"id": "devops", "name": "Yuki", "type": "queen", "status": "active", "currentTask": "MBTI iOS: CI/CD + TestFlight pipeline", "role": "DevOps Engineer", "workspace": "/Users/devl/clawd/agents/devops", "skills": ["deployments", "infrastructure", "monitoring"]},
       {"id": "business", "name": "Koji", "type": "queen", "status": "idle", "currentTask": null, "role": "Business Strategist", "workspace": "/Users/devl/clawd/agents/business", "skills": ["metrics", "growth", "strategy"]},
       {"id": "brain", "name": "Sora", "type": "queen", "status": "idle", "currentTask": null, "role": "Second Brain Keeper", "workspace": "/Users/devl/clawd/agents/brain", "skills": ["obsidian", "knowledge-management", "IPO"]},
-      {"id": "frontend", "name": "Fel", "type": "queen", "status": "idle", "currentTask": null, "role": "Frontend Architect", "workspace": "/Users/devl/clawd/agents/fel", "skills": ["react", "typescript", "tailwind", "mobile", "pwa"], "stack": "React 19, Next.js 15, Tailwind v4"},
-      {"id": "backend", "name": "Bel", "type": "queen", "status": "idle", "currentTask": null, "role": "Backend Engineer", "workspace": "/Users/devl/clawd/agents/bel", "skills": ["postgresql", "supabase", "api-design", "security"], "stack": "PostgreSQL, Supabase, Node.js"},
+      {"id": "frontend", "name": "Fel", "type": "queen", "status": "active", "currentTask": "MBTI iOS: SwiftUI UI + screens", "role": "Frontend Architect", "workspace": "/Users/devl/clawd/agents/fel", "skills": ["react", "typescript", "tailwind", "mobile", "pwa"], "stack": "React 19, Next.js 15, Tailwind v4"},
+      {"id": "backend", "name": "Bel", "type": "queen", "status": "active", "currentTask": "MBTI iOS: MBTI engine + content", "role": "Backend Engineer", "workspace": "/Users/devl/clawd/agents/bel", "skills": ["postgresql", "supabase", "api-design", "security"], "stack": "PostgreSQL, Supabase, Node.js"},
       {"id": "karin", "name": "Karin", "type": "queen", "status": "idle", "currentTask": null, "role": "Personal Assistant", "workspace": "/Users/devl/clawd/agents/karin", "skills": ["task-tracking", "motivation", "reflection", "emotional-support"], "style": "Warm, friendly, comforting yet motivating"}
     ],
     "workers": {
@@ -90,6 +90,25 @@
       ]
     },
     {
+      "id": "mbti-horoscope-ios",
+      "name": "MBTI + Horoscope iOS App",
+      "description": "iOS app combining MBTI personality test with daily horoscope guidance. Situation-aware advice for breakups, work, dating.",
+      "status": "in_progress",
+      "priority": "high",
+      "progress": 5,
+      "repo_url": null,
+      "created_at": "2026-02-04T01:38:00.000Z",
+      "updated_at": "2026-02-04T01:47:00.000Z",
+      "assignedQueen": "main",
+      "tasks": [
+        {"id": "s1", "title": "GitHub repo + CI/CD pipeline", "status": "in_progress", "completed_at": null, "assignedAgent": "Yuki"},
+        {"id": "s2", "title": "SwiftUI onboarding + MBTI test UI", "status": "in_progress", "completed_at": null, "assignedAgent": "Fel"},
+        {"id": "s3", "title": "MBTI scoring engine (16 types)", "status": "in_progress", "completed_at": null, "assignedAgent": "Bel"},
+        {"id": "s4", "title": "Daily reading content system", "status": "queued", "completed_at": null, "assignedAgent": "Bel"},
+        {"id": "s5", "title": "TestFlight deployment", "status": "queued", "completed_at": null, "assignedAgent": "Yuki"}
+      ]
+    },
+    {
       "id": "move-ios",
       "name": "Move iOS — Hybrid Athlete Fitness App",
       "description": "Native iOS fitness dashboard for hybrid athletes. Apple Health sync, voice notes, smart actionables. Read-only, no manual logging.",
@@ -137,9 +156,9 @@
     }
   ],
   "meta": {
-    "totalProjects": 4,
+    "totalProjects": 5,
     "completedProjects": 2,
-    "inProgressProjects": 2,
+    "inProgressProjects": 3,
     "activeAgents": 0,
     "queuedWorkers": 0,
     "totalQueens": 8,
