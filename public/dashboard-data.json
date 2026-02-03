@@ -1,6 +1,6 @@
 {
   "schemaVersion": "2.0",
-  "lastUpdated": "2026-02-03T05:57:00.000Z",
+  "lastUpdated": "2026-02-03T08:30:00.000Z",
   "agents": {
     "queens": [
       {"id": "main", "name": "Kato", "type": "queen", "status": "idle", "currentTask": null, "role": "AI Sentinel & Chief of Staff", "workspace": "/Users/devl/clawd", "skills": ["orchestration", "development", "workflow"]},
@@ -9,7 +9,8 @@
       {"id": "business", "name": "Koji", "type": "queen", "status": "idle", "currentTask": null, "role": "Business Strategist", "workspace": "/Users/devl/clawd/agents/business", "skills": ["metrics", "growth", "strategy"]},
       {"id": "brain", "name": "Sora", "type": "queen", "status": "idle", "currentTask": null, "role": "Second Brain Keeper", "workspace": "/Users/devl/clawd/agents/brain", "skills": ["obsidian", "knowledge-management", "IPO"]},
       {"id": "frontend", "name": "Fel", "type": "queen", "status": "idle", "currentTask": null, "role": "Frontend Architect", "workspace": "/Users/devl/clawd/agents/fel", "skills": ["react", "typescript", "tailwind", "mobile", "pwa"], "stack": "React 19, Next.js 15, Tailwind v4"},
-      {"id": "backend", "name": "Bel", "type": "queen", "status": "idle", "currentTask": null, "role": "Backend Engineer", "workspace": "/Users/devl/clawd/agents/bel", "skills": ["postgresql", "supabase", "api-design", "security"], "stack": "PostgreSQL, Supabase, Node.js"}
+      {"id": "backend", "name": "Bel", "type": "queen", "status": "idle", "currentTask": null, "role": "Backend Engineer", "workspace": "/Users/devl/clawd/agents/bel", "skills": ["postgresql", "supabase", "api-design", "security"], "stack": "PostgreSQL, Supabase, Node.js"},
+      {"id": "karin", "name": "Karin", "type": "queen", "status": "idle", "currentTask": null, "role": "Personal Assistant", "workspace": "/Users/devl/clawd/agents/karin", "skills": ["task-tracking", "motivation", "reflection", "emotional-support"], "style": "Warm, friendly, comforting yet motivating"}
     ],
     "workers": {
       "specialists": [
@@ -141,8 +142,8 @@
     "inProgressProjects": 2,
     "activeAgents": 0,
     "queuedWorkers": 0,
-    "totalQueens": 7,
+    "totalQueens": 8,
     "totalWorkerSpecialists": 8,
-    "totalAgents": 15
+    "totalAgents": 16
   }
 }
