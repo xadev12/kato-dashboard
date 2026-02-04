@@ -39,36 +39,32 @@ const queenBorderColors: Record<string, string> = {
   pink: 'group-hover:border-pink-500/30 group-hover:shadow-pink-500/10'
 }
 
-// Mock recent activity data
+// Mock recent activity data - ACTIVE AGENTS ONLY
 const RECENT_ACTIVITY: Record<string, Array<{ task: string; time: string; status: 'completed' | 'in_progress' | 'failed' }>> = {
   main: [
     { task: 'Dashboard v3 redesign', time: '2h ago', status: 'in_progress' },
     { task: 'Pipeline optimization', time: '5h ago', status: 'completed' },
     { task: 'Memory system upgrade', time: '1d ago', status: 'completed' }
   ],
-  product: [
-    { task: 'Feature prioritization', time: '4h ago', status: 'completed' },
-    { task: 'User story review', time: '1d ago', status: 'completed' }
-  ],
-  devops: [
+  yuki: [
     { task: 'CI/CD pipeline fix', time: '6h ago', status: 'completed' },
     { task: 'Security audit', time: '2d ago', status: 'completed' }
   ],
-  business: [
+  koji: [
     { task: 'Market analysis', time: '1d ago', status: 'completed' },
     { task: 'Competitive research', time: '3d ago', status: 'completed' }
   ],
-  brain: [
+  sora: [
     { task: 'Knowledge base cleanup', time: '3h ago', status: 'in_progress' },
     { task: 'Note organization', time: '1d ago', status: 'completed' }
+  ],
+  karin: [
+    { task: 'Hourly check-in', time: '30m ago', status: 'completed' },
+    { task: 'Energy tracking', time: '1h ago', status: 'completed' }
   ]
 }
 
 export function AgentRoster() {
-  const [selectedAgent, setSelectedAgent] = useState<QueenAgent | null>(null)
-  const [spawnModalOpen, setSpawnModalOpen] = useState(false)
-  const [selectedSubAgent, setSelectedSubAgent] = useState<SubAgent | null>(null)
-  
   // Search and filter states
   const [searchQuery, setSearchQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState<'all' | AgentState>('all')
@@ -104,12 +100,6 @@ export function AgentRoster() {
       return matchesSearch && matchesStatus && matchesSkill
     })
   }, [searchQuery, statusFilter, skillFilter])
-
-  const handleSpawnClick = (agent: QueenAgent, subAgent: SubAgent) => {
-    setSelectedAgent(agent)
-    setSelectedSubAgent(subAgent)
-    setSpawnModalOpen(true)
-  }
 
   const toggleExpandAgent = (agentId: string) => {
     setExpandedAgent(expandedAgent === agentId ? null : agentId)
@@ -242,10 +232,9 @@ export function AgentRoster() {
       {viewMode === 'grid' ? (
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-5">
           {filteredAgents.map((agent) => (
-            <QueenAgentCard 
-              key={agent.id} 
-              agent={agent} 
-              onSpawnClick={handleSpawnClick}
+            <QueenAgentCard
+              key={agent.id}
+              agent={agent}
               isExpanded={expandedAgent === agent.id}
               onToggleExpand={() => toggleExpandAgent(agent.id)}
             />
@@ -289,14 +278,6 @@ export function AgentRoster() {
         </div>
       )}
 
-      {/* Spawn Modal */}
-      {spawnModalOpen && selectedAgent && selectedSubAgent && (
-        <SpawnModal
-          agent={selectedAgent}
-          subAgent={selectedSubAgent}
-          onClose={() => setSpawnModalOpen(false)}
-        />
-      )}
     </div>
   )
 }
@@ -334,14 +315,12 @@ function StatusCard({ label, value, total, color, icon }: {
 }
 
 // Queen Agent Card Component
-const QueenAgentCard = memo(function QueenAgentCard({ 
-  agent, 
-  onSpawnClick,
+const QueenAgentCard = memo(function QueenAgentCard({
+  agent,
   isExpanded,
   onToggleExpand
-}: { 
+}: {
   agent: QueenAgent
-  onSpawnClick: (agent: QueenAgent, subAgent: SubAgent) => void
   isExpanded: boolean
   onToggleExpand: () => void
 }) {
@@ -493,8 +472,7 @@ const QueenAgentCard = memo(function QueenAgentCard({
             {agent.subAgents.slice(0, isExpanded ? undefined : 3).map((subAgent) => (
               <SubAgentRow 
                 key={subAgent.id} 
-                subAgent={subAgent} 
-                onSpawn={() => onSpawnClick(agent, subAgent)}
+                subAgent={subAgent}
               />
             ))}
             {!isExpanded && agent.subAgents.length > 3 && (
@@ -510,10 +488,6 @@ const QueenAgentCard = memo(function QueenAgentCard({
 
         {/* Quick Actions */}
         <div className="flex items-center gap-2 mt-4 pt-4 border-t border-white/[0.06]">
-          <button className="flex-1 px-3 py-2 rounded-lg bg-white/[0.05] hover:bg-white/[0.08] text-gray-300 text-xs font-medium transition-colors flex items-center justify-center gap-1.5">
-            <MessageIcon className="w-3.5 h-3.5" />
-            Message
-          </button>
           <button className="flex-1 px-3 py-2 rounded-lg bg-white/[0.05] hover:bg-white/[0.08] text-gray-300 text-xs font-medium transition-colors flex items-center justify-center gap-1.5">
             <MemoryIcon className="w-3.5 h-3.5" />
             Memory
@@ -565,23 +539,15 @@ function QueenAgentListRow({
           {agent.subAgents.length} sub-agents
         </span>
       </div>
-      
-      <div className="flex items-center gap-2">
-        <button className="px-3 py-1.5 rounded-lg bg-violet-600/80 hover:bg-violet-600 text-white text-xs font-medium transition-colors">
-          Spawn
-        </button>
-      </div>
     </div>
   )
 }
 
 // Sub-Agent Row Component
 const SubAgentRow = memo(function SubAgentRow({ 
-  subAgent, 
-  onSpawn 
+  subAgent
 }: { 
   subAgent: SubAgent
-  onSpawn: () => void 
 }) {
   const status = statusConfig[subAgent.status]
 
@@ -599,102 +565,9 @@ const SubAgentRow = memo(function SubAgentRow({
         <div className="text-xs text-violet-400 font-medium">{subAgent.spawnCost >= 1000 ? `${(subAgent.spawnCost / 1000).toFixed(0)}k` : subAgent.spawnCost}</div>
         <div className="text-[10px] text-gray-500">tokens</div>
       </div>
-      <button 
-        onClick={onSpawn}
-        className="px-3 py-1.5 rounded-md bg-violet-600/80 hover:bg-violet-600 text-white text-xs font-medium transition-all duration-150 hover:shadow-md"
-      >
-        Spawn
-      </button>
     </div>
   )
 })
-
-// Spawn Modal Component
-function SpawnModal({ 
-  agent, 
-  subAgent, 
-  onClose 
-}: { 
-  agent: QueenAgent
-  subAgent: SubAgent
-  onClose: () => void 
-}) {
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={onClose}>
-      <div 
-        className="relative w-full max-w-md rounded-2xl border border-white/[0.1] bg-[#111111] p-6 shadow-2xl animate-fade-in"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Close button */}
-        <button 
-          onClick={onClose}
-          className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-lg bg-white/[0.05] text-gray-400 hover:text-white transition-colors"
-        >
-          <CloseIcon className="w-5 h-5" />
-        </button>
-
-        {/* Header */}
-        <div className="flex items-center gap-4 mb-6">
-          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-violet-500/10 text-xl font-semibold text-violet-300 border border-violet-500/20">
-            {subAgent.name.charAt(0)}
-          </div>
-          <div>
-            <h3 className="text-xl font-bold text-white">Spawn {subAgent.name}</h3>
-            <p className="text-sm text-gray-400">Deploy a new specialist instance</p>
-          </div>
-        </div>
-
-        {/* Details */}
-        <div className="space-y-4 mb-6">
-          <div className="p-4 bg-white/[0.03] rounded-xl border border-white/[0.06]">
-            <div className="text-xs text-gray-500 uppercase tracking-wider mb-1">Specialty</div>
-            <div className="text-sm text-gray-200">{subAgent.specialty}</div>
-          </div>
-          
-          <div className="p-4 bg-white/[0.03] rounded-xl border border-white/[0.06]">
-            <div className="text-xs text-gray-500 uppercase tracking-wider mb-1">Description</div>
-            <div className="text-sm text-gray-200">{subAgent.description}</div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div className="p-4 bg-violet-500/10 rounded-xl border border-violet-500/20">
-              <div className="text-xs text-violet-400 uppercase tracking-wider mb-1">Spawn Cost</div>
-              <div className="text-xl font-bold text-violet-300">{subAgent.spawnCost.toLocaleString()} tokens</div>
-            </div>
-            <div className="p-4 bg-emerald-500/10 rounded-xl border border-emerald-500/20">
-              <div className="text-xs text-emerald-400 uppercase tracking-wider mb-1">Times Spawned</div>
-              <div className="text-xl font-bold text-emerald-300">{subAgent.spawnedCount}</div>
-            </div>
-          </div>
-
-          <div className="p-4 bg-white/[0.03] rounded-xl border border-white/[0.06]">
-            <div className="text-xs text-gray-500 uppercase tracking-wider mb-1">Parent Agent</div>
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-medium text-gray-400 w-6">{agent.name.charAt(0)}</span>
-              <span className="text-sm text-gray-200">{agent.name}</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Actions */}
-        <div className="flex gap-3">
-          <button 
-            onClick={onClose}
-            className="flex-1 px-4 py-2.5 rounded-lg bg-white/[0.05] text-gray-300 font-medium hover:bg-white/[0.1] transition-colors"
-          >
-            Cancel
-          </button>
-          <button 
-            onClick={onClose}
-            className="flex-1 px-4 py-2.5 rounded-lg bg-violet-600 text-white font-medium hover:bg-violet-500 transition-colors shadow-lg shadow-violet-500/20"
-          >
-            Spawn Agent
-          </button>
-        </div>
-      </div>
-    </div>
-  )
-}
 
 // Icon Components
 function SearchIcon({ className }: { className?: string }) {
@@ -790,14 +663,6 @@ function ContextIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
-    </svg>
-  )
-}
-
-function MessageIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
     </svg>
   )
 }

@@ -1,4 +1,4 @@
-import { memo, useMemo, useState } from 'react'
+import { memo, useMemo, useState, useCallback } from 'react'
 import { useProjects, useAgents, useDashboardMeta, useActions } from '../hooks/useProjects'
 import { ProjectCard } from '../components/ProjectCard'
 import { AgentFilterPanel } from '../components/AgentFilterPanel'
@@ -11,10 +11,10 @@ import type { QueenType, Task } from '../types'
 type FilterType = 'all' | 'in_progress' | 'done' | 'not_started'
 
 export function AgentDashboard() {
-  const { projects, loading: projectsLoading } = useProjects()
-  const { queens, workers, loading: agentsLoading } = useAgents()
-  const { meta, lastUpdated, loading: metaLoading } = useDashboardMeta()
-  const { pending: pendingActions, loading: actionsLoading } = useActions()
+  const { projects, loading: projectsLoading, refresh: refreshProjects } = useProjects()
+  const { queens, workers, loading: agentsLoading, refresh: refreshAgents } = useAgents()
+  const { meta, lastUpdated, loading: metaLoading, refresh: refreshMeta } = useDashboardMeta()
+  const { pending: pendingActions, loading: actionsLoading, refresh: refreshActions } = useActions()
   
   const [searchQuery, setSearchQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState<FilterType>('all')
@@ -96,6 +96,16 @@ export function AgentDashboard() {
   // Active queen agents count
   const activeQueens = queens.filter(q => q.status === 'active').length
   const activeSubAgents = queens.flatMap(q => q.subAgents || []).filter(s => s.status === 'active').length
+
+  // Refresh all data
+  const handleRefresh = useCallback(async () => {
+    await Promise.all([
+      refreshProjects(),
+      refreshAgents(),
+      refreshMeta(),
+      refreshActions()
+    ])
+  }, [refreshProjects, refreshAgents, refreshMeta, refreshActions])
 
   return (
     <div className="space-y-8 animate-fade-in pb-8">
@@ -191,11 +201,9 @@ export function AgentDashboard() {
 
         {/* Worker Queue & User Actions */}
         <div className="space-y-6">
-          <UserActionsPanel 
-            agents={queens}
-            onSpawnSpecialist={(spec) => console.log('Spawn:', spec)}
-            onMessageAgent={(agent) => console.log('Message:', agent)}
+          <UserActionsPanel
             onCreateTask={() => console.log('Create task')}
+            onRefresh={handleRefresh}
           />
           
           <WorkerQueuePanel workers={workers} />

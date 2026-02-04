@@ -12,12 +12,25 @@ const priorityDot: Record<string, string> = {
   low: 'bg-gray-500',
 }
 
+function formatDateTime(dateString: string | null | undefined): string {
+  if (!dateString) return '-'
+  const date = new Date(dateString)
+  return date.toLocaleString([], {
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  })
+}
+
 export function TaskCard({ task, onStatusChange }: Props) {
   const nextStatus: Record<Task['status'], Task['status']> = {
     queued: 'in_progress',
     in_progress: 'done',
     done: 'queued',
   }
+
+  const timestamp = task.completed_at || task.created_at || null
 
   return (
     <div
@@ -36,6 +49,11 @@ export function TaskCard({ task, onStatusChange }: Props) {
           {task.assigned_to && (
             <p className="text-xs text-gray-600 mt-1">
               → {task.assigned_to}
+            </p>
+          )}
+          {timestamp && (
+            <p className="text-[10px] text-gray-500 mt-1">
+              {formatDateTime(timestamp)}
             </p>
           )}
         </div>

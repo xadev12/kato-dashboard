@@ -38,11 +38,11 @@ const statusConfig = {
 }
 
 const queenLabels: Record<string, string> = {
-  main: 'Main',
-  product: 'Product',
-  devops: 'DevOps',
-  business: 'Business',
-  brain: 'Brain'
+  main: 'Kato',
+  yuki: 'Yuki',
+  koji: 'Koji',
+  sora: 'Sora',
+  karin: 'Karin'
 }
 
 // Calculate project velocity (tasks per day)
@@ -84,7 +84,12 @@ function formatTime(hours: number | undefined): string {
 function formatDate(dateString: string | null): string {
   if (!dateString) return '-'
   const date = new Date(dateString)
-  return date.toLocaleDateString([], { month: 'short', day: 'numeric' })
+  return date.toLocaleString([], { 
+    month: 'short', 
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  })
 }
 
 // Task item component
@@ -220,6 +225,13 @@ export const ProjectCard = memo(function ProjectCard({ project }: Props) {
                 <TaskItem key={task.id} task={task} />
               ))}
             </div>
+          </div>
+        )}
+
+        {/* Updated timestamp */}
+        {project.updated_at && (
+          <div className="mt-3 text-[10px] text-gray-500">
+            Updated {formatDate(project.updated_at)}
           </div>
         )}
         
