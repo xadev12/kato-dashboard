@@ -1067,14 +1067,128 @@ const wss = new WebSocketServer({ server, path: '/ws' })
 
 const clients = new Set<any>()
 
+// Track client subscriptions
+const clientSubscriptions = new Map<any, Set<string>>()
+
+// Get current token stats for broadcasting
+function getCurrentTokenStats() {
+  const today = new Date().toISOString().split('T')[0]
+  const monthStart = new Date().toISOString().slice(0, 7) + '-01'
+  
+  // Today's stats
+  const todayStats = db.prepare(`
+    SELECT 
+      SUM(tokens_used) as tokens_used,
+      SUM(cost) as cost,
+      SUM(session_count) as sessions
+    FROM tokens
+    WHERE date = ?
+  `).get(today) as { tokens_used: number; cost: number; sessions: number }
+  
+  // Monthly stats
+  const monthlyStats = db.prepare(`
+    SELECT 
+      SUM(tokens_used) as tokens_used,
+      SUM(cost) as cost
+    FROM tokens
+    WHERE date >= ?
+  `).get(monthStart) as { tokens_used: number; cost: number }
+  
+  // Model breakdown
+  const modelBreakdown = db.prepare(`
+    SELECT 
+      model as modelId,
+      model as modelName,
+      SUM(tokens_used) as tokensUsed,
+      SUM(cost) as cost,
+      SUM(session_count) as requests
+    FROM tokens
+    WHERE date = ? AND model IS NOT NULL
+    GROUP BY model
+  `).all(today)
+  
+  // Agent breakdown  
+  const agentBreakdown = db.prepare(`
+    SELECT 
+      agent_id as agentId,
+      agent_id as agentName,
+      SUM(tokens_used) as tokensUsed,
+      SUM(cost) as cost,
+      SUM(session_count) as requests
+    FROM tokens
+    WHERE date = ?
+    GROUP BY agent_id
+  `).all(today)
+  
+  const totalTokens = todayStats?.tokens_used || 0
+  const totalCost = todayStats?.cost || 0
+  
+  return {
+    period: 'today',
+    generatedAt: new Date().toISOString(),
+    totalTokensUsed: totalTokens,
+    totalCost,
+    totalRequests: todayStats?.sessions || 0,
+    avgTokensPerRequest: todayStats?.sessions ? Math.round(totalTokens / todayStats.sessions) : 0,
+    tokenWastePercent: 0,
+    parallelizationEfficiency: 85,
+    today: {
+      tokensUsed: totalTokens,
+      cost: totalCost,
+      requests: todayStats?.sessions || 0,
+      sessions: todayStats?.sessions || 0
+    },
+    monthly: {
+      limit: 1000000,
+      used: monthlyStats?.tokens_used || 0,
+      remaining: 1000000 - (monthlyStats?.tokens_used || 0),
+      projected: Math.round((monthlyStats?.tokens_used || 0) * 1.2)
+    },
+    modelBreakdown: (modelBreakdown || []).map((m: any) => ({
+      ...m,
+      percentage: totalTokens > 0 ? ((m.tokensUsed / totalTokens) * 100).toFixed(1) : '0.0'
+    })),
+    agentBreakdown: (agentBreakdown || []).map((a: any) => ({
+      ...a,
+      avgTokensPerRequest: a.requests ? Math.round(a.tokensUsed / a.requests) : 0,
+      successRate: 94
+    }))
+  }
+}
+
 wss.on('connection', (ws) => {
   console.log('[WebSocket] Client connected')
   clients.add(ws)
+  clientSubscriptions.set(ws, new Set())
   
   ws.on('message', (message) => {
     try {
       const data = JSON.parse(message.toString())
       console.log('[WebSocket] Received:', data)
+      
+      // Handle subscription requests
+      if (data.action === 'subscribe' && data.channel) {
+        const subs = clientSubscriptions.get(ws)
+        if (subs) {
+          subs.add(data.channel)
+          console.log(`[WebSocket] Client subscribed to: ${data.channel}`)
+          
+          // Send initial data for the channel
+          if (data.channel === 'tokenStats') {
+            ws.send(JSON.stringify({
+              type: 'tokenStats',
+              data: getCurrentTokenStats()
+            }))
+          }
+        }
+      }
+      
+      if (data.action === 'unsubscribe' && data.channel) {
+        const subs = clientSubscriptions.get(ws)
+        if (subs) {
+          subs.delete(data.channel)
+        }
+      }
     } catch (e) {
       // Ignore non-JSON messages
     }
@@ -1083,11 +1197,28 @@ wss.on('connection', (ws) => {
   ws.on('close', () => {
     console.log('[WebSocket] Client disconnected')
     clients.delete(ws)
+    clientSubscriptions.delete(ws)
   })
   
   // Send initial connection confirmation
   ws.send(JSON.stringify({ type: 'connected', timestamp: new Date().toISOString() }))
 })
+
+// Broadcast token stats every 5 seconds to subscribed clients
+setInterval(() => {
+  const stats = getCurrentTokenStats()
+  const message = JSON.stringify({
+    type: 'tokenStats',
+    data: stats
+  })
+  
+  clients.forEach((client) => {
+    const subs = clientSubscriptions.get(client)
+    if (client.readyState === 1 && subs?.has('tokenStats')) {
+      client.send(message)
+    }
+  })
+}, 5000)
 
 function broadcastUpdate(data: any) {
   const message = JSON.stringify(data)
