@@ -1,7 +1,7 @@
 export type ProjectStatus = 'not_started' | 'in_progress' | 'done'
 export type TaskStatus = 'queued' | 'in_progress' | 'done'
 export type AgentState = 'idle' | 'active' | 'blocked'
-export type QueenType = 'main' | 'product' | 'devops' | 'business' | 'brain'
+export type QueenType = 'main' | 'yuki' | 'koji' | 'sora' | 'karin'
 export type ActionType = 'project_created' | 'task_created' | 'task_updated' | 'status_changed' | 'agent_action' | 'deploy' | 'commit'
 
 export interface Project {
@@ -287,94 +287,95 @@ export interface AgentMemory {
   lastSynced: string
 }
 
-// All agents data for roster view
+// All agents data for roster view - ACTIVE QUEEN AGENTS ONLY
+// Archived: Kenji (product), Fel (frontend), Bel (backend)
 export const ALL_QUEEN_AGENTS: QueenAgent[] = [
   {
     id: 'main',
     name: 'Kato',
     type: 'queen',
     status: 'active',
-    currentTask: 'Optimizing Kato Dashboard v3',
-    taskStartedAt: '2026-02-03T02:15:00Z',
-    emoji: '',
-    skills: ['System Coordination', 'Task Routing', 'Context Management', 'Performance Optimization'],
-    description: 'Primary coordinator. Routes tasks, manages context, and optimizes system-wide performance.',
+    currentTask: 'Dashboard v3 overhaul & orchestration',
+    taskStartedAt: '2026-02-04T05:00:00Z',
+    emoji: '🤖',
+    skills: ['System Coordination', 'Pipeline Orchestration', 'Multi-Agent Management', 'Strategic Decision Making'],
+    description: 'AI Sentinel & Chief of Staff. Orchestrates the multi-agent system, manages pipeline progression, and makes strategic decisions.',
     color: 'violet',
     subAgents: [
-      { id: 'frontend', name: 'Frontend Specialist', emoji: '', specialty: 'React/TypeScript UI Development', description: 'UI/UX implementation with modern frameworks', status: 'active', spawnCost: 15000, spawnedCount: 15, currentTask: 'Dashboard v3 Rebuild' },
-      { id: 'backend', name: 'Backend Specialist', emoji: '', specialty: 'API & Database Design', description: 'Server-side logic and data architecture', status: 'idle', spawnCost: 15000, spawnedCount: 9 },
-      { id: 'fullstack', name: 'Full Stack Dev', emoji: '', specialty: 'End-to-End Development', description: 'Complete feature implementation', status: 'idle', spawnCost: 25000, spawnedCount: 6 }
+      { id: 'frontend', name: 'Frontend Specialist', emoji: '🎨', specialty: 'React/TypeScript UI Development', description: 'UI/UX implementation with modern frameworks', status: 'active', spawnCost: 15000, spawnedCount: 15, currentTask: 'Dashboard v3 Rebuild' },
+      { id: 'backend', name: 'Backend Specialist', emoji: '⚙️', specialty: 'API & Database Design', description: 'Server-side logic and data architecture', status: 'idle', spawnCost: 15000, spawnedCount: 9 },
+      { id: 'fullstack', name: 'Full Stack Dev', emoji: '🏗️', specialty: 'End-to-End Development', description: 'Complete feature implementation', status: 'idle', spawnCost: 25000, spawnedCount: 6 }
     ],
     stats: { tasksCompleted: 187, successRate: 94, currentStreak: 12, weeklyVelocity: 15 },
-    memoryStats: { totalEntries: 567, lastUpdated: '2026-02-03T02:10:00Z', activeContexts: 6 }
+    memoryStats: { totalEntries: 567, lastUpdated: '2026-02-04T13:00:00Z', activeContexts: 6 }
   },
   {
-    id: 'product',
-    name: 'Product Owner',
+    id: 'yuki',
+    name: 'Yuki',
     type: 'queen',
     status: 'idle',
     currentTask: null,
-    emoji: '',
-    skills: ['Requirements Analysis', 'User Stories', 'Roadmap Planning', 'Stakeholder Communication'],
-    description: 'Product vision and requirements. Defines what to build and why.',
-    color: 'amber',
-    subAgents: [
-      { id: 'ux-researcher', name: 'UX Researcher', emoji: '', specialty: 'User Research & Testing', description: 'Gather and analyze user feedback', status: 'idle', spawnCost: 12000, spawnedCount: 7 },
-      { id: 'spec-writer', name: 'Spec Writer', emoji: '', specialty: 'Technical Specifications', description: 'Detailed feature specifications', status: 'idle', spawnCost: 10000, spawnedCount: 11 }
-    ],
-    stats: { tasksCompleted: 95, successRate: 91, currentStreak: 4, weeklyVelocity: 8 },
-    memoryStats: { totalEntries: 215, lastUpdated: '2026-02-02T18:00:00Z', activeContexts: 3 }
-  },
-  {
-    id: 'devops',
-    name: 'DevOps Engineer',
-    type: 'queen',
-    status: 'idle',
-    currentTask: null,
-    emoji: '',
-    skills: ['CI/CD Pipelines', 'Infrastructure as Code', 'Monitoring', 'Security Hardening'],
-    description: 'Infrastructure and deployment automation. Keeps systems running smoothly.',
+    emoji: '🚀',
+    skills: ['CI/CD Pipelines', 'Infrastructure as Code', 'Product-Technical Review', 'Security Hardening'],
+    description: 'DevOps Engineer + Product-Technical Reviewer. Bridges technical feasibility with product value. Challenges scope and validates MVP.',
     color: 'emerald',
     subAgents: [
-      { id: 'sre', name: 'SRE Specialist', emoji: '', specialty: 'Site Reliability Engineering', description: 'System reliability and uptime', status: 'idle', spawnCost: 18000, spawnedCount: 5 },
-      { id: 'security', name: 'Security Auditor', emoji: '', specialty: 'Security Reviews', description: 'Security assessment and hardening', status: 'idle', spawnCost: 15000, spawnedCount: 4 }
+      { id: 'sre', name: 'SRE Specialist', emoji: '🔧', specialty: 'Site Reliability Engineering', description: 'System reliability and uptime', status: 'idle', spawnCost: 18000, spawnedCount: 5 },
+      { id: 'security', name: 'Security Auditor', emoji: '🔒', specialty: 'Security Reviews', description: 'Security assessment and hardening', status: 'idle', spawnCost: 15000, spawnedCount: 4 }
     ],
     stats: { tasksCompleted: 72, successRate: 97, currentStreak: 15, weeklyVelocity: 6 },
-    memoryStats: { totalEntries: 158, lastUpdated: '2026-02-02T14:30:00Z', activeContexts: 2 }
+    memoryStats: { totalEntries: 158, lastUpdated: '2026-02-04T12:55:00Z', activeContexts: 2 }
   },
   {
-    id: 'business',
-    name: 'Business Strategist',
+    id: 'koji',
+    name: 'Koji',
     type: 'queen',
     status: 'idle',
     currentTask: null,
-    emoji: '',
+    emoji: '📈',
     skills: ['Market Analysis', 'Competitive Research', 'Business Modeling', 'Growth Strategy'],
-    description: 'Business strategy and market analysis. Identifies opportunities and risks.',
+    description: 'Business Strategist. Tracks metrics, designs growth experiments, and provides data-driven business insights.',
     color: 'blue',
     subAgents: [
-      { id: 'market-analyst', name: 'Market Analyst', emoji: '', specialty: 'Market Research', description: 'Competitive and market analysis', status: 'idle', spawnCost: 14000, spawnedCount: 6 },
-      { id: 'pricing', name: 'Pricing Specialist', emoji: '', specialty: 'Pricing Strategy', description: 'Pricing model optimization', status: 'idle', spawnCost: 13000, spawnedCount: 3 }
+      { id: 'market-analyst', name: 'Market Analyst', emoji: '📊', specialty: 'Market Research', description: 'Competitive and market analysis', status: 'idle', spawnCost: 14000, spawnedCount: 6 },
+      { id: 'pricing', name: 'Pricing Specialist', emoji: '💰', specialty: 'Pricing Strategy', description: 'Pricing model optimization', status: 'idle', spawnCost: 13000, spawnedCount: 3 }
     ],
     stats: { tasksCompleted: 48, successRate: 88, currentStreak: 2, weeklyVelocity: 4 },
-    memoryStats: { totalEntries: 125, lastUpdated: '2026-02-01T16:20:00Z', activeContexts: 2 }
+    memoryStats: { totalEntries: 125, lastUpdated: '2026-02-03T16:20:00Z', activeContexts: 2 }
   },
   {
-    id: 'brain',
-    name: 'Second Brain Keeper',
+    id: 'sora',
+    name: 'Sora',
     type: 'queen',
     status: 'idle',
     currentTask: null,
-    emoji: '',
-    skills: ['Knowledge Management', 'Documentation', 'Pattern Recognition', 'Insight Synthesis'],
-    description: 'Memory and knowledge management. Maintains system context and learns from patterns.',
+    emoji: '🧠',
+    skills: ['Knowledge Management', 'Obsidian Vault', 'IPO Methodology', 'Documentation'],
+    description: 'Second Brain Keeper. Manages the Obsidian vault using IPO methodology. Processes inputs and maintains knowledge base.',
     color: 'pink',
     subAgents: [
-      { id: 'archivist', name: 'Knowledge Archivist', emoji: '', specialty: 'Documentation & Notes', description: 'Organize and maintain knowledge base', status: 'idle', spawnCost: 8000, spawnedCount: 9 },
-      { id: 'qa', name: 'QA Specialist', emoji: '', specialty: 'Quality Assurance', description: 'Testing and quality validation', status: 'idle', spawnCost: 12000, spawnedCount: 13 },
-      { id: 'ios', name: 'iOS Specialist', emoji: '', specialty: 'iOS Development', description: 'Swift/SwiftUI app development', status: 'idle', spawnCost: 20000, spawnedCount: 5 }
+      { id: 'archivist', name: 'Knowledge Archivist', emoji: '📚', specialty: 'Documentation & Notes', description: 'Organize and maintain knowledge base', status: 'idle', spawnCost: 8000, spawnedCount: 9 },
+      { id: 'qa', name: 'QA Specialist', emoji: '✅', specialty: 'Quality Assurance', description: 'Testing and quality validation', status: 'idle', spawnCost: 12000, spawnedCount: 13 },
+      { id: 'ios', name: 'iOS Specialist', emoji: '📱', specialty: 'iOS Development', description: 'Swift/SwiftUI app development', status: 'idle', spawnCost: 20000, spawnedCount: 5 }
     ],
     stats: { tasksCompleted: 134, successRate: 95, currentStreak: 11, weeklyVelocity: 11 },
-    memoryStats: { totalEntries: 892, lastUpdated: '2026-02-03T00:00:00Z', activeContexts: 8 }
+    memoryStats: { totalEntries: 892, lastUpdated: '2026-02-04T08:00:00Z', activeContexts: 8 }
+  },
+  {
+    id: 'karin',
+    name: 'Karin',
+    type: 'queen',
+    status: 'idle',
+    currentTask: null,
+    emoji: '💐',
+    skills: ['Task Tracking', 'Motivation', 'Emotional Support', 'Daily Check-ins'],
+    description: 'Personal Assistant. Warm, friendly, and motivating. Tracks daily tasks, provides emotional support, and helps with hourly check-ins.',
+    color: 'amber',
+    subAgents: [
+      { id: 'mood-tracker', name: 'Mood Tracker', emoji: '😊', specialty: 'Energy & Mood Tracking', description: 'Track daily energy and mood patterns', status: 'idle', spawnCost: 5000, spawnedCount: 3 },
+      { id: 'reminder', name: 'Reminder Bot', emoji: '⏰', specialty: 'Reminders & Alerts', description: 'Smart reminders for tasks and habits', status: 'idle', spawnCost: 4000, spawnedCount: 8 }
+    ],
+    stats: { tasksCompleted: 56, successRate: 92, currentStreak: 7, weeklyVelocity: 9 },
+    memoryStats: { totalEntries: 78, lastUpdated: '2026-02-04T10:00:00Z', activeContexts: 3 }
   }
 ]
