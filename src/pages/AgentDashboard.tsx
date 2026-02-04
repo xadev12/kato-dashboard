@@ -1,7 +1,8 @@
 import { memo, useMemo, useState } from 'react'
 import { useProjects, useAgents, useDashboardMeta, useActions } from '../hooks/useProjects'
 import { ProjectCard } from '../components/ProjectCard'
-import { AgentStatusCard } from '../components/AgentStatusCard'
+import { AgentFilterPanel } from '../components/AgentFilterPanel'
+import { UserActionsPanel } from '../components/UserActionsPanel'
 import { WorkerQueuePanel } from '../components/WorkerQueuePanel'
 import { GlobalStatsPanel } from '../components/GlobalStatsPanel'
 import { SearchBar } from '../components/SearchBar'
@@ -188,8 +189,15 @@ export function AgentDashboard() {
           )}
         </div>
 
-        {/* Worker Queue & Agent Status */}
+        {/* Worker Queue & User Actions */}
         <div className="space-y-6">
+          <UserActionsPanel 
+            agents={queens}
+            onSpawnSpecialist={(spec) => console.log('Spawn:', spec)}
+            onMessageAgent={(agent) => console.log('Message:', agent)}
+            onCreateTask={() => console.log('Create task')}
+          />
+          
           <WorkerQueuePanel workers={workers} />
           
           {/* Quick Stats */}
@@ -223,22 +231,9 @@ export function AgentDashboard() {
         </div>
       </div>
 
-      {/* Agent Status Section */}
+      {/* Agent Status Section with Filters */}
       <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-white flex items-center gap-2">
-            Queen Agents
-            <span className="text-sm font-normal text-gray-500">
-              ({queens.filter(q => q.status === 'active').length} active)
-            </span>
-          </h2>
-        </div>
-        
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-          {queens.map(agent => (
-            <AgentStatusCard key={agent.id} agent={agent} />
-          ))}
-        </div>
+        <AgentFilterPanel agents={queens} />
       </div>
 
       {/* Projects Section */}

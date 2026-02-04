@@ -68,11 +68,21 @@ const queenColors: Record<string, { gradient: string; glow: string; text: string
   }
 }
 
+// Calculate active task count for an agent
+function getAgentTaskCount(agent: QueenAgent): number {
+  let count = agent.currentTask ? 1 : 0
+  if (agent.subAgents) {
+    count += agent.subAgents.filter(sa => sa.currentTask).length
+  }
+  return count
+}
+
 export const AgentStatusCard = memo(function AgentStatusCard({ agent }: Props) {
   const status = statusConfig[agent.status]
   const initial = queenInitials[agent.id] || 'A'
   const colors = queenColors[agent.id] || queenColors.main
   const stats = agent.stats
+  const taskCount = getAgentTaskCount(agent)
 
   // Calculate time active if there's a task
   const timeActive = agent.taskStartedAt 
@@ -92,7 +102,14 @@ export const AgentStatusCard = memo(function AgentStatusCard({ agent }: Props) {
               {initial}
             </div>
             <div>
-              <h3 className="font-semibold text-white text-sm">{agent.name}</h3>
+              <div className="flex items-center gap-2">
+                <h3 className="font-semibold text-white text-sm">{agent.name}</h3>
+                {taskCount > 0 && (
+                  <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${status.bg} ${status.color} border ${status.border}`}>
+                    {taskCount} task{taskCount > 1 ? 's' : ''}
+                  </span>
+                )}
+              </div>
               <span className="text-xs text-gray-500 capitalize">{agent.id}</span>
             </div>
           </div>
