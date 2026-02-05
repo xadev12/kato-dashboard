@@ -202,7 +202,6 @@ export function AgentDashboard() {
         {/* Worker Queue & User Actions */}
         <div className="space-y-6">
           <UserActionsPanel
-            onCreateTask={() => console.log('Create task')}
             onRefresh={handleRefresh}
           />
           

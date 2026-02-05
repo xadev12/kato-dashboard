@@ -1,12 +1,10 @@
 import { memo, useState } from 'react'
 
 interface Props {
-  onCreateTask?: () => void
   onRefresh?: () => void
 }
 
 export const UserActionsPanel = memo(function UserActionsPanel({
-  onCreateTask,
   onRefresh
 }: Props) {
   const [isRefreshing, setIsRefreshing] = useState(false)
