@@ -6,6 +6,9 @@ interface Props {
   agents: QueenAgent[]
 }
 
+// Hide these agents only on the Active tab
+const ACTIVE_HIDDEN_AGENTS = ['kenji', 'fel', 'bel']
+
 type FilterState = 'all' | 'active' | 'idle' | 'blocked'
 
 export const AgentFilterPanel = memo(function AgentFilterPanel({ agents }: Props) {
@@ -15,7 +18,7 @@ export const AgentFilterPanel = memo(function AgentFilterPanel({ agents }: Props
   // Count agents by status
   const counts = {
     all: agents.length,
-    active: agents.filter(a => a.status === 'active').length,
+    active: agents.filter(a => a.status === 'active' && !ACTIVE_HIDDEN_AGENTS.includes(a.id)).length,
     idle: agents.filter(a => a.status === 'idle').length,
     blocked: agents.filter(a => a.status === 'blocked').length
   }
@@ -27,7 +30,8 @@ export const AgentFilterPanel = memo(function AgentFilterPanel({ agents }: Props
       agent.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       agent.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (agent.currentTask && agent.currentTask.toLowerCase().includes(searchQuery.toLowerCase()))
-    return matchesFilter && matchesSearch
+    const hiddenOnActive = filter === 'active' && ACTIVE_HIDDEN_AGENTS.includes(agent.id)
+    return matchesFilter && matchesSearch && !hiddenOnActive
   })
 
   const tabs: { id: FilterState; label: string; color: string }[] = [

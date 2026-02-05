@@ -29,15 +29,6 @@ export const UserActionsPanel = memo(function UserActionsPanel({
         </h3>
         <div className="space-y-2">
           <button
-            onClick={onCreateTask}
-            className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg bg-white/[0.03] border border-white/[0.06] text-gray-300 text-sm hover:bg-white/[0.06] hover:border-white/[0.1] hover:text-white transition-all duration-200"
-          >
-            <svg className="w-4 h-4 text-violet-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-            </svg>
-            Create New Task
-          </button>
-          <button
             onClick={handleRefresh}
             disabled={isRefreshing}
             className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg bg-white/[0.03] border border-white/[0.06] text-gray-300 text-sm hover:bg-white/[0.06] hover:border-white/[0.1] hover:text-white transition-all duration-200 disabled:opacity-50"
@@ -46,14 +37,6 @@ export const UserActionsPanel = memo(function UserActionsPanel({
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
             </svg>
             {isRefreshing ? 'Refreshing...' : 'Refresh Dashboard'}
-          </button>
-          <button
-            className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg bg-white/[0.03] border border-white/[0.06] text-gray-300 text-sm hover:bg-white/[0.06] hover:border-white/[0.1] hover:text-white transition-all duration-200"
-          >
-            <svg className="w-4 h-4 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-            View Reports
           </button>
         </div>
       </div>

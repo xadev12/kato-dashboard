@@ -1037,6 +1037,35 @@ app.post('/api/search', asyncHandler(async (req: express.Request, res: express.R
   }
 }))
 
+// POST /api/sync - Trigger database sync with real data
+app.post('/api/sync', asyncHandler(async (req: express.Request, res: express.Response) => {
+  console.log('[Sync] Triggering database sync...')
+  
+  try {
+    // Import and run sync
+    const { execSync } = await import('child_process')
+    const result = execSync('npm run db:sync 2>&1', { 
+      cwd: '/Users/devl/clawd/kato-dashboard',
+      encoding: 'utf-8',
+      timeout: 30000
+    })
+    
+    console.log('[Sync] Result:', result)
+    
+    res.json({
+      success: true,
+      message: 'Database synced successfully',
+      timestamp: new Date().toISOString()
+    })
+  } catch (error) {
+    console.error('[Sync] Error:', error)
+    res.status(500).json({
+      error: 'Sync failed',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    })
+  }
+}))
+
 // Error handler
 app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
   console.error('API Error:', err)

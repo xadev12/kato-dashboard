@@ -13,6 +13,7 @@
     "server": "tsx backend/server.ts",
     "server:dev": "tsx watch backend/server.ts",
     "db:seed": "cd backend && npx tsx seed.ts",
+    "db:sync": "cd backend && npx tsx sync.ts",
     "start:all": "concurrently \"npm run server:dev\" \"npm run dev\"",
     "backend:start": "npm run server",
     "backend:dev": "npm run server:dev",
