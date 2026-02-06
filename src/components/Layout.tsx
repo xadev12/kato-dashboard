@@ -1,8 +1,11 @@
 import { Link, useLocation } from 'react-router-dom'
 import { AgentIndicator } from './AgentIndicator'
+import { GlobalSearch } from './GlobalSearch'
 
 const navItems = [
   { path: '/', label: 'Agent View', icon: '', badge: false },
+  { path: '/activity', label: 'Activity', icon: 'ACT', badge: false },
+  { path: '/calendar', label: 'Calendar', icon: 'CAL', badge: false },
   { path: '/actions', label: 'My Actions', icon: '', badge: true },
   { path: '/roster', label: 'Roster', icon: '', badge: false },
   { path: '/memory', label: 'Memory', icon: '', badge: false },
@@ -52,6 +55,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
               </nav>
             </div>
             
+            <GlobalSearch />
             <AgentIndicator />
           </div>
           
