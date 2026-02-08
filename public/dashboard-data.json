@@ -1,85 +1,28 @@
 {
-  "schemaVersion": "3.0",
-  "lastUpdated": "2026-02-07T12:00:00.000Z",
-  "sprint": {
-    "name": "60-Day Builder Sprint",
-    "day": 2,
-    "totalDays": 60,
-    "startDate": "Feb 6",
-    "endDate": "Apr 6",
-    "targets": [
-      { "metric": "Income", "target": "$5K/month", "deadline": "Apr 6" },
-      { "metric": "Fitness", "target": "10kg lost (91.9→81.9kg)", "deadline": "Apr 6" },
-      { "metric": "Product", "target": "Horoscope/MBTI app live", "deadline": "Apr 6" },
-      { "metric": "Hackathon", "target": "Colosseum entry submitted", "deadline": "~Feb 12" }
-    ],
-    "philosophy": "Ship revenue-generating products fast. Every week must produce measurable progress toward $5K/month."
-  },
-  "activeWork": {
-    "projects": [
-      {
-        "id": "horoscope-app",
-        "name": "Horoscope/MBTI App",
-        "status": "in_progress",
-        "progress": 11,
-        "currentStage": "idea",
-        "priority": "P1",
-        "blocker": null,
-        "assignedQueen": null,
-        "updatedAt": "2026-02-07T03:45:00Z"
-      },
-      {
-        "id": "hackathon-prize",
-        "name": "Colosseum Hackathon Submission",
-        "status": "blocked",
-        "progress": 55,
-        "currentStage": "implementation",
-        "priority": "P1",
-        "blocker": "Apple Developer certificate revoked. Requires manual Xcode signing setup.",
-        "assignedQueen": null,
-        "updatedAt": "2026-02-06T21:05:00Z"
-      }
-    ],
-    "blockedCount": 1
-  },
-  "queue": [
-    { "id": "horoscope-app", "feature": "Horoscope/MBTI app", "project": "Horoscope/MBTI", "priority": "P1", "complexity": null },
-    { "id": "hackathon-prize", "feature": "Colosseum hackathon submission", "project": "ClawdNet", "priority": "P1", "complexity": null },
-    { "id": "move-profile", "feature": "Profile & settings redesign", "project": "Move iOS", "priority": "P2", "complexity": "Simple" },
-    { "id": "move-audio-cues", "feature": "Audio coaching cues", "project": "Move iOS", "priority": "P2", "complexity": "Medium" },
-    { "id": "move-social", "feature": "Social features", "project": "Move iOS", "priority": "P2", "complexity": "Complex" }
-  ],
-  "systemHealth": {
-    "tokens": {
-      "today": 0,
-      "cost": 0,
-      "budget": 20,
-      "budgetUsedPercent": 0,
-      "overBudget": false
-    },
-    "agents": {
-      "total": 5,
-      "active": 0,
-      "idle": 5,
-      "list": [
-        { "id": "main", "name": "Kato", "status": "idle", "currentTask": null, "emoji": null },
-        { "id": "yuki", "name": "DevOps Engineer", "status": "idle", "currentTask": null, "emoji": "🚀" },
-        { "id": "koji", "name": "Business Strategist", "status": "idle", "currentTask": null, "emoji": "📈" },
-        { "id": "sora", "name": "Second Brain Keeper", "status": "idle", "currentTask": null, "emoji": "🧠" },
-        { "id": "karin", "name": "Personal Assistant", "status": "idle", "currentTask": null, "emoji": "💐" }
-      ]
-    }
-  },
+  "schemaVersion": "2.0",
+  "lastUpdated": "2026-02-04T01:47:00.000Z",
   "agents": {
     "queens": [
-      { "id": "main", "name": "Kato", "type": "queen", "status": "idle", "currentTask": null, "role": "AI Sentinel & Chief of Staff", "workspace": "/Users/devl/clawd" },
-      { "id": "yuki", "name": "Yuki", "type": "queen", "status": "idle", "currentTask": null, "role": "DevOps Engineer", "emoji": "🚀" },
-      { "id": "koji", "name": "Koji", "type": "queen", "status": "idle", "currentTask": null, "role": "Business Strategist", "emoji": "📈" },
-      { "id": "sora", "name": "Sora", "type": "queen", "status": "idle", "currentTask": null, "role": "Second Brain Keeper", "emoji": "🧠" },
-      { "id": "karin", "name": "Karin", "type": "queen", "status": "idle", "currentTask": null, "role": "Personal Assistant", "emoji": "💐" }
+      {"id": "main", "name": "Kato", "type": "queen", "status": "idle", "currentTask": null, "role": "AI Sentinel & Chief of Staff", "workspace": "/Users/devl/clawd", "skills": ["orchestration", "development", "workflow"]},
+      {"id": "product", "name": "Kenji", "type": "queen", "status": "active", "currentTask": "MBTI iOS: Sprint coordination", "role": "Product Owner", "workspace": "/Users/devl/clawd/agents/product", "skills": ["product-strategy", "user-research", "roadmap"]},
+      {"id": "devops", "name": "Yuki", "type": "queen", "status": "active", "currentTask": "MBTI iOS: CI/CD + TestFlight pipeline", "role": "DevOps Engineer", "workspace": "/Users/devl/clawd/agents/devops", "skills": ["deployments", "infrastructure", "monitoring"]},
+      {"id": "business", "name": "Koji", "type": "queen", "status": "idle", "currentTask": null, "role": "Business Strategist", "workspace": "/Users/devl/clawd/agents/business", "skills": ["metrics", "growth", "strategy"]},
+      {"id": "brain", "name": "Sora", "type": "queen", "status": "idle", "currentTask": null, "role": "Second Brain Keeper", "workspace": "/Users/devl/clawd/agents/brain", "skills": ["obsidian", "knowledge-management", "IPO"]},
+      {"id": "frontend", "name": "Fel", "type": "queen", "status": "active", "currentTask": "MBTI iOS: SwiftUI UI + screens", "role": "Frontend Architect", "workspace": "/Users/devl/clawd/agents/fel", "skills": ["react", "typescript", "tailwind", "mobile", "pwa"], "stack": "React 19, Next.js 15, Tailwind v4"},
+      {"id": "backend", "name": "Bel", "type": "queen", "status": "active", "currentTask": "MBTI iOS: MBTI engine + content", "role": "Backend Engineer", "workspace": "/Users/devl/clawd/agents/bel", "skills": ["postgresql", "supabase", "api-design", "security"], "stack": "PostgreSQL, Supabase, Node.js"},
+      {"id": "karin", "name": "Karin", "type": "queen", "status": "idle", "currentTask": null, "role": "Personal Assistant", "workspace": "/Users/devl/clawd/agents/karin", "skills": ["task-tracking", "motivation", "reflection", "emotional-support"], "style": "Warm, friendly, comforting yet motivating"}
     ],
     "workers": {
-      "specialists": [],
+      "specialists": [
+        {"id": "frontend-specialist", "name": "Frontend Specialist", "role": "React components, UI", "skills": ["vercel-react-best-practices", "vercel-composition-patterns", "superdesign", "ui-ux-pro-max", "web-design-guidelines", "artifacts-builder", "responsive-maker", "frontend-patterns", "frontend-dev-guidelines", "frontend-ui-ux", "mobile-design"]},
+        {"id": "backend-specialist", "name": "Backend Specialist", "role": "APIs, database", "skills": ["supabase-postgres-best-practices"]},
+        {"id": "mobile-specialist", "name": "Mobile/iOS Specialist", "role": "iOS optimizations, PWA", "skills": ["ios-simulator", "mobile-design", "vercel-react-native-skills"]},
+        {"id": "design-specialist", "name": "Design Specialist", "role": "Design systems, mockups", "skills": ["superdesign", "ui-ux-pro-max", "web-design-guidelines"]},
+        {"id": "testing-specialist", "name": "Testing/QA Specialist", "role": "Tests, quality assurance", "skills": []},
+        {"id": "data-specialist", "name": "Data Analyst", "role": "Ad-hoc analysis, dashboards", "skills": []},
+        {"id": "content-specialist", "name": "Content Writer", "role": "Docs, marketing copy", "skills": []},
+        {"id": "security-specialist", "name": "Security Auditor", "role": "Security audits", "skills": []}
+      ],
       "active": [],
       "queue": [],
       "recent": []
@@ -87,71 +30,139 @@
   },
   "projects": [
     {
-      "id": "horoscope-app",
-      "name": "Horoscope/MBTI App",
-      "description": "Daily horoscope and MBTI personality insights app with freemium model",
-      "status": "in_progress",
-      "priority": "high",
-      "progress": 11,
-      "currentStage": "idea",
-      "created_at": "2026-02-07T03:45:00Z",
-      "updated_at": "2026-02-07T03:45:00Z",
-      "tasks": []
-    },
-    {
-      "id": "hackathon-prize",
-      "name": "Colosseum Hackathon Submission",
-      "description": "Submit ClawdNet/SkillIssue for Colosseum hackathon prize pool",
-      "status": "blocked",
-      "priority": "high",
-      "progress": 55,
-      "currentStage": "implementation",
-      "blocker": "Apple Developer certificate revoked. Requires manual Xcode signing setup.",
-      "created_at": "2026-02-06T09:04:00Z",
-      "updated_at": "2026-02-06T21:05:00Z",
-      "tasks": [
-        { "id": "aura-revenuecat", "title": "Integrate RevenueCat for freemium monetization", "status": "done", "completed_at": "2026-02-06T16:35:00Z" },
-        { "id": "testflight-build", "title": "Create TestFlight build", "status": "blocked", "blockerReason": "Apple Developer certificate revoked" },
-        { "id": "demo-video", "title": "Record and edit 2-min demo video", "status": "in_progress" },
-        { "id": "pitch-deck", "title": "Create 10-slide pitch deck", "status": "pending" },
-        { "id": "github-repo", "title": "Prepare GitHub repo with README", "status": "done", "completed_at": "2026-02-06T11:46:00Z" },
-        { "id": "submission-form", "title": "Complete Colosseum submission form", "status": "pending" }
-      ]
-    },
-    {
-      "id": "mbti-horoscope",
-      "name": "Horoscope/MBTI App (Aura)",
-      "description": "iOS app combining MBTI personality test with daily horoscope guidance",
+      "id": "move-pwa-setup",
+      "name": "Move PWA - Complete Setup",
+      "description": "Daily move goal tracker with Ring integration, Supabase backend, and Vercel deployment",
       "status": "done",
       "priority": "high",
       "progress": 100,
-      "currentStage": "iterate",
-      "created_at": "2026-02-03T00:00:00Z",
-      "updated_at": "2026-02-06T09:03:00Z",
-      "tasks": []
+      "repo_url": "https://github.com/xadev12/move-pwa",
+      "created_at": "2026-01-29T08:00:00.000Z",
+      "updated_at": "2026-01-29T09:44:30.880Z",
+      "assignedQueen": null,
+      "tasks": [
+        {"id": "task-1", "title": "Authorize 1Password CLI", "status": "done", "completed_at": "2026-01-29T08:41:00.000Z", "assignedAgent": null},
+        {"id": "task-2", "title": "Create Supabase project", "status": "done", "completed_at": "2026-01-29T08:45:00.000Z", "assignedAgent": null},
+        {"id": "task-3", "title": "Set up database schema", "status": "done", "completed_at": "2026-01-29T08:47:00.000Z", "assignedAgent": null},
+        {"id": "task-4", "title": "Save credentials to 1Password", "status": "done", "completed_at": "2026-01-29T08:48:00.000Z", "assignedAgent": null},
+        {"id": "task-5", "title": "Fix TypeScript import errors", "status": "done", "completed_at": "2026-01-29T08:50:00.000Z", "assignedAgent": null},
+        {"id": "task-6", "title": "Deploy to Vercel", "status": "done", "completed_at": "2026-01-29T09:15:00.000Z", "assignedAgent": null},
+        {"id": "task-7", "title": "Configure environment variables in Vercel", "status": "done", "completed_at": "2026-01-29T09:44:23.708Z", "assignedAgent": null},
+        {"id": "task-8", "title": "Verify deployment works", "status": "done", "completed_at": "2026-01-29T09:44:30.879Z", "assignedAgent": null}
+      ]
+    },
+    {
+      "id": "kato-dashboard-redesign",
+      "name": "Kato Dashboard - Redesign & Features",
+      "description": "Enhanced dashboard with search, filters, refined aesthetics, and real-time progress tracking",
+      "status": "in_progress",
+      "priority": "high",
+      "progress": 100,
+      "repo_url": "https://github.com/xadev12/kato-dashboard",
+      "created_at": "2026-01-29T08:15:00.000Z",
+      "updated_at": "2026-01-29T09:35:51.767Z",
+      "assignedQueen": "main",
+      "tasks": [
+        {"id": "task-1", "title": "Upgrade visual aesthetics (remove emojis)", "status": "done", "completed_at": "2026-01-29T08:58:00.000Z", "assignedAgent": null},
+        {"id": "task-2", "title": "Add search functionality", "status": "done", "completed_at": "2026-01-29T09:05:00.000Z", "assignedAgent": null},
+        {"id": "task-3", "title": "Add filter buttons", "status": "done", "completed_at": "2026-01-29T09:06:00.000Z", "assignedAgent": null},
+        {"id": "task-4", "title": "Refine card designs", "status": "done", "completed_at": "2026-01-29T09:10:00.000Z", "assignedAgent": null},
+        {"id": "task-5", "title": "Enhance empty states", "status": "done", "completed_at": "2026-01-29T09:35:51.766Z", "assignedAgent": null}
+      ]
+    },
+    {
+      "id": "kato-system-optimization",
+      "name": "Kato Dashboard - Agent Coordination",
+      "description": "Multi-agent task tracking, agent assignment visibility, and token-efficient coordination",
+      "status": "in_progress",
+      "priority": "high",
+      "progress": 20,
+      "repo_url": "https://github.com/xadev12/kato-dashboard",
+      "created_at": "2026-01-31T20:42:00.000Z",
+      "updated_at": "2026-01-31T20:45:00.000Z",
+      "assignedQueen": "main",
+      "tasks": [
+        {"id": "ko-1", "title": "Create TASKS.md coordination hub", "status": "done", "completed_at": "2026-01-31T20:45:00Z", "assignedAgent": "main"},
+        {"id": "ko-2", "title": "Extend dashboard JSON schema with agent fields", "status": "done", "completed_at": "2026-01-31T20:46:00Z", "assignedAgent": "main"},
+        {"id": "ko-3", "title": "Create sync script TASKS.md → dashboard", "status": "queued", "completed_at": null, "assignedAgent": null},
+        {"id": "ko-4", "title": "Add agent workload view to dashboard UI", "status": "queued", "completed_at": null, "assignedAgent": "Frontend Specialist"},
+        {"id": "ko-5", "title": "Document token efficiency patterns", "status": "queued", "completed_at": null, "assignedAgent": null}
+      ]
+    },
+    {
+      "id": "mbti-horoscope-ios",
+      "name": "MBTI + Horoscope iOS App",
+      "description": "iOS app combining MBTI personality test with daily horoscope guidance. Situation-aware advice for breakups, work, dating.",
+      "status": "in_progress",
+      "priority": "high",
+      "progress": 5,
+      "repo_url": null,
+      "created_at": "2026-02-04T01:38:00.000Z",
+      "updated_at": "2026-02-04T01:47:00.000Z",
+      "assignedQueen": "main",
+      "tasks": [
+        {"id": "s1", "title": "GitHub repo + CI/CD pipeline", "status": "in_progress", "completed_at": null, "assignedAgent": "Yuki"},
+        {"id": "s2", "title": "SwiftUI onboarding + MBTI test UI", "status": "in_progress", "completed_at": null, "assignedAgent": "Fel"},
+        {"id": "s3", "title": "MBTI scoring engine (16 types)", "status": "in_progress", "completed_at": null, "assignedAgent": "Bel"},
+        {"id": "s4", "title": "Daily reading content system", "status": "queued", "completed_at": null, "assignedAgent": "Bel"},
+        {"id": "s5", "title": "TestFlight deployment", "status": "queued", "completed_at": null, "assignedAgent": "Yuki"}
+      ]
+    },
+    {
+      "id": "move-ios",
+      "name": "Move iOS — Hybrid Athlete Fitness App",
+      "description": "Native iOS fitness dashboard for hybrid athletes. Apple Health sync, voice notes, smart actionables. Read-only, no manual logging.",
+      "status": "done",
+      "priority": "high",
+      "progress": 100,
+      "repo_url": null,
+      "created_at": "2026-02-01T03:30:00.000Z",
+      "updated_at": "2026-02-01T04:10:00.000Z",
+      "assignedQueen": "main",
+      "tasks": [
+        {"id": "A1", "title": "HealthKit permissions setup + entitlements", "status": "done", "completed_at": "2026-02-01T03:50:00.000Z", "assignedAgent": "iOS Specialist", "workstream": "HealthKit"},
+        {"id": "A2", "title": "Bidirectional sync (read workouts, write metadata)", "status": "done", "completed_at": "2026-02-01T03:50:00.000Z", "assignedAgent": "iOS Specialist", "workstream": "HealthKit"},
+        {"id": "A3", "title": "Background sync with HKObserverQuery", "status": "done", "completed_at": "2026-02-01T03:50:00.000Z", "assignedAgent": "iOS Specialist", "workstream": "HealthKit"},
+        {"id": "A4", "title": "Workout type mapping (strength/run/sport)", "status": "done", "completed_at": "2026-02-01T03:50:00.000Z", "assignedAgent": "iOS Specialist", "workstream": "HealthKit"},
+        {"id": "B1", "title": "Design system implementation (colors, typography, spacing)", "status": "done", "completed_at": "2026-02-01T03:45:00.000Z", "assignedAgent": "Frontend Specialist", "workstream": "Dashboard UI"},
+        {"id": "B2", "title": "Activity cards with voice note indicators", "status": "done", "completed_at": "2026-02-01T03:45:00.000Z", "assignedAgent": "Frontend Specialist", "workstream": "Dashboard UI"},
+        {"id": "B3", "title": "Weekly progress ring (3-segment: emerald/coral/violet)", "status": "done", "completed_at": "2026-02-01T03:45:00.000Z", "assignedAgent": "Frontend Specialist", "workstream": "Dashboard UI"},
+        {"id": "B4", "title": "Pull-to-refresh + loading states", "status": "done", "completed_at": "2026-02-01T03:45:00.000Z", "assignedAgent": "Frontend Specialist", "workstream": "Dashboard UI"},
+        {"id": "C1", "title": "Rule engine implementation (hardcoded rules)", "status": "done", "completed_at": "2026-02-01T03:50:00.000Z", "assignedAgent": "Backend Specialist", "workstream": "Smart Actionables"},
+        {"id": "C2", "title": "Health metrics caching (sleep, HRV)", "status": "done", "completed_at": "2026-02-01T03:50:00.000Z", "assignedAgent": "Backend Specialist", "workstream": "Smart Actionables"},
+        {"id": "C3", "title": "Actionable banner UI with dismiss", "status": "done", "completed_at": "2026-02-01T03:50:00.000Z", "assignedAgent": "Backend Specialist", "workstream": "Smart Actionables"},
+        {"id": "C4", "title": "Was this helpful? feedback capture", "status": "done", "completed_at": "2026-02-01T03:50:00.000Z", "assignedAgent": "Backend Specialist", "workstream": "Smart Actionables"},
+        {"id": "D1", "title": "AVFoundation recording setup", "status": "done", "completed_at": "2026-02-01T03:55:00.000Z", "assignedAgent": "iOS Specialist", "workstream": "Voice Notes"},
+        {"id": "D2", "title": "Long-press gesture → modal → tap-to-record", "status": "done", "completed_at": "2026-02-01T03:55:00.000Z", "assignedAgent": "iOS Specialist", "workstream": "Voice Notes"},
+        {"id": "D3", "title": "Waveform visualization", "status": "done", "completed_at": "2026-02-01T03:55:00.000Z", "assignedAgent": "iOS Specialist", "workstream": "Voice Notes"},
+        {"id": "D4", "title": "Local storage + SwiftData integration", "status": "done", "completed_at": "2026-02-01T03:55:00.000Z", "assignedAgent": "iOS Specialist", "workstream": "Voice Notes"},
+        {"id": "E1", "title": "Timer interface (start/stop)", "status": "done", "completed_at": "2026-02-01T03:55:00.000Z", "assignedAgent": "iOS Specialist", "workstream": "Team Sports"},
+        {"id": "E2", "title": "RPE rating slider (1-10)", "status": "done", "completed_at": "2026-02-01T03:55:00.000Z", "assignedAgent": "iOS Specialist", "workstream": "Team Sports"},
+        {"id": "E3", "title": "Auto-save to HealthKit", "status": "done", "completed_at": "2026-02-01T03:55:00.000Z", "assignedAgent": "iOS Specialist", "workstream": "Team Sports"},
+        {"id": "E4", "title": "Background audio mode", "status": "done", "completed_at": "2026-02-01T03:55:00.000Z", "assignedAgent": "iOS Specialist", "workstream": "Team Sports"},
+        {"id": "F1", "title": "3-screen onboarding flow", "status": "done", "completed_at": "2026-02-01T04:00:00.000Z", "assignedAgent": "Frontend Specialist", "workstream": "Polish"},
+        {"id": "F2", "title": "Rich notifications (workout imported)", "status": "done", "completed_at": "2026-02-01T04:00:00.000Z", "assignedAgent": "Frontend Specialist", "workstream": "Polish"},
+        {"id": "F3", "title": "PR/streak celebration animations", "status": "done", "completed_at": "2026-02-01T04:00:00.000Z", "assignedAgent": "Frontend Specialist", "workstream": "Polish"},
+        {"id": "F4", "title": "App icons, launch screen", "status": "done", "completed_at": "2026-02-01T04:00:00.000Z", "assignedAgent": "Frontend Specialist", "workstream": "Polish"},
+        {"id": "G1", "title": "StoreKit integration (monthly/yearly)", "status": "done", "completed_at": "2026-02-01T04:00:00.000Z", "assignedAgent": "Business Specialist", "workstream": "Move Plus"},
+        {"id": "G2", "title": "Paywall screens", "status": "done", "completed_at": "2026-02-01T04:00:00.000Z", "assignedAgent": "Business Specialist", "workstream": "Move Plus"},
+        {"id": "G3", "title": "Feature gating (30-day history, voice limits)", "status": "done", "completed_at": "2026-02-01T04:00:00.000Z", "assignedAgent": "Business Specialist", "workstream": "Move Plus"},
+        {"id": "G4", "title": "Restore purchases", "status": "done", "completed_at": "2026-02-01T04:00:00.000Z", "assignedAgent": "Business Specialist", "workstream": "Move Plus"},
+        {"id": "H1", "title": "Unit tests for rule engine", "status": "done", "completed_at": "2026-02-01T04:10:00.000Z", "assignedAgent": "QA Specialist", "workstream": "Testing"},
+        {"id": "H2", "title": "HealthKit mocking framework", "status": "done", "completed_at": "2026-02-01T04:10:00.000Z", "assignedAgent": "QA Specialist", "workstream": "Testing"},
+        {"id": "H3", "title": "UI tests for critical flows", "status": "done", "completed_at": "2026-02-01T04:10:00.000Z", "assignedAgent": "QA Specialist", "workstream": "Testing"},
+        {"id": "H4", "title": "Device testing (iPhone + Apple Watch sync)", "status": "done", "completed_at": "2026-02-01T04:10:00.000Z", "assignedAgent": "QA Specialist", "workstream": "Testing"}
+      ]
     }
   ],
-  "roadmap": {
-    "active": [
-      { "id": "horoscope-app", "feature": "Horoscope/MBTI app", "project": "Horoscope/MBTI", "priority": "P1", "status": "PRD Stage" },
-      { "id": "hackathon-prize", "feature": "Colosseum hackathon submission", "project": "ClawdNet", "priority": "P1", "status": "Implementation" }
-    ],
-    "backlog": [
-      { "id": "move-profile", "feature": "Profile & settings redesign", "description": "User profile, connected devices, notification preferences", "complexity": "Simple" },
-      { "id": "move-audio-cues", "feature": "Audio coaching cues", "description": "Pace alerts, HR zone changes, milestone celebrations during workouts", "complexity": "Medium" },
-      { "id": "move-social", "feature": "Social features", "description": "Activity sharing, friend challenges, leaderboards", "complexity": "Complex" }
-    ]
-  },
   "meta": {
-    "totalProjects": 3,
-    "completedProjects": 1,
-    "inProgressProjects": 1,
-    "blockedProjects": 1,
-    "totalAgents": 5,
+    "totalProjects": 5,
+    "completedProjects": 2,
+    "inProgressProjects": 3,
     "activeAgents": 0,
-    "tokenStats": {
-      "today": { "tokensUsed": 0, "cost": 0, "requests": 0 },
-      "totalRequests": 0
-    }
+    "queuedWorkers": 0,
+    "totalQueens": 8,
+    "totalWorkerSpecialists": 8,
+    "totalAgents": 16
   }
 }
