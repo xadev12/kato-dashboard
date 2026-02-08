@@ -1,31 +1,39 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { Layout } from './components/Layout'
-import { Dashboard } from './pages/Dashboard'
-import { AgentDashboard } from './pages/AgentDashboard'
+import { MissionControl } from './pages/MissionControl'
+import { Projects } from './pages/Projects'
 import { ProjectDetail } from './pages/ProjectDetail'
-import { MyActions } from './pages/MyActions'
-import { AgentRoster } from './pages/AgentRoster'
-import { MemoryManager } from './pages/MemoryManager'
 import { TokenDashboard } from './pages/TokenDashboard'
-import { ActivityFeed } from './pages/ActivityFeed'
-import { Calendar } from './pages/Calendar'
-import { SearchResults } from './pages/SearchResults'
+import { AgentRoster } from './pages/AgentRoster'
 
 export default function App() {
   return (
     <BrowserRouter>
       <Layout>
         <Routes>
-          <Route path="/" element={<AgentDashboard />} />
-          <Route path="/legacy" element={<Dashboard />} />
-          <Route path="/actions" element={<MyActions />} />
-          <Route path="/roster" element={<AgentRoster />} />
-          <Route path="/memory" element={<MemoryManager />} />
-          <Route path="/tokens" element={<TokenDashboard />} />
-          <Route path="/activity" element={<ActivityFeed />} />
-          <Route path="/calendar" element={<Calendar />} />
-          <Route path="/search" element={<SearchResults />} />
+          {/* Main Dashboard - Mission Control */}
+          <Route path="/" element={<MissionControl />} />
+
+          {/* Projects */}
+          <Route path="/projects" element={<Projects />} />
           <Route path="/projects/:id" element={<ProjectDetail />} />
+
+          {/* Tokens */}
+          <Route path="/tokens" element={<TokenDashboard />} />
+
+          {/* Agent Roster */}
+          <Route path="/roster" element={<AgentRoster />} />
+
+          {/* Redirects for removed pages */}
+          <Route path="/legacy" element={<Navigate to="/" replace />} />
+          <Route path="/actions" element={<Navigate to="/" replace />} />
+          <Route path="/memory" element={<Navigate to="/" replace />} />
+          <Route path="/activity" element={<Navigate to="/" replace />} />
+          <Route path="/calendar" element={<Navigate to="/" replace />} />
+          <Route path="/search" element={<Navigate to="/" replace />} />
+
+          {/* Catch-all redirect */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Layout>
     </BrowserRouter>

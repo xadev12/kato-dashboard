@@ -1,7 +1,7 @@
 {
   "name": "kato-dashboard",
   "private": true,
-  "version": "2.0.0",
+  "version": "3.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -10,8 +10,10 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "server": "tsx backend/server.ts",
-    "server:dev": "tsx watch backend/server.ts",
+    "server": "tsx backend/server-v3.ts",
+    "server:dev": "tsx watch backend/server-v3.ts",
+    "server:legacy": "tsx backend/server.ts",
+    "server:legacy:dev": "tsx watch backend/server.ts",
     "db:seed": "cd backend && npx tsx seed.ts",
     "db:sync": "cd backend && npx tsx sync.ts",
     "start:all": "concurrently \"npm run server:dev\" \"npm run dev\"",
@@ -27,11 +29,13 @@
     "@supabase/supabase-js": "^2.93.2",
     "better-sqlite3": "^12.6.2",
     "cors": "^2.8.6",
+    "dotenv": "^17.2.4",
     "express": "^5.2.1",
     "lucide-react": "^0.563.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "react-router-dom": "^7.13.0"
+    "react-router-dom": "^7.13.0",
+    "ws": "^8.19.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
@@ -42,6 +46,7 @@
     "@types/node": "^24.10.1",
     "@types/react": "^19.2.5",
     "@types/react-dom": "^19.2.3",
+    "@types/ws": "^8.18.1",
     "@vitejs/plugin-react": "^5.1.1",
     "autoprefixer": "^10.4.23",
     "concurrently": "^9.1.2",
