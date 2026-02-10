@@ -783,9 +783,15 @@
         "projectId": "hackathon-prize",
         "status": "pending",
         "assignedAgent": "claude",
-        "hasSubtasks": false,
-        "subtaskCount": 0,
-        "subtaskProgress": null,
+        "hasSubtasks": true,
+        "subtaskCount": 4,
+        "subtaskProgress": 50,
+        "subtasks": [
+          { "id": "rc-1", "title": "Setup RevenueCat SDK & configure offerings", "status": "done" },
+          { "id": "rc-2", "title": "Create PaywallView with product listing", "status": "done" },
+          { "id": "rc-3", "title": "Build SubscriptionManager service", "status": "in_progress" },
+          { "id": "rc-4", "title": "Wire entitlement checks into existing views", "status": "pending" }
+        ],
         "startedAt": "2026-02-10T18:42:55.905Z",
         "estimatedComplete": "2026-02-10T20:42:55.905Z"
       },
@@ -824,9 +830,14 @@
         "projectId": "post-hack-monetize",
         "status": "in_progress",
         "assignedAgent": "kimi",
-        "hasSubtasks": false,
-        "subtaskCount": 0,
-        "subtaskProgress": null,
+        "hasSubtasks": true,
+        "subtaskCount": 3,
+        "subtaskProgress": 33,
+        "subtasks": [
+          { "id": "ph-1", "title": "Initialize PostHog SDK with project key", "status": "done" },
+          { "id": "ph-2", "title": "Add event tracking to key user flows", "status": "in_progress" },
+          { "id": "ph-3", "title": "Create analytics dashboard views", "status": "pending" }
+        ],
         "startedAt": "2026-02-10T18:42:55.905Z",
         "estimatedComplete": "2026-02-10T20:42:55.905Z"
       },
@@ -838,9 +849,16 @@
         "projectId": "post-hack-monetize",
         "status": "in_progress",
         "assignedAgent": "claude",
-        "hasSubtasks": false,
-        "subtaskCount": 0,
-        "subtaskProgress": null,
+        "hasSubtasks": true,
+        "subtaskCount": 5,
+        "subtaskProgress": 60,
+        "subtasks": [
+          { "id": "edge-1", "title": "Referral code generation function", "status": "done" },
+          { "id": "edge-2", "title": "Referral redemption & validation", "status": "done" },
+          { "id": "edge-3", "title": "Share link generation with deep links", "status": "done" },
+          { "id": "edge-4", "title": "Webhook handler for RevenueCat events", "status": "in_progress" },
+          { "id": "edge-5", "title": "Rate limiting & security middleware", "status": "pending" }
+        ],
         "startedAt": "2026-02-10T18:42:55.905Z",
         "estimatedComplete": "2026-02-10T20:42:55.905Z"
       },

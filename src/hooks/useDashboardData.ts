@@ -87,6 +87,12 @@ export interface OpportunityScan {
 }
 
 // Kato queue types
+export interface Subtask {
+  id: string
+  title: string
+  status: 'done' | 'in_progress' | 'pending'
+}
+
 export interface KatoTask {
   id: string
   type: 'current' | 'planned' | 'upcoming' | 'system'
@@ -99,6 +105,10 @@ export interface KatoTask {
   estimatedComplete?: string
   plannedFor?: string
   reason?: string
+  hasSubtasks?: boolean
+  subtaskCount?: number
+  subtaskProgress?: number | null
+  subtasks?: Subtask[]
 }
 
 export interface KatoQueue {

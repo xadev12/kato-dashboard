@@ -402,6 +402,12 @@ function OpportunityCard({
 }
 
 // Kato's Autonomous Queue Component
+interface Subtask {
+  id: string;
+  title: string;
+  status: 'done' | 'in_progress' | 'pending';
+}
+
 interface KatoTask {
   id: string;
   type: 'current' | 'planned' | 'upcoming' | 'system';
@@ -414,6 +420,10 @@ interface KatoTask {
   estimatedComplete?: string;
   plannedFor?: string;
   reason?: string;
+  hasSubtasks?: boolean;
+  subtaskCount?: number;
+  subtaskProgress?: number | null;
+  subtasks?: Subtask[];
 }
 
 interface KatoQueueData {
@@ -424,6 +434,7 @@ interface KatoQueueData {
 
 export function KatoQueue({ data }: { data?: KatoQueueData }) {
   const [lastUpdateAgo, setLastUpdateAgo] = useState('');
+  const [expandedTaskId, setExpandedTaskId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!data?.lastUpdated) return;
@@ -520,7 +531,14 @@ export function KatoQueue({ data }: { data?: KatoQueueData }) {
           />
         ) : (
           tasks.map((task) => (
-            <TaskCard key={task.id} task={task} getTaskIcon={getTaskIcon} getTaskColor={getTaskColor} />
+            <TaskCard
+              key={task.id}
+              task={task}
+              getTaskIcon={getTaskIcon}
+              getTaskColor={getTaskColor}
+              isExpanded={expandedTaskId === task.id}
+              onToggle={task.hasSubtasks ? () => setExpandedTaskId(expandedTaskId === task.id ? null : task.id) : undefined}
+            />
           ))
         )}
       </div>
@@ -573,18 +591,32 @@ function TaskCard({
   task,
   getTaskIcon,
   getTaskColor,
+  isExpanded,
+  onToggle,
 }: {
   task: KatoTask;
   getTaskIcon: (type: KatoTask['type']) => React.ReactNode;
   getTaskColor: (type: KatoTask['type']) => { bg: string; color: string };
+  isExpanded?: boolean;
+  onToggle?: () => void;
 }) {
   const progress = getTaskProgress(task.startedAt, task.estimatedComplete);
   const timeLeft = getEstimatedTimeLeft(task.estimatedComplete);
   const taskColor = getTaskColor(task.type);
 
+  // Calculate subtask-based progress if subtasks exist
+  const subtaskProgress = task.subtasks
+    ? Math.round((task.subtasks.filter(s => s.status === 'done').length / task.subtasks.length) * 100)
+    : task.subtaskProgress;
+  const completedSubtasks = task.subtasks?.filter(s => s.status === 'done').length ?? 0;
+  const totalSubtasks = task.subtasks?.length ?? task.subtaskCount ?? 0;
+
+  const Wrapper = onToggle ? 'button' : 'div';
+
   return (
-    <div
-      className="p-2.5 rounded-lg transition-all duration-200"
+    <Wrapper
+      {...(onToggle ? { onClick: onToggle } : {})}
+      className={`w-full text-left p-2.5 rounded-lg transition-all duration-200 ${onToggle ? 'cursor-pointer' : ''}`}
       style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-subtle)' }}
     >
       <div className="flex items-center gap-3">
@@ -592,7 +624,15 @@ function TaskCard({
           {getTaskIcon(task.type)}
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm truncate" style={{ color: 'var(--text-primary)' }}>{task.title}</p>
+          <div className="flex items-center gap-2">
+            <p className="text-sm truncate" style={{ color: 'var(--text-primary)' }}>{task.title}</p>
+            {task.hasSubtasks && (
+              <ChevronIcon
+                className={`w-3 h-3 flex-shrink-0 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}
+                style={{ color: 'var(--text-tertiary)' }}
+              />
+            )}
+          </div>
           <div className="flex items-center gap-2 text-[10px]" style={{ color: 'var(--text-tertiary)' }}>
             {task.project && <span>{task.project}</span>}
             {task.assignedAgent && (
@@ -602,6 +642,11 @@ function TaskCard({
               </span>
             )}
             {task.reason && <span style={{ color: 'var(--text-muted)' }}>{task.reason}</span>}
+            {task.hasSubtasks && totalSubtasks > 0 && (
+              <span style={{ color: 'var(--text-muted)' }}>
+                {completedSubtasks}/{totalSubtasks} subtasks
+              </span>
+            )}
           </div>
         </div>
         <div className="flex flex-col items-end gap-1 flex-shrink-0">
@@ -621,8 +666,22 @@ function TaskCard({
           )}
         </div>
       </div>
-      {/* Progress bar for current tasks */}
-      {task.type === 'current' && progress !== null && (
+      {/* Subtask progress bar (from subtask completion) */}
+      {task.hasSubtasks && subtaskProgress !== null && subtaskProgress !== undefined && (
+        <div className="mt-2 ml-9">
+          <div className="h-1 rounded-full overflow-hidden" style={{ background: 'var(--bg-muted)' }}>
+            <div
+              className="h-full rounded-full transition-all duration-500"
+              style={{
+                width: `${subtaskProgress}%`,
+                background: subtaskProgress >= 100 ? 'var(--success)' : 'var(--accent-primary)'
+              }}
+            />
+          </div>
+        </div>
+      )}
+      {/* Time-based progress bar for current tasks without subtasks */}
+      {!task.hasSubtasks && task.type === 'current' && progress !== null && (
         <div className="mt-2 ml-9">
           <div className="h-1 rounded-full overflow-hidden" style={{ background: 'var(--bg-muted)' }}>
             <div
@@ -635,6 +694,47 @@ function TaskCard({
           </div>
         </div>
       )}
+      {/* Expanded subtask list */}
+      {isExpanded && task.subtasks && task.subtasks.length > 0 && (
+        <div className="mt-3 ml-9 space-y-1.5" style={{ borderTop: '1px solid var(--border-subtle)', paddingTop: '0.5rem' }}>
+          {task.subtasks.map((subtask) => (
+            <SubtaskRow key={subtask.id} subtask={subtask} />
+          ))}
+        </div>
+      )}
+    </Wrapper>
+  );
+}
+
+function SubtaskRow({ subtask }: { subtask: Subtask }) {
+  const getStatusIcon = (status: Subtask['status']) => {
+    switch (status) {
+      case 'done':
+        return <SubtaskCheckIcon className="w-3 h-3" style={{ color: 'var(--success)' }} />;
+      case 'in_progress':
+        return (
+          <span
+            className="block w-3 h-3 rounded-full border-2 animate-pulse"
+            style={{ borderColor: 'var(--warning)', borderTopColor: 'transparent' }}
+          />
+        );
+      case 'pending':
+        return <span className="block w-3 h-3 rounded-full" style={{ border: '1.5px solid var(--border-medium)' }} />;
+    }
+  };
+
+  return (
+    <div className="flex items-center gap-2 py-0.5">
+      {getStatusIcon(subtask.status)}
+      <span
+        className="text-xs"
+        style={{
+          color: subtask.status === 'done' ? 'var(--text-muted)' : 'var(--text-secondary)',
+          textDecoration: subtask.status === 'done' ? 'line-through' : 'none'
+        }}
+      >
+        {subtask.title}
+      </span>
     </div>
   );
 }
@@ -798,6 +898,14 @@ function SystemIcon({ className }: { className?: string }) {
       <path d="M20 12h2" />
       <path d="m6.34 17.66-1.41 1.41" />
       <path d="m19.07 4.93-1.41 1.41" />
+    </svg>
+  );
+}
+
+function SubtaskCheckIcon({ className, style }: { className?: string; style?: React.CSSProperties }) {
+  return (
+    <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="20 6 9 17 4 12" />
     </svg>
   );
 }
