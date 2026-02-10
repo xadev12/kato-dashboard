@@ -1,26 +1,43 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 
+// Enhanced Opportunity interface with source, category, and action status
 interface Opportunity {
   id: string;
-  type: 'blocker' | 'ready' | 'opportunity' | 'suggestion' | 'deadline';
+  type: 'blocker' | 'ready' | 'opportunity' | 'suggestion' | 'deadline' | 'idea' | 'system';
+  category?: 'project' | 'system' | 'external' | 'roadmap';
   priority: 'high' | 'medium' | 'low';
   title: string;
   description: string;
   project?: string;
+  source?: string;
   action: string;
   discoveredAt: string;
   expiresAt: string;
+  // Action tracking
+  status?: 'active' | 'acted' | 'dismissed' | 'expired';
+  actedAt?: string;
+  dismissedAt?: string;
 }
 
 interface OpportunityScanData {
   lastScan: string;
   items: Opportunity[];
   scanCount: number;
+  metrics?: {
+    conversionRate: number;
+    totalSeen: number;
+    totalConverted: number;
+    totalIgnored: number;
+    currentActive: number;
+  };
 }
 
 export function OpportunityScan({ data }: { data?: OpportunityScanData }) {
   const [lastScanAgo, setLastScanAgo] = useState('');
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [showArchive, setShowArchive] = useState(false);
+  // Local action state (acts/dismisses) — in production this would persist to backend
+  const [actionState, setActionState] = useState<Record<string, 'acted' | 'dismissed'>>({});
 
   useEffect(() => {
     if (!data?.lastScan) return;
@@ -40,6 +57,61 @@ export function OpportunityScan({ data }: { data?: OpportunityScanData }) {
 
   const opportunities = data?.items || [];
 
+  // Split into active vs archived based on local action state
+  const { activeOpportunities, archivedOpportunities } = useMemo(() => {
+    const active: Opportunity[] = [];
+    const archived: Opportunity[] = [];
+
+    for (const opp of opportunities) {
+      const localStatus = actionState[opp.id];
+      if (localStatus) {
+        archived.push({ ...opp, status: localStatus });
+      } else if (opp.status === 'acted' || opp.status === 'dismissed' || opp.status === 'expired') {
+        archived.push(opp);
+      } else {
+        active.push(opp);
+      }
+    }
+
+    return { activeOpportunities: active, archivedOpportunities: archived };
+  }, [opportunities, actionState]);
+
+  // Sort: P0/ROADMAP items first, then by priority, then blockers first
+  const sortedOpportunities = useMemo(() => {
+    const items = showArchive ? archivedOpportunities : activeOpportunities;
+
+    return [...items].sort((a, b) => {
+      // P0/ROADMAP items always first
+      const aIsP0 = a.source === 'ROADMAP' || a.category === 'roadmap' || a.priority === 'high';
+      const bIsP0 = b.source === 'ROADMAP' || b.category === 'roadmap' || b.priority === 'high';
+      if (aIsP0 && !bIsP0) return -1;
+      if (!aIsP0 && bIsP0) return 1;
+
+      // Then blockers
+      if (a.type === 'blocker' && b.type !== 'blocker') return -1;
+      if (a.type !== 'blocker' && b.type === 'blocker') return 1;
+
+      // Then by priority
+      const priorityOrder = { high: 0, medium: 1, low: 2 };
+      return (priorityOrder[a.priority] || 2) - (priorityOrder[b.priority] || 2);
+    });
+  }, [activeOpportunities, archivedOpportunities, showArchive]);
+
+  const handleAct = (id: string) => {
+    setActionState(prev => ({ ...prev, [id]: 'acted' }));
+    setExpandedId(null);
+  };
+
+  const handleDismiss = (id: string) => {
+    setActionState(prev => ({ ...prev, [id]: 'dismissed' }));
+    setExpandedId(null);
+  };
+
+  // Conversion metrics
+  const metrics = data?.metrics;
+  const actedCount = Object.values(actionState).filter(s => s === 'acted').length + (metrics?.totalConverted || 0);
+  const dismissedCount = Object.values(actionState).filter(s => s === 'dismissed').length + (metrics?.totalIgnored || 0);
+
   const getTypeIcon = (type: Opportunity['type']) => {
     switch (type) {
       case 'blocker': return <BlockerIcon className="w-4 h-4" />;
@@ -47,6 +119,8 @@ export function OpportunityScan({ data }: { data?: OpportunityScanData }) {
       case 'deadline': return <DeadlineIcon className="w-4 h-4" />;
       case 'opportunity': return <OpportunityIcon className="w-4 h-4" />;
       case 'suggestion': return <SuggestionIcon className="w-4 h-4" />;
+      case 'idea': return <IdeaIcon className="w-4 h-4" />;
+      case 'system': return <SystemTaskIcon className="w-4 h-4" />;
       default: return <OpportunityIcon className="w-4 h-4" />;
     }
   };
@@ -58,6 +132,8 @@ export function OpportunityScan({ data }: { data?: OpportunityScanData }) {
       case 'deadline': return { bg: 'var(--warning-muted)', color: 'var(--warning)', border: 'rgba(201, 169, 89, 0.2)' };
       case 'opportunity': return { bg: 'rgba(139, 115, 85, 0.08)', color: 'var(--accent-primary)', border: 'rgba(139, 115, 85, 0.15)' };
       case 'suggestion': return { bg: 'var(--bg-muted)', color: 'var(--text-secondary)', border: 'var(--border-subtle)' };
+      case 'idea': return { bg: 'rgba(139, 125, 184, 0.08)', color: '#8B7DB8', border: 'rgba(139, 125, 184, 0.15)' };
+      case 'system': return { bg: 'var(--success-muted)', color: 'var(--success)', border: 'rgba(122, 158, 126, 0.2)' };
       default: return { bg: 'var(--bg-muted)', color: 'var(--text-secondary)', border: 'var(--border-subtle)' };
     }
   };
@@ -70,13 +146,28 @@ export function OpportunityScan({ data }: { data?: OpportunityScanData }) {
     }
   };
 
+  const getSourceColor = (source?: string) => {
+    switch (source) {
+      case 'ROADMAP': return { bg: 'rgba(139, 115, 85, 0.08)', color: 'var(--accent-primary)' };
+      case 'Project': return { bg: 'var(--warning-muted)', color: 'var(--warning)' };
+      case 'External': return { bg: 'rgba(139, 125, 184, 0.08)', color: '#8B7DB8' };
+      case 'System': return { bg: 'var(--success-muted)', color: 'var(--success)' };
+      default: return { bg: 'var(--bg-muted)', color: 'var(--text-tertiary)' };
+    }
+  };
+
+  const displayedItems = sortedOpportunities.slice(0, 8);
+  const remainingCount = sortedOpportunities.length - displayedItems.length;
+
   return (
     <div className="space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>Opportunity Scan</h2>
-          <p className="text-xs" style={{ color: 'var(--text-tertiary)' }}>Productive opportunities detected</p>
+          <p className="text-xs" style={{ color: 'var(--text-tertiary)' }}>
+            {showArchive ? 'History & dismissed items' : 'Productive opportunities detected'}
+          </p>
         </div>
         <div className="flex items-center gap-2">
           <span className="text-xs" style={{ color: 'var(--text-tertiary)' }}>Last scan: {lastScanAgo || 'never'}</span>
@@ -89,32 +180,82 @@ export function OpportunityScan({ data }: { data?: OpportunityScanData }) {
         </div>
       </div>
 
+      {/* Conversion Metrics Bar */}
+      {(actedCount > 0 || dismissedCount > 0) && (
+        <div
+          className="flex items-center gap-3 px-3 py-2 rounded-lg text-[10px]"
+          style={{ background: 'var(--bg-muted)' }}
+        >
+          <span style={{ color: 'var(--text-tertiary)' }}>Tracking:</span>
+          <span className="flex items-center gap-1" style={{ color: 'var(--success)' }}>
+            <ReadyIcon className="w-3 h-3" /> {actedCount} acted
+          </span>
+          <span className="flex items-center gap-1" style={{ color: 'var(--text-muted)' }}>
+            <DismissIcon className="w-3 h-3" /> {dismissedCount} dismissed
+          </span>
+          <span style={{ color: 'var(--text-tertiary)' }}>
+            {activeOpportunities.length} active
+          </span>
+        </div>
+      )}
+
+      {/* Archive Toggle */}
+      <div className="flex items-center gap-2">
+        <button
+          onClick={() => setShowArchive(false)}
+          className="px-2.5 py-1 rounded-lg text-xs transition-all duration-200"
+          style={{
+            background: !showArchive ? 'var(--bg-secondary)' : 'transparent',
+            color: !showArchive ? 'var(--text-primary)' : 'var(--text-tertiary)',
+            border: !showArchive ? '1px solid var(--border-subtle)' : '1px solid transparent',
+            boxShadow: !showArchive ? 'var(--shadow-sm)' : 'none'
+          }}
+        >
+          Active ({activeOpportunities.length})
+        </button>
+        <button
+          onClick={() => setShowArchive(true)}
+          className="px-2.5 py-1 rounded-lg text-xs transition-all duration-200"
+          style={{
+            background: showArchive ? 'var(--bg-secondary)' : 'transparent',
+            color: showArchive ? 'var(--text-primary)' : 'var(--text-tertiary)',
+            border: showArchive ? '1px solid var(--border-subtle)' : '1px solid transparent',
+            boxShadow: showArchive ? 'var(--shadow-sm)' : 'none'
+          }}
+        >
+          Archive ({archivedOpportunities.length})
+        </button>
+      </div>
+
       {/* Opportunities List */}
       <div className="space-y-2">
-        {opportunities.length === 0 ? (
+        {displayedItems.length === 0 ? (
           <EmptyState
             icon={<ScanIcon className="w-5 h-5" style={{ color: 'var(--text-tertiary)' }} />}
-            title="No opportunities detected"
-            subtitle="System is running smoothly"
+            title={showArchive ? 'No archived items' : 'No opportunities detected'}
+            subtitle={showArchive ? 'Acted or dismissed items appear here' : 'System is running smoothly'}
           />
         ) : (
-          opportunities.slice(0, 5).map((opp) => (
+          displayedItems.map((opp) => (
               <OpportunityCard
                 key={opp.id}
                 opp={opp}
                 isExpanded={expandedId === opp.id}
                 onToggle={() => setExpandedId(expandedId === opp.id ? null : opp.id)}
+                onAct={showArchive ? undefined : () => handleAct(opp.id)}
+                onDismiss={showArchive ? undefined : () => handleDismiss(opp.id)}
                 getTypeColor={getTypeColor}
                 getTypeIcon={getTypeIcon}
                 getPriorityColor={getPriorityColor}
+                getSourceColor={getSourceColor}
               />
           ))
         )}
       </div>
 
-      {opportunities.length > 5 && (
+      {remainingCount > 0 && (
         <div className="text-center text-xs" style={{ color: 'var(--text-tertiary)' }}>
-          +{opportunities.length - 5} more opportunities
+          +{remainingCount} more {showArchive ? 'archived' : 'opportunities'}
         </div>
       )}
     </div>
@@ -125,24 +266,37 @@ function OpportunityCard({
   opp,
   isExpanded,
   onToggle,
+  onAct,
+  onDismiss,
   getTypeColor,
   getTypeIcon,
-  getPriorityColor
+  getPriorityColor,
+  getSourceColor
 }: {
   opp: Opportunity;
   isExpanded: boolean;
   onToggle: () => void;
+  onAct?: () => void;
+  onDismiss?: () => void;
   getTypeColor: (type: Opportunity['type']) => { bg: string; color: string; border: string };
   getTypeIcon: (type: Opportunity['type']) => React.ReactNode;
   getPriorityColor: (priority: Opportunity['priority']) => string;
+  getSourceColor: (source?: string) => { bg: string; color: string };
 }) {
   const typeColor = getTypeColor(opp.type);
+  const sourceColor = getSourceColor(opp.source);
+  const isArchived = opp.status === 'acted' || opp.status === 'dismissed' || opp.status === 'expired';
 
   return (
     <button
       onClick={onToggle}
       className="w-full text-left p-3 rounded-xl transition-all duration-300 cursor-pointer"
-      style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-subtle)', boxShadow: 'var(--shadow-sm)' }}
+      style={{
+        background: 'var(--bg-secondary)',
+        border: '1px solid var(--border-subtle)',
+        boxShadow: 'var(--shadow-sm)',
+        opacity: isArchived ? 0.7 : 1
+      }}
     >
       <div className="flex items-start gap-3">
         <div
@@ -175,8 +329,33 @@ function OpportunityCard({
             >
               {opp.action}
             </span>
+            {/* Source badge */}
+            {opp.source && (
+              <span
+                className="px-1.5 py-0.5 rounded text-[10px] font-medium"
+                style={{ background: sourceColor.bg, color: sourceColor.color }}
+              >
+                {opp.source}
+              </span>
+            )}
+            {/* Category badge */}
+            {opp.category && (
+              <span className="text-[10px]" style={{ color: 'var(--text-muted)' }}>{opp.category}</span>
+            )}
             {opp.project && (
               <span className="text-[10px]" style={{ color: 'var(--text-muted)' }}>{opp.project}</span>
+            )}
+            {/* Archive status badge */}
+            {isArchived && opp.status && (
+              <span
+                className="px-1.5 py-0.5 rounded text-[10px]"
+                style={{
+                  background: opp.status === 'acted' ? 'var(--success-muted)' : 'var(--bg-muted)',
+                  color: opp.status === 'acted' ? 'var(--success)' : 'var(--text-muted)'
+                }}
+              >
+                {opp.status}
+              </span>
             )}
           </div>
           {isExpanded && (
@@ -189,6 +368,29 @@ function OpportunityCard({
                 <div className="flex items-center gap-2 text-[10px]">
                   <span style={{ color: 'var(--text-muted)' }}>Expires:</span>
                   <span style={{ color: 'var(--text-secondary)' }}>{new Date(opp.expiresAt).toLocaleString()}</span>
+                </div>
+              )}
+              {/* Action buttons */}
+              {(onAct || onDismiss) && (
+                <div className="flex items-center gap-2 mt-2">
+                  {onAct && (
+                    <button
+                      onClick={(e) => { e.stopPropagation(); onAct(); }}
+                      className="px-3 py-1 rounded-lg text-[11px] font-medium transition-all duration-200"
+                      style={{ background: 'var(--success-muted)', color: 'var(--success)', border: '1px solid rgba(122, 158, 126, 0.2)' }}
+                    >
+                      Act on it
+                    </button>
+                  )}
+                  {onDismiss && (
+                    <button
+                      onClick={(e) => { e.stopPropagation(); onDismiss(); }}
+                      className="px-3 py-1 rounded-lg text-[11px] transition-all duration-200"
+                      style={{ background: 'var(--bg-muted)', color: 'var(--text-tertiary)', border: '1px solid var(--border-subtle)' }}
+                    >
+                      Later
+                    </button>
+                  )}
                 </div>
               )}
             </div>
@@ -511,6 +713,34 @@ function SuggestionIcon({ className }: { className?: string }) {
       <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
       <line x1="12" y1="19" x2="12" y2="22" />
       <line x1="8" y1="22" x2="16" y2="22" />
+    </svg>
+  );
+}
+
+function IdeaIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M9 18h6" />
+      <path d="M10 22h4" />
+      <path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14" />
+    </svg>
+  );
+}
+
+function SystemTaskIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
+      <circle cx="12" cy="12" r="3" />
+    </svg>
+  );
+}
+
+function DismissIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="18" y1="6" x2="6" y2="18" />
+      <line x1="6" y1="6" x2="18" y2="18" />
     </svg>
   );
 }

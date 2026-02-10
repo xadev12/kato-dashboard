@@ -4,6 +4,11 @@ Started: Wed Feb 11 02:33:27 +08 2026
 
 ## Codebase Patterns
 - OpportunityScan.tsx contains both `OpportunityScan` and `KatoQueue` components plus all SVG icons
+- Opportunity interface extended with: `category`, `source`, `status`, `actedAt`, `dismissedAt` fields
+- Opportunity types now include: blocker, ready, opportunity, suggestion, deadline, idea, system
+- Source badges use `getSourceColor()` helper — ROADMAP=brown, Project=warning, External=purple, System=green
+- Active/Archive toggle uses local `actionState` (Record<string, 'acted'|'dismissed'>) — future: persist to backend
+- Sorting: ROADMAP/P0 items first, then blockers, then by priority
 - All SVG icons are defined as inline function components at the bottom of OpportunityScan.tsx
 - **Wabi-Sabi theme** (v4): warm beige/granola light theme, NOT dark
 - CSS variables in index.css: `--bg-primary: #FAF9F7`, `--bg-secondary: #FFFFFF`, `--accent-primary: #8B7355`
@@ -19,6 +24,21 @@ Started: Wed Feb 11 02:33:27 +08 2026
 - Layout.tsx uses `style={{}}` for theming, with `var()` CSS custom properties
 - All transitions use `cubic-bezier(0.4, 0, 0.2, 1)` easing and 300ms duration
 
+---
+
+## 2026-02-11 - US-001 (new PRD v4)
+- Implemented wabi-sabi theme across MissionControl.tsx and OpportunityScan.tsx
+- Replaced all dark theme hardcoded colors (bg-[#111111], text-white, border-white/[0.06], text-cyan-400) with CSS custom properties
+- Used inline `style={{}}` props with `var()` for all theming — keeps Tailwind for layout/spacing
+- Updated type color system from Tailwind classes to CSS variable-based objects: `{ bg, color, border }`
+- Updated AGENT_COLORS from Tailwind classes to hex values for use in inline styles
+- index.css already had wabi-sabi variables (updated externally), Layout.tsx also pre-updated
+- Files changed: src/pages/MissionControl.tsx, src/components/OpportunityScan.tsx
+- **Learnings for future iterations:**
+  - The theme is implemented via CSS custom properties in index.css, consumed via `style={{ color: 'var(--name)' }}`
+  - getTypeColor and getTaskColor now return objects `{ bg, color, border }` instead of class strings
+  - When icons need dynamic colors, add `style?: React.CSSProperties` prop alongside `className`
+  - Version badge updated from v3 to v4
 ---
 
 ## 2026-02-11 - US-002
@@ -45,4 +65,22 @@ Started: Wed Feb 11 02:33:27 +08 2026
   - The original `.map()` with block body `{}` inside JSX ternary caused TS parser issues — extracting to a separate component is cleaner
   - Icons are all inline SVGs at the bottom of the file, follow the `{ className?: string }` prop pattern
   - The component already had all type icons, priority colors, and empty state — the main missing piece was interactivity (clickable cards)
+---
+
+## 2026-02-11 - US-002 (Enhanced Opportunity Scanner)
+- Enhanced OpportunityScan with P0/ROADMAP sorting, source badges, archive toggle, and conversion tracking
+- Added new opportunity types: `idea` (lightbulb icon, purple) and `system` (gear icon, green)
+- Added `source` badge display (ROADMAP, Project, External, System) with color coding
+- Implemented sorting: P0/ROADMAP items always at top, then blockers, then by priority
+- Added conversion metrics bar showing acted/dismissed/active counts
+- Added Active/Archive tab toggle — dismissed/acted items move to archive view
+- Added "Act on it" and "Later" action buttons in expanded card view
+- Updated Opportunity interface in both component and useDashboardData hook
+- Added IdeaIcon, SystemTaskIcon, DismissIcon SVG components
+- Files changed: src/components/OpportunityScan.tsx, src/hooks/useDashboardData.ts
+- **Learnings for future iterations:**
+  - The dashboard-data.json already had `source` and `category` fields on opportunities — the component just wasn't rendering them
+  - `metrics` object on OpportunityScan data has conversionRate, totalSeen, totalConverted, totalIgnored, currentActive
+  - Local state for act/dismiss is in-memory only; future stories should persist to backend API
+  - Twitter/Reddit placeholders are handled by the `source: 'External'` category — actual API integration is deferred
 ---

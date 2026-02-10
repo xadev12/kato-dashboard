@@ -68,7 +68,7 @@
         "scripts/dashboard-scanner.js",
         "src/components/OpportunityScan.tsx"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "US-003",

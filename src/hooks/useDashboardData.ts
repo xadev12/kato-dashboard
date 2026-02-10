@@ -58,20 +58,32 @@ export interface SystemHealth {
 // Opportunity scan types
 export interface Opportunity {
   id: string
-  type: 'blocker' | 'ready' | 'opportunity' | 'suggestion' | 'deadline'
+  type: 'blocker' | 'ready' | 'opportunity' | 'suggestion' | 'deadline' | 'idea' | 'system'
+  category?: 'project' | 'system' | 'external' | 'roadmap'
   priority: 'high' | 'medium' | 'low'
   title: string
   description: string
   project?: string
+  source?: string
   action: string
   discoveredAt: string
   expiresAt: string
+  status?: 'active' | 'acted' | 'dismissed' | 'expired'
+  actedAt?: string
+  dismissedAt?: string
 }
 
 export interface OpportunityScan {
   lastScan: string
   items: Opportunity[]
   scanCount: number
+  metrics?: {
+    conversionRate: number
+    totalSeen: number
+    totalConverted: number
+    totalIgnored: number
+    currentActive: number
+  }
 }
 
 // Kato queue types
