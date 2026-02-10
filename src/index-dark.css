@@ -1,0 +1,222 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-primary: #0a0a0a;
+    --bg-secondary: #111111;
+    --bg-tertiary: #1a1a1a;
+    --border-subtle: rgba(255, 255, 255, 0.06);
+    --border-medium: rgba(255, 255, 255, 0.1);
+    
+    /* Warm accent colors - violet/amber/emerald instead of cold blue */
+    --accent-violet: #8b5cf6;
+    --accent-amber: #f59e0b;
+    --accent-emerald: #10b981;
+    --accent-rose: #f43f5e;
+  }
+  
+  body {
+    @apply bg-[#0a0a0a] text-gray-100 antialiased;
+    background: 
+      radial-gradient(circle at 0% 0%, rgba(139, 92, 246, 0.04) 0%, transparent 50%),
+      radial-gradient(circle at 100% 0%, rgba(245, 158, 11, 0.03) 0%, transparent 40%),
+      radial-gradient(circle at 100% 100%, rgba(16, 185, 129, 0.03) 0%, transparent 40%),
+      radial-gradient(circle at 50% 50%, rgba(244, 63, 94, 0.02) 0%, transparent 60%),
+      #0a0a0a;
+  }
+  
+  * {
+    @apply border-gray-800/50;
+  }
+  
+  /* Better focus states with warm violet */
+  *:focus-visible {
+    @apply outline-none ring-2 ring-violet-500/50 ring-offset-2 ring-offset-gray-950;
+  }
+}
+
+@layer components {
+  /* Refined card system */
+  .card {
+    @apply relative bg-[#111111] border border-white/[0.06] rounded-xl p-5 
+           transition-all duration-200 hover:border-white/[0.1] hover:shadow-xl 
+           hover:shadow-black/20;
+  }
+  
+  .card::before {
+    content: '';
+    @apply absolute inset-0 rounded-xl bg-gradient-to-br from-violet-500/[0.02] to-purple-500/[0.02] 
+           opacity-0 transition-opacity duration-200;
+  }
+  
+  .card:hover::before {
+    @apply opacity-100;
+  }
+  
+  /* Stat cards - refined */
+  .stat-card {
+    @apply relative bg-[#111111] border border-white/[0.06] rounded-xl p-6 
+           transition-all duration-200 hover:border-violet-500/20 
+           hover:shadow-lg hover:shadow-violet-500/5 overflow-hidden;
+  }
+  
+  .stat-card::after {
+    content: '';
+    @apply absolute inset-0 bg-gradient-to-br from-violet-500/[0.02] to-transparent 
+           opacity-0 transition-opacity duration-200;
+  }
+  
+  .stat-card:hover::after {
+    @apply opacity-100;
+  }
+  
+  /* Refined badges */
+  .badge {
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-medium 
+           uppercase tracking-wide transition-all duration-200;
+  }
+  .badge-green {
+    @apply bg-emerald-500/10 text-emerald-400 border border-emerald-500/20;
+  }
+  .badge-yellow {
+    @apply bg-amber-500/10 text-amber-400 border border-amber-500/20;
+  }
+  .badge-gray {
+    @apply bg-gray-500/10 text-gray-400 border border-gray-500/20;
+  }
+  .badge-blue {
+    @apply bg-violet-500/10 text-violet-400 border border-violet-500/20;
+  }
+  .badge-purple {
+    @apply bg-purple-500/10 text-purple-400 border border-purple-500/20;
+  }
+  .badge-red {
+    @apply bg-rose-500/10 text-rose-400 border border-rose-500/20;
+  }
+  
+  /* Modern refined buttons */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg 
+           font-medium text-sm transition-all duration-150 cursor-pointer;
+  }
+  .btn-primary {
+    @apply bg-violet-600 hover:bg-violet-500 text-white shadow-sm hover:shadow-md 
+           border border-violet-500/20 hover:border-violet-400/30;
+  }
+  .btn-secondary {
+    @apply bg-white/[0.03] hover:bg-white/[0.06] text-gray-300 hover:text-white 
+           border border-white/[0.06] hover:border-white/[0.1];
+  }
+  .btn-ghost {
+    @apply bg-transparent hover:bg-white/[0.03] text-gray-400 hover:text-gray-200;
+  }
+  .btn-sm {
+    @apply px-3 py-1.5 text-xs;
+  }
+  
+  /* Refined progress bar */
+  .progress-bar {
+    @apply relative h-1.5 bg-white/[0.03] rounded-full overflow-hidden;
+  }
+  
+  .progress-fill {
+    @apply h-full bg-gradient-to-r from-violet-500 to-violet-400
+           rounded-full transition-all duration-500 ease-out;
+  }
+  
+  /* Refined column headers */
+  .column-header {
+    @apply flex items-center justify-between px-1 mb-4 text-xs font-semibold 
+           text-gray-500 uppercase tracking-wider;
+  }
+  
+  /* Input fields */
+  .input {
+    @apply w-full bg-white/[0.03] border border-white/[0.06] rounded-lg px-4 py-2.5 
+           text-sm text-gray-200 placeholder:text-gray-600 
+           focus:outline-none focus:border-violet-500/30 focus:bg-white/[0.05]
+           transition-all duration-150;
+  }
+  
+  /* Icon buttons */
+  .icon-btn {
+    @apply w-9 h-9 flex items-center justify-center rounded-lg 
+           bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.06] 
+           text-gray-400 hover:text-gray-200 transition-all duration-150;
+  }
+  
+  /* Priority indicators - warm palette */
+  .priority-high {
+    @apply text-rose-400 bg-rose-500/10 border-rose-500/20;
+  }
+  .priority-medium {
+    @apply text-amber-400 bg-amber-500/10 border-amber-500/20;
+  }
+  .priority-low {
+    @apply text-emerald-400 bg-emerald-500/10 border-emerald-500/20;
+  }
+  
+  /* Status indicators */
+  .status-idle {
+    @apply text-emerald-400 bg-emerald-500/10 border-emerald-500/20;
+  }
+  .status-active {
+    @apply text-amber-400 bg-amber-500/10 border-amber-500/20;
+  }
+  .status-blocked {
+    @apply text-rose-400 bg-rose-500/10 border-rose-500/20;
+  }
+}
+
+/* Fade in animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out;
+}
+
+/* Pulse animation for active states */
+@keyframes softPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.animate-soft-pulse {
+  animation: softPulse 2s ease-in-out infinite;
+}
+
+/* Slide in animation */
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-10px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.animate-slide-in {
+  animation: slideIn 0.3s ease-out;
+}
+
+/* Custom scrollbar with warm gradient */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #4c1d95 0%, #7c3aed 50%, #4c1d95 100%);
+  border-radius: 4px;
+  border: 1px solid rgba(124, 58, 237, 0.3);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #5b21b6 0%, #8b5cf6 50%, #5b21b6 100%);
+}
+
+/* Selection color */
+::selection {
+  background: rgba(139, 92, 246, 0.3);
+  color: white;
+}

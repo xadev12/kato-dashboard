@@ -20,21 +20,41 @@ export function Layout({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="min-h-screen bg-[#030712]">
+    <div className="min-h-screen" style={{ background: 'var(--bg-primary)' }}>
       {/* Header */}
-      <header className="sticky top-0 z-50 border-b border-white/[0.06] bg-[#030712]/80 backdrop-blur-xl">
+      <header 
+        className="sticky top-0 z-50 backdrop-blur-xl"
+        style={{ 
+          background: 'rgba(250, 249, 247, 0.85)',
+          borderBottom: '1px solid var(--border-subtle)'
+        }}
+      >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-14 items-center justify-between">
             <div className="flex items-center gap-4">
               <Link to="/" className="flex items-center gap-2.5">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-cyan-500 to-cyan-600 text-sm font-bold text-white">
+                <div 
+                  className="flex h-8 w-8 items-center justify-center rounded-lg text-sm font-bold text-white"
+                  style={{ background: 'var(--accent-primary)' }}
+                >
                   K
                 </div>
-                <span className="text-lg font-semibold text-white">Kato</span>
+                <span 
+                  className="text-lg font-semibold"
+                  style={{ color: 'var(--text-primary)' }}
+                >
+                  Kato
+                </span>
               </Link>
 
               {/* Desktop Navigation */}
-              <nav className="hidden lg:flex items-center gap-1 p-1 bg-white/[0.03] rounded-lg border border-white/[0.06] ml-4">
+              <nav 
+                className="hidden lg:flex items-center gap-1 p-1 rounded-lg ml-4"
+                style={{ 
+                  background: 'var(--bg-tertiary)',
+                  border: '1px solid var(--border-subtle)'
+                }}
+              >
                 {navItems.map((item) => (
                   <NavLink
                     key={item.path}
@@ -54,7 +74,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
           </div>
 
           {/* Mobile Navigation */}
-          <nav className="lg:hidden flex items-center gap-1 py-2 overflow-x-auto scrollbar-hide">
+          <nav 
+            className="lg:hidden flex items-center gap-1 py-2 overflow-x-auto scrollbar-hide"
+            style={{ borderTop: '1px solid var(--border-subtle)' }}
+          >
             {navItems.map((item) => (
               <NavLink
                 key={item.path}
@@ -94,11 +117,25 @@ function NavLink({
   return (
     <Link
       to={to}
-      className={`${mobile ? 'flex-shrink-0' : ''} px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap ${
-        active
-          ? 'bg-gradient-to-r from-cyan-500/20 to-cyan-500/10 text-cyan-400 border border-cyan-500/20 shadow-sm'
-          : 'text-gray-400 hover:text-white hover:bg-white/[0.03]'
-      }`}
+      className={`${mobile ? 'flex-shrink-0' : ''} px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap`}
+      style={{
+        background: active ? 'rgba(139, 115, 85, 0.1)' : 'transparent',
+        color: active ? 'var(--accent-primary)' : 'var(--text-secondary)',
+        border: active ? '1px solid rgba(139, 115, 85, 0.15)' : '1px solid transparent',
+        boxShadow: active ? 'var(--shadow-sm)' : 'none'
+      }}
+      onMouseEnter={(e) => {
+        if (!active) {
+          e.currentTarget.style.color = 'var(--text-primary)'
+          e.currentTarget.style.background = 'var(--bg-muted)'
+        }
+      }}
+      onMouseLeave={(e) => {
+        if (!active) {
+          e.currentTarget.style.color = 'var(--text-secondary)'
+          e.currentTarget.style.background = 'transparent'
+        }
+      }}
     >
       <NavIcon name={icon} className="w-4 h-4" />
       <span>{label}</span>

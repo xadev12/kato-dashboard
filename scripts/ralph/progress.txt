@@ -1,0 +1,43 @@
+# Ralph Progress Log
+Started: Wed Feb 11 02:33:27 +08 2026
+---
+
+## Codebase Patterns
+- OpportunityScan.tsx contains both `OpportunityScan` and `KatoQueue` components plus all SVG icons
+- All SVG icons are defined as inline function components at the bottom of OpportunityScan.tsx
+- Dark theme uses `bg-[#111111]` for card backgrounds, `bg-[#0a0a0a]` for section containers
+- Border pattern: `border border-white/[0.06]` for subtle borders, `hover:border-white/[0.1]` for hover
+- Type color mapping: blocker=rose, ready=emerald, deadline=amber, opportunity=cyan, suggestion=gray
+- Priority color mapping: high=rose, medium=amber, low=gray
+- Agent color mapping: kato=cyan, yuki=violet, koji=amber, sora=emerald, karin=rose (AGENT_COLORS const)
+- MissionControl.tsx is the main page component that orchestrates all sections
+- `useDashboardData` hook handles API fetch with polling (5s) and JSON fallback
+- Progress bars use `h-1` or `h-1.5` with `bg-white/[0.06]` track and colored fill with rounded-full
+
+---
+
+## 2026-02-11 - US-002
+- Enhanced KatoQueue task cards with progress bars, agent avatars, and estimated completion time
+- Extracted TaskCard into its own component with progress bar for "current" type tasks
+- Added AgentAvatar component with color-coded initials (kato=cyan, yuki=violet, koji=amber, sora=emerald, karin=rose)
+- Added getTaskProgress() and getEstimatedTimeLeft() helpers for time-based progress calculation
+- Progress bar shows amber normally, rose when overdue; time estimate shows "~Xm left" or "overdue"
+- Files changed: src/components/OpportunityScan.tsx
+- **Learnings for future iterations:**
+  - The KatoTask interface already had `startedAt`, `estimatedComplete`, `assignedAgent` fields — just needed UI to display them
+  - Stats summary (active/planned/system counts) was already implemented in the KatoQueue component
+  - Task type icons were also already implemented — the story mainly needed progress bars, agent avatars, and time estimates
+  - Agent color mapping uses a simple Record lookup with fallback to gray
+---
+
+## 2026-02-11 - US-001
+- Made opportunity scan cards clickable with expandable detail view
+- Extracted OpportunityCard into its own component for cleaner code
+- Added ChevronIcon with rotation animation for expand/collapse state
+- Expanded view shows discoveredAt and expiresAt timestamps
+- Files changed: src/components/OpportunityScan.tsx
+- **Learnings for future iterations:**
+  - The original `.map()` with block body `{}` inside JSX ternary caused TS parser issues — extracting to a separate component is cleaner
+  - Icons are all inline SVGs at the bottom of the file, follow the `{ className?: string }` prop pattern
+  - The component already had all type icons, priority colors, and empty state — the main missing piece was interactivity (clickable cards)
+---

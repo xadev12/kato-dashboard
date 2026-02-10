@@ -117,7 +117,7 @@ VITE_SUPABASE_ANON_KEY=...               # Optional
 - Frontend falls back to `dashboard-data.json` if backend API is unavailable
 - Backend runs locally on Mac mini — NOT deployed publicly
 - Auto-sync cron updates `dashboard-data.json` and deploys to Vercel every 10 minutes
-- Agent names: Kato, Bel, Fel, Kenji, Yuki, Koji, Sora, Karin
+- Active agents: Kato, Yuki, Koji, Sora, Karin (Bel, Fel, Kenji archived — replaced by CLI-Direct)
 
 ## Design Notes
 

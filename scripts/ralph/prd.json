@@ -1,0 +1,178 @@
+{
+  "title": "Kato Dashboard v4 - Wabi-Sabi Edition",
+  "description": "Clean, motion-rich dashboard with beige/granola aesthetic, opportunity scanning, and autonomous operation visibility",
+  "branchName": "ralph/dashboard-v4",
+  "version": "4.0.0",
+  "designSystem": {
+    "aesthetic": "wabi-sabi",
+    "vibe": "clean-motion",
+    "colors": {
+      "background": "#FAF9F7",
+      "surface": "#FFFFFF",
+      "surfaceMuted": "#F5F4F2",
+      "primary": "#8B7355",
+      "primaryMuted": "#A69580",
+      "accent": "#D4C4B0",
+      "text": "#2C2C2C",
+      "textMuted": "#6B6B6B",
+      "success": "#7A9E7E",
+      "warning": "#C9A959",
+      "error": "#B87A7A",
+      "divider": "#E8E6E3"
+    },
+    "typography": {
+      "heading": "Inter, system-ui, sans-serif",
+      "body": "Inter, system-ui, sans-serif"
+    },
+    "motion": {
+      "easing": "cubic-bezier(0.4, 0, 0.2, 1)",
+      "duration": "300ms"
+    }
+  },
+  "userStories": [
+    {
+      "id": "US-001",
+      "title": "Wabi-Sabi Theme Implementation",
+      "description": "Implement beige/granola color scheme with clean motion aesthetics",
+      "acceptanceCriteria": [
+        "Background: warm off-white (#FAF9F7)",
+        "Cards: pure white with subtle shadow",
+        "Primary color: warm brown (#8B7355)",
+        "Text: near-black with muted variants",
+        "Dividers: warm gray (#E8E6E3)",
+        "Smooth transitions on all hover states",
+        "No harsh borders, use shadows and subtle dividers"
+      ],
+      "files": [
+        "src/index.css",
+        "tailwind.config.ts",
+        "src/components/Layout.tsx"
+      ],
+      "passes": false
+    },
+    {
+      "id": "US-002",
+      "title": "Enhanced Opportunity Scanner",
+      "description": "Improve opportunity detection with startup ideas, P0 prioritization, and external sources",
+      "acceptanceCriteria": [
+        "P0 ROADMAP items always appear at top regardless of type",
+        "Detect startup ideas from patterns in projects",
+        "Twitter API integration for opportunity scanning (future)",
+        "Reddit scanning capability (future)",
+        "Categorize opportunities: Blocker, Ready, Idea, Deadline, System",
+        "Show opportunity source (ROADMAP, Project, External)",
+        "Historical opportunity archive",
+        "Conversion tracking (acted vs ignored)"
+      ],
+      "files": [
+        "scripts/dashboard-scanner.js",
+        "src/components/OpportunityScan.tsx"
+      ],
+      "passes": false
+    },
+    {
+      "id": "US-003",
+      "title": "Subtask System",
+      "description": "Implement hierarchical task system with subtask visibility",
+      "acceptanceCriteria": [
+        "Tasks can have nested subtasks",
+        "Progress bar calculated from subtask completion",
+        "Expand/collapse subtask view",
+        "Subtasks show in Kato's Queue when expanded",
+        "Click parent task to see all subtasks"
+      ],
+      "files": [
+        "src/components/KatoQueue.tsx",
+        "src/components/SubtaskList.tsx",
+        "public/dashboard-data.json schema"
+      ],
+      "passes": false
+    },
+    {
+      "id": "US-004",
+      "title": "Actions Panel",
+      "description": "Create dedicated Actions section for pending decisions and opportunities",
+      "acceptanceCriteria": [
+        "New 'Actions' column or section",
+        "Shows opportunities requiring action",
+        "Shows blocked items needing resolution",
+        "Shows P0 items waiting to start",
+        "Click to take action (if backend supports)",
+        "Mark as 'later' to snooze",
+        "Dismissing removes from active view but keeps in history"
+      ],
+      "files": [
+        "src/components/ActionsPanel.tsx",
+        "src/pages/MissionControl.tsx"
+      ],
+      "passes": false
+    },
+    {
+      "id": "US-005",
+      "title": "System Tasks with Better Token Accuracy",
+      "description": "Fix token logging accuracy and show system tasks appropriately",
+      "acceptanceCriteria": [
+        "Debug and fix token stats accuracy",
+        "System tasks show in separate section",
+        "Token logging task shows last run time",
+        "Health check task shows last status",
+        "Collapsible 'System' section"
+      ],
+      "files": [
+        "scripts/collect-token-stats.js",
+        "src/components/SystemPanel.tsx"
+      ],
+      "passes": false
+    },
+    {
+      "id": "US-006",
+      "title": "Historical Archive",
+      "description": "Show historical opportunities and completed tasks",
+      "acceptanceCriteria": [
+        "Archive view for past opportunities",
+        "Completed tasks history",
+        "Conversion rate metrics",
+        "Filter by date range",
+        "Filter by type"
+      ],
+      "files": [
+        "src/components/HistoryView.tsx",
+        "src/pages/MissionControl.tsx"
+      ],
+      "passes": false
+    },
+    {
+      "id": "US-007",
+      "title": "External Integrations",
+      "description": "Pull data from multiple sources",
+      "acceptanceCriteria": [
+        "GitHub integration: open PRs, issues",
+        "Calendar integration: upcoming events",
+        "Move app: fitness goals progress",
+        "Placeholder for Twitter API",
+        "Placeholder for Reddit API",
+        "Unified 'External' section in dashboard"
+      ],
+      "files": [
+        "src/components/ExternalData.tsx",
+        "scripts/integrations/"
+      ],
+      "passes": false
+    },
+    {
+      "id": "US-008",
+      "title": "Message Bot Research",
+      "description": "Research message bot UIs for inspiration",
+      "acceptanceCriteria": [
+        "Document findings from Notion, Slack, Discord bot UIs",
+        "Identify patterns: command palettes, quick actions, rich cards",
+        "Apply relevant patterns to dashboard",
+        "Reference: Notion AI, Slack shortcuts, Discord bot interactions"
+      ],
+      "files": [
+        "docs/ui-research.md"
+      ],
+      "passes": false
+    }
+  ]
+}

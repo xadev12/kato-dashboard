@@ -55,9 +55,50 @@ export interface SystemHealth {
   }
 }
 
+// Opportunity scan types
+export interface Opportunity {
+  id: string
+  type: 'blocker' | 'ready' | 'opportunity' | 'suggestion' | 'deadline'
+  priority: 'high' | 'medium' | 'low'
+  title: string
+  description: string
+  project?: string
+  action: string
+  discoveredAt: string
+  expiresAt: string
+}
+
+export interface OpportunityScan {
+  lastScan: string
+  items: Opportunity[]
+  scanCount: number
+}
+
+// Kato queue types
+export interface KatoTask {
+  id: string
+  type: 'current' | 'planned' | 'upcoming' | 'system'
+  title: string
+  project?: string
+  projectId?: string
+  status: string
+  assignedAgent?: string
+  startedAt?: string
+  estimatedComplete?: string
+  plannedFor?: string
+  reason?: string
+}
+
+export interface KatoQueue {
+  lastUpdated: string
+  tasks: KatoTask[]
+  mode: 'autonomous' | 'manual'
+}
+
 export interface DashboardV3Data {
   schemaVersion: string
   lastUpdated: string
+  generatedAt?: string
   sprint: SprintInfo
   activeWork: {
     projects: ActiveProject[]
@@ -65,6 +106,8 @@ export interface DashboardV3Data {
   }
   queue: QueueItem[]
   systemHealth: SystemHealth
+  opportunities?: OpportunityScan
+  katoQueue?: KatoQueue
   // Legacy data for compatibility
   projects?: any[]
   agents?: any
@@ -72,12 +115,36 @@ export interface DashboardV3Data {
 }
 
 const POLLING_INTERVAL = 5000
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 
 async function fetchDashboardData(): Promise<DashboardV3Data | null> {
+  // Try live API first
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/status?t=${Date.now()}`, {
+      headers: { 'Content-Type': 'application/json' }
+    })
+    if (response.ok) {
+      const data = await response.json()
+      // Normalize: ensure lastUpdated exists
+      if (data.generatedAt && !data.lastUpdated) {
+        data.lastUpdated = data.generatedAt
+      }
+      return data
+    }
+  } catch (err) {
+    console.warn('[Dashboard] API unavailable, falling back to JSON:', err)
+  }
+  
+  // Fallback to static JSON
   try {
     const response = await fetch('/dashboard-data.json?t=' + Date.now())
     if (!response.ok) throw new Error('Fetch failed')
-    return await response.json()
+    const data = await response.json()
+    // Normalize: ensure lastUpdated exists
+    if (data.generatedAt && !data.lastUpdated) {
+      data.lastUpdated = data.generatedAt
+    }
+    return data
   } catch {
     return null
   }
@@ -86,19 +153,25 @@ async function fetchDashboardData(): Promise<DashboardV3Data | null> {
 export function useDashboardData() {
   const [data, setData] = useState<DashboardV3Data | null>(null)
   const [loading, setLoading] = useState(true)
+  const [refreshing, setRefreshing] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [isApiConnected, setIsApiConnected] = useState(false)
 
   const refresh = useCallback(async () => {
+    setRefreshing(true)
     try {
       const result = await fetchDashboardData()
       if (result) {
         setData(result)
         setError(null)
+        // Check if we got data from API (has schemaVersion) vs JSON fallback
+        setIsApiConnected(!!result.schemaVersion && !!result.generatedAt)
       }
     } catch (err) {
       setError('Failed to fetch dashboard data')
     } finally {
       setLoading(false)
+      setRefreshing(false)
     }
   }, [])
 
@@ -138,7 +211,9 @@ export function useDashboardData() {
   return {
     data,
     loading,
+    refreshing,
     error,
+    isApiConnected,
     refresh,
     // Computed
     sprint: data?.sprint || null,
@@ -146,6 +221,8 @@ export function useDashboardData() {
     blockedProjects,
     queue,
     systemHealth: data?.systemHealth || null,
+    opportunities: data?.opportunities,
+    katoQueue: data?.katoQueue,
     lastUpdated: data?.lastUpdated || '',
     lastUpdatedAgo,
     activeCount: activeProjects.length,

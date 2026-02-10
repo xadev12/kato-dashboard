@@ -8,7 +8,27 @@ import fs from 'fs'
 import path from 'path'
 
 const PROJECTS_DIR = '/Users/devl/clawd/projects'
+const HACKATHON_DIR = '/Users/devl/clawd/hackathon'
 const ARCHIVE_DIR = path.join(PROJECTS_DIR, 'archive')
+
+// Simple TTL cache to avoid re-reading filesystem on every request
+const CACHE_TTL_MS = 30000 // 30 seconds
+let cachedPipelines: Pipeline[] | null = null
+let cacheTimestamp = 0
+
+function isCacheValid(): boolean {
+  return cachedPipelines !== null && (Date.now() - cacheTimestamp) < CACHE_TTL_MS
+}
+
+function setCache(pipelines: Pipeline[]): void {
+  cachedPipelines = pipelines
+  cacheTimestamp = Date.now()
+}
+
+function invalidateCache(): void {
+  cachedPipelines = null
+  cacheTimestamp = 0
+}
 
 export interface PipelineStage {
   status: 'pending' | 'active' | 'completed' | 'blocked'
@@ -95,26 +115,76 @@ export interface ProjectTask {
 }
 
 /**
- * Read all pipeline.json files from projects directory
+ * Recursively find all pipeline.json files in a directory
+ */
+function findPipelineFiles(dir: string, exclude: string[] = []): string[] {
+  const files: string[] = []
+  
+  if (!fs.existsSync(dir)) return files
+  
+  const entries = fs.readdirSync(dir, { withFileTypes: true })
+  
+  for (const entry of entries) {
+    if (entry.isDirectory() && !exclude.includes(entry.name)) {
+      const fullPath = path.join(dir, entry.name)
+      const pipelinePath = path.join(fullPath, 'pipeline.json')
+      
+      // Check if this directory has a pipeline.json
+      if (fs.existsSync(pipelinePath)) {
+        files.push(pipelinePath)
+      }
+      
+      // Recurse into subdirectories
+      files.push(...findPipelineFiles(fullPath, exclude))
+    }
+  }
+  
+  return files
+}
+
+/**
+ * Read all pipeline.json files from projects directory (recursively)
+ * Uses 30-second TTL cache to avoid filesystem thrashing
  */
 export async function readAllPipelines(): Promise<Pipeline[]> {
-  const pipelines: Pipeline[] = []
-
-  if (!fs.existsSync(PROJECTS_DIR)) {
-    console.warn(`[Sources] Projects directory not found: ${PROJECTS_DIR}`)
-    return pipelines
+  // Return cached data if still valid
+  if (isCacheValid() && cachedPipelines) {
+    console.log('[Sources] Returning cached pipelines (TTL valid)')
+    return cachedPipelines
   }
 
-  const dirs = fs.readdirSync(PROJECTS_DIR, { withFileTypes: true })
-    .filter(d => d.isDirectory() && d.name !== 'archive')
+  const pipelines: Pipeline[] = []
 
-  for (const dir of dirs) {
-    const pipelinePath = path.join(PROJECTS_DIR, dir.name, 'pipeline.json')
-    if (fs.existsSync(pipelinePath)) {
+  // Recursively read from projects directory
+  if (fs.existsSync(PROJECTS_DIR)) {
+    const pipelineFiles = findPipelineFiles(PROJECTS_DIR, ['archive', 'node_modules', '.git'])
+    
+    for (const pipelinePath of pipelineFiles) {
       try {
         const content = fs.readFileSync(pipelinePath, 'utf-8')
         const pipeline = JSON.parse(content) as Pipeline
-        pipeline.projectId = pipeline.projectId || dir.name
+        // Use parent directory name as project ID if not specified
+        const dirName = path.basename(path.dirname(pipelinePath))
+        pipeline.projectId = pipeline.projectId || dirName
+        pipelines.push(pipeline)
+      } catch (err) {
+        console.error(`[Sources] Failed to read ${pipelinePath}:`, err)
+      }
+    }
+  } else {
+    console.warn(`[Sources] Projects directory not found: ${PROJECTS_DIR}`)
+  }
+
+  // Also check hackathon directory (for backwards compatibility)
+  if (fs.existsSync(HACKATHON_DIR)) {
+    const hackathonFiles = findPipelineFiles(HACKATHON_DIR, ['node_modules', '.git'])
+    
+    for (const pipelinePath of hackathonFiles) {
+      try {
+        const content = fs.readFileSync(pipelinePath, 'utf-8')
+        const pipeline = JSON.parse(content) as Pipeline
+        const dirName = path.basename(path.dirname(pipelinePath))
+        pipeline.projectId = pipeline.projectId || dirName
         pipelines.push(pipeline)
       } catch (err) {
         console.error(`[Sources] Failed to read ${pipelinePath}:`, err)
@@ -122,6 +192,10 @@ export async function readAllPipelines(): Promise<Pipeline[]> {
     }
   }
 
+  // Update cache
+  setCache(pipelines)
+  console.log(`[Sources] Cached ${pipelines.length} pipelines`)
+  
   return pipelines
 }
 
@@ -248,23 +322,65 @@ export async function getActiveProjects(): Promise<Project[]> {
 /**
  * Get single project by ID
  */
-export async function getProject(id: string): Promise<Project | null> {
-  const pipelinePath = path.join(PROJECTS_DIR, id, 'pipeline.json')
-
-  if (!fs.existsSync(pipelinePath)) {
-    // Check archive
-    const archivePath = path.join(ARCHIVE_DIR, id, 'pipeline.json')
-    if (fs.existsSync(archivePath)) {
-      const content = fs.readFileSync(archivePath, 'utf-8')
-      const pipeline = JSON.parse(content) as Pipeline
-      pipeline.projectId = id
-      return pipelineToProject(pipeline)
+/**
+ * Recursively find a project by ID
+ */
+function findProjectById(dir: string, id: string, exclude: string[] = []): string | null {
+  if (!fs.existsSync(dir)) return null
+  
+  const entries = fs.readdirSync(dir, { withFileTypes: true })
+  
+  for (const entry of entries) {
+    if (entry.isDirectory() && !exclude.includes(entry.name)) {
+      const fullPath = path.join(dir, entry.name)
+      
+      // Check if this directory matches the ID and has pipeline.json
+      if (entry.name === id) {
+        const pipelinePath = path.join(fullPath, 'pipeline.json')
+        if (fs.existsSync(pipelinePath)) {
+          return pipelinePath
+        }
+      }
+      
+      // Recurse into subdirectories
+      const found = findProjectById(fullPath, id, exclude)
+      if (found) return found
     }
-    return null
+  }
+  
+  return null
+}
+
+export async function getProject(id: string): Promise<Project | null> {
+  // Search recursively in projects directory
+  const projectPath = findProjectById(PROJECTS_DIR, id, ['archive', 'node_modules', '.git'])
+  if (projectPath) {
+    const content = fs.readFileSync(projectPath, 'utf-8')
+    const pipeline = JSON.parse(content) as Pipeline
+    pipeline.projectId = id
+    return pipelineToProject(pipeline)
   }
 
-  const content = fs.readFileSync(pipelinePath, 'utf-8')
-  const pipeline = JSON.parse(content) as Pipeline
-  pipeline.projectId = id
-  return pipelineToProject(pipeline)
+  // Search recursively in hackathon directory (backwards compatibility)
+  const hackathonPath = findProjectById(HACKATHON_DIR, id, ['node_modules', '.git'])
+  if (hackathonPath) {
+    const content = fs.readFileSync(hackathonPath, 'utf-8')
+    const pipeline = JSON.parse(content) as Pipeline
+    pipeline.projectId = id
+    return pipelineToProject(pipeline)
+  }
+
+  // Check archive
+  const archivePath = path.join(ARCHIVE_DIR, id, 'pipeline.json')
+  if (fs.existsSync(archivePath)) {
+    const content = fs.readFileSync(archivePath, 'utf-8')
+    const pipeline = JSON.parse(content) as Pipeline
+    pipeline.projectId = id
+    return pipelineToProject(pipeline)
+  }
+
+  return null
 }
+
+// Export cache control for admin/debug endpoints
+export { invalidateCache as clearProjectCache }
