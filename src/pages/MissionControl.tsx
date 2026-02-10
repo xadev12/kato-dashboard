@@ -1,17 +1,22 @@
 import { useDashboardData } from '../hooks/useDashboardData'
 import { Link } from 'react-router-dom'
+import { OpportunityScan, KatoQueue } from '../components/OpportunityScan'
 
 export function MissionControl() {
   const {
     loading,
+    refreshing,
     sprint,
     activeProjects,
     blockedProjects,
     queue,
     systemHealth,
+    opportunities,
+    katoQueue,
     lastUpdatedAgo,
     activeCount,
     blockedCount,
+    isApiConnected,
     refresh
   } = useDashboardData()
 
@@ -20,34 +25,49 @@ export function MissionControl() {
   }
 
   return (
-    <div className="space-y-6 animate-fade-in pb-8">
+    <div className="space-y-6 animate-fade-in pb-8 min-w-0 overflow-x-hidden">
       {/* Header Bar */}
       <Header
         sprint={sprint}
         activeCount={activeCount}
         blockedCount={blockedCount}
         lastUpdated={lastUpdatedAgo}
+        isApiConnected={isApiConnected}
+        isRefreshing={refreshing}
         onRefresh={refresh}
       />
 
       {/* Three Column Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* LEFT: Active Work */}
-        <div className="space-y-4">
+        <div className="space-y-4 min-w-0">
           <SectionHeader title="Active Work" subtitle="What's happening now" />
           <ActiveWorkColumn projects={activeProjects} blockedProjects={blockedProjects} />
         </div>
 
         {/* CENTER: Queue */}
-        <div className="space-y-4">
+        <div className="space-y-4 min-w-0">
           <SectionHeader title="Queue" subtitle="What's next" />
           <QueueColumn items={queue} />
         </div>
 
         {/* RIGHT: System Health */}
-        <div className="space-y-4">
+        <div className="space-y-4 min-w-0">
           <SectionHeader title="System Health" subtitle="What it's costing" />
           <SystemHealthColumn health={systemHealth} />
+        </div>
+      </div>
+
+      {/* Second Row: Opportunity Scan & Kato's Queue */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* LEFT: Opportunity Scan */}
+        <div className="p-4 rounded-2xl bg-[#0a0a0a] border border-white/[0.06] min-w-0">
+          <OpportunityScan data={opportunities} />
+        </div>
+
+        {/* RIGHT: Kato's Queue */}
+        <div className="p-4 rounded-2xl bg-[#0a0a0a] border border-white/[0.06] min-w-0">
+          <KatoQueue data={katoQueue} />
         </div>
       </div>
     </div>
@@ -60,12 +80,16 @@ function Header({
   activeCount,
   blockedCount,
   lastUpdated,
+  isApiConnected,
+  isRefreshing,
   onRefresh
 }: {
   sprint: any
   activeCount: number
   blockedCount: number
   lastUpdated: string
+  isApiConnected: boolean
+  isRefreshing: boolean
   onRefresh: () => void
 }) {
   return (
@@ -76,6 +100,18 @@ function Header({
           <span className="hidden sm:inline-block px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 text-xs font-medium border border-cyan-500/20">
             v3
           </span>
+          {/* Connection Status */}
+          <div 
+            className={`flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-medium border ${
+              isApiConnected 
+                ? 'bg-green-500/10 text-green-400 border-green-500/20' 
+                : 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+            }`}
+            title={isApiConnected ? 'Live API connection' : 'Static data (API unavailable)'}
+          >
+            <span className={`w-1.5 h-1.5 rounded-full ${isApiConnected ? 'bg-green-400 animate-pulse' : 'bg-amber-400'}`} />
+            {isApiConnected ? 'Live' : 'Cached'}
+          </div>
         </div>
         {sprint && (
           <p className="text-sm text-gray-400">
@@ -97,15 +133,27 @@ function Header({
           </div>
         )}
 
-        {/* Last Updated */}
-        <div className="flex items-center gap-2 text-xs text-gray-500">
-          <span>Updated {lastUpdated}</span>
+        {/* Last Updated with Refresh */}
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-gray-500">Updated {lastUpdated}</span>
           <button
             onClick={onRefresh}
-            className="p-1.5 rounded-lg hover:bg-white/[0.05] transition-colors"
-            title="Refresh"
+            disabled={isRefreshing}
+            className={`p-1.5 rounded-lg transition-colors text-gray-500 hover:text-cyan-400 ${
+              isRefreshing 
+                ? 'cursor-not-allowed opacity-50' 
+                : 'hover:bg-white/[0.05]'
+            }`}
+            title={isRefreshing ? 'Refreshing...' : 'Refresh data'}
           >
-            <RefreshIcon className="w-3.5 h-3.5" />
+            <RefreshIcon className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin' : ''}`} />
+          </button>
+          <button
+            onClick={() => window.location.reload()}
+            className="p-1.5 rounded-lg transition-colors text-gray-500 hover:text-cyan-400 hover:bg-white/[0.05]"
+            title="Full page reload"
+          >
+            <ReloadIcon className="w-3.5 h-3.5" />
           </button>
         </div>
       </div>
@@ -392,6 +440,10 @@ function LoadingSkeleton() {
           <div className="h-48 bg-white/[0.03] rounded-xl" />
         </div>
       </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="h-48 bg-white/[0.03] rounded-2xl" />
+        <div className="h-48 bg-white/[0.03] rounded-2xl" />
+      </div>
     </div>
   )
 }
@@ -404,6 +456,17 @@ function RefreshIcon({ className }: { className?: string }) {
       <path d="M3 3v5h5" />
       <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16" />
       <path d="M16 16h5v5" />
+    </svg>
+  )
+}
+
+function ReloadIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
+      <path d="M21 3v5h-5" />
+      <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
+      <path d="M8 16H3v5" />
     </svg>
   )
 }
