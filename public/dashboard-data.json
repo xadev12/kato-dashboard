@@ -879,9 +879,69 @@
         "status": "queued",
         "reason": "Regular maintenance",
         "plannedFor": "2026-02-10T19:12:55.905Z"
+      },
+      {
+        "id": "system-token-logging",
+        "type": "system",
+        "title": "Token usage logging",
+        "status": "ok",
+        "reason": "Cost tracking",
+        "startedAt": "2026-02-10T18:30:00.000Z",
+        "plannedFor": "2026-02-10T19:00:00.000Z"
+      },
+      {
+        "id": "system-dashboard-sync",
+        "type": "system",
+        "title": "Dashboard data sync",
+        "status": "ok",
+        "reason": "Auto-sync to Vercel",
+        "startedAt": "2026-02-10T18:40:00.000Z",
+        "plannedFor": "2026-02-10T18:50:00.000Z"
       }
     ],
     "mode": "autonomous"
   },
+  "systemTasks": [
+    {
+      "id": "system-token-logging",
+      "title": "Token usage logging",
+      "status": "ok",
+      "lastRunAt": "2026-02-10T18:30:00.000Z",
+      "lastStatus": "ok",
+      "nextRunAt": "2026-02-10T19:00:00.000Z",
+      "interval": "30m",
+      "detail": "840 requests logged today"
+    },
+    {
+      "id": "system-health-check",
+      "title": "System health check",
+      "status": "ok",
+      "lastRunAt": "2026-02-10T18:42:55.905Z",
+      "lastStatus": "ok",
+      "nextRunAt": "2026-02-10T19:12:55.905Z",
+      "interval": "30m",
+      "detail": "All agents responding"
+    },
+    {
+      "id": "system-dashboard-sync",
+      "title": "Dashboard data sync",
+      "status": "ok",
+      "lastRunAt": "2026-02-10T18:40:00.000Z",
+      "lastStatus": "ok",
+      "nextRunAt": "2026-02-10T18:50:00.000Z",
+      "interval": "10m",
+      "detail": "Auto-sync to Vercel"
+    },
+    {
+      "id": "system-pipeline-engine",
+      "title": "Pipeline engine cron",
+      "status": "ok",
+      "lastRunAt": "2026-02-10T18:27:00.000Z",
+      "lastStatus": "ok",
+      "nextRunAt": "2026-02-10T18:42:00.000Z",
+      "interval": "15m",
+      "detail": "Gate checker + stage advancement"
+    }
+  ],
   "lastKatoCheck": "2026-02-10T18:42:55.905Z"
 }

@@ -23,6 +23,15 @@ Started: Wed Feb 11 02:33:27 +08 2026
 - Progress bars use `h-1` or `h-1.5` with `var(--bg-muted)` track and colored fill with rounded-full
 - Layout.tsx uses `style={{}}` for theming, with `var()` CSS custom properties
 - All transitions use `cubic-bezier(0.4, 0, 0.2, 1)` easing and 300ms duration
+- KatoTask supports nested subtasks via `subtasks: Subtask[]` — progress bar auto-calculates from done/total
+- For clickable/non-clickable variants of same component, use conditional Wrapper pattern: `const Wrapper = onToggle ? 'button' : 'div'`
+- ActionsPanel aggregates actionable items from 3 sources: opportunities, blockedProjects, katoTasks (planned type)
+- Action items support 3 states: done, snoozed (1hr auto-expire), dismissed — all in-memory via `actionState`
+- MissionControl second row is now 3-column: Actions | Opportunity Scan | Kato's Queue
+- Static JSON fallback (`dashboard-data.json`) has `meta.tokenStats` and `agents.queens`, NOT `systemHealth` — `deriveSystemHealth()` in useDashboardData.ts normalizes it
+- Token cost estimation: when cost=0, use blended rate of ~$3/1M tokens to estimate from `tokensUsed`
+- System tasks sourced from: 1) top-level `systemTasks` array (preferred), 2) katoQueue tasks with type='system' (fallback)
+- SystemPanel.tsx is a standalone component with collapsible section — receives `systemTasks` and `tokenStats` as props from MissionControl
 
 ---
 
@@ -83,4 +92,56 @@ Started: Wed Feb 11 02:33:27 +08 2026
   - `metrics` object on OpportunityScan data has conversionRate, totalSeen, totalConverted, totalIgnored, currentActive
   - Local state for act/dismiss is in-memory only; future stories should persist to backend API
   - Twitter/Reddit placeholders are handled by the `source: 'External'` category — actual API integration is deferred
+---
+
+## 2026-02-11 - US-003 (Subtask System)
+- Added Subtask interface and extended KatoTask with `hasSubtasks`, `subtaskCount`, `subtaskProgress`, `subtasks` fields
+- Updated KatoTask interface in both OpportunityScan.tsx and useDashboardData.ts
+- TaskCard now supports expand/collapse: click parent task to see all subtasks
+- Subtask progress bar calculated from subtask completion (done count / total), colored with accent-primary
+- SubtaskRow component shows status icons: checkmark (done), animated spinner (in_progress), empty circle (pending)
+- Done subtasks get line-through text decoration
+- ChevronIcon on task cards with subtasks indicates expand/collapse state
+- Added subtask sample data to 3 tasks in dashboard-data.json (revenuecat, analytics, edge functions)
+- Files changed: src/components/OpportunityScan.tsx, src/hooks/useDashboardData.ts, public/dashboard-data.json
+- **Learnings for future iterations:**
+  - dashboard-data.json already had `hasSubtasks`, `subtaskCount`, `subtaskProgress` fields (all false/0/null) — just needed `subtasks` array added
+  - TaskCard uses a conditional Wrapper (`button` vs `div`) to make only tasks with subtasks clickable
+  - Subtask progress bar uses accent-primary (brown), time-based progress uses warning (amber) — different visual distinction
+  - SubtaskCheckIcon is separate from ReadyIcon to allow different strokeWidth (2.5 vs 2) for visual clarity at small sizes
+---
+
+## 2026-02-11 - US-004 (Actions Panel)
+- Created ActionsPanel component (`src/components/ActionsPanel.tsx`) as a dedicated section for pending decisions and opportunities
+- Aggregates actionable items from 3 data sources: opportunities (blockers & high-priority), blocked projects, and planned kato tasks
+- Three view modes: Active (pending actions), Snoozed (temporarily deferred), History (done/dismissed)
+- Each action item has 3 buttons: Done (marks complete), Later (snoozes for 1 hour with auto-expire), Dismiss (removes from active, keeps in history)
+- Integrated into MissionControl as first column in the second row (now 3-column: Actions | Opportunities | Queue)
+- Follows existing wabi-sabi patterns: CSS variable styling, rounded-xl cards, consistent type/priority color helpers
+- Files changed: src/components/ActionsPanel.tsx (new), src/pages/MissionControl.tsx
+- **Learnings for future iterations:**
+  - The `useDashboardData` hook already provides `opportunities`, `blockedProjects`, and `katoQueue` — ActionsPanel receives these as props from MissionControl
+  - Action items are built by mapping over multiple data sources and unifying into a single `ActionItem` interface
+  - Snooze uses a simple time-based expiry (1 hour) — when expired, items automatically return to active view
+  - The second row changed from 2-column to 3-column grid to accommodate the new Actions panel
+  - All action state is in-memory (`useState`) — future: persist to backend API
+---
+
+## 2026-02-11 - US-005 (System Tasks with Better Token Accuracy)
+- Created SystemPanel component (`src/components/SystemPanel.tsx`) with collapsible system task section
+- Fixed token stats accuracy: added `deriveSystemHealth()` to compute `systemHealth` from static JSON `meta.tokenStats` when backend is unavailable
+- Token cost estimation: when `cost=0` but `tokensUsed > 0`, estimates cost at ~$3/1M tokens (blended rate)
+- System tasks sourced from two places: top-level `systemTasks` array (richer metadata) and katoQueue `type='system'` tasks (fallback)
+- Each system task shows: status indicator (green/amber/red dot), last run time (relative), interval, detail text, and status badge
+- Token stats summary shows: cost, total tokens (formatted with M/K suffix), request count, input/output split
+- Collapsible via chevron toggle on header — collapsed state hides all task rows and token summary
+- Added 4 system tasks to dashboard-data.json: token logging, health check, dashboard sync, pipeline engine
+- Integrated into MissionControl's SystemHealthColumn (right column, below token/agent cards)
+- Exported `SystemTaskInfo` interface and `tokenStatsForPanel` computed value from useDashboardData hook
+- Files changed: src/components/SystemPanel.tsx (new), src/hooks/useDashboardData.ts, src/pages/MissionControl.tsx, public/dashboard-data.json
+- **Learnings for future iterations:**
+  - The static `dashboard-data.json` does NOT have `systemHealth` at top level — only the live backend (`server-v3.ts`) generates it. The hook must normalize.
+  - `meta.tokenStats.today.cost` is often 0 even when `tokensUsed` is large — the cost field isn't populated by the collector. Estimation is necessary.
+  - System tasks can come from two sources; the merge logic in `useDashboardData` deduplicates by ID, preferring top-level `systemTasks` entries.
+  - The `animate-fade-in` class from index.css works well for collapsible section content animation.
 ---

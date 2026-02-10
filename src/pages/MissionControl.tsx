@@ -2,6 +2,7 @@ import { useDashboardData } from '../hooks/useDashboardData'
 import { Link } from 'react-router-dom'
 import { OpportunityScan, KatoQueue } from '../components/OpportunityScan'
 import { ActionsPanel } from '../components/ActionsPanel'
+import { SystemPanel } from '../components/SystemPanel'
 
 export function MissionControl() {
   const {
@@ -14,6 +15,8 @@ export function MissionControl() {
     systemHealth,
     opportunities,
     katoQueue,
+    systemTasks,
+    tokenStatsForPanel,
     lastUpdatedAgo,
     activeCount,
     blockedCount,
@@ -56,6 +59,13 @@ export function MissionControl() {
         <div className="space-y-4 min-w-0">
           <SectionHeader title="System Health" subtitle="What it's costing" />
           <SystemHealthColumn health={systemHealth} />
+          {/* System Tasks — collapsible */}
+          <div
+            className="p-4 rounded-xl"
+            style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-subtle)', boxShadow: 'var(--shadow-sm)' }}
+          >
+            <SystemPanel systemTasks={systemTasks} tokenStats={tokenStatsForPanel} />
+          </div>
         </div>
       </div>
 

@@ -136,8 +136,62 @@ export interface DashboardV3Data {
   meta?: any
 }
 
+// System task types for the SystemPanel
+export interface SystemTaskInfo {
+  id: string
+  title: string
+  status: string
+  lastRunAt?: string
+  lastStatus?: 'ok' | 'warning' | 'error'
+  nextRunAt?: string
+  interval?: string
+  detail?: string
+}
+
 const POLLING_INTERVAL = 5000
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
+
+// Estimate cost from token count when actual cost isn't available
+// Blended rate: ~$3/1M tokens (mix of input/output across models)
+function estimateCostFromTokens(tokensUsed: number): number {
+  return (tokensUsed / 1_000_000) * 3
+}
+
+// Derive systemHealth from static dashboard-data.json fields
+function deriveSystemHealth(data: any): SystemHealth {
+  const tokenStats = data?.meta?.tokenStats?.today
+  const agents = data?.agents?.queens || []
+  const dailyBudget = 20
+
+  const tokensUsed = tokenStats?.tokensUsed || 0
+  // Use actual cost if available, otherwise estimate from token count
+  const cost = tokenStats?.cost > 0 ? tokenStats.cost : estimateCostFromTokens(tokensUsed)
+  const budgetUsedPercent = dailyBudget > 0 ? Math.round((cost / dailyBudget) * 100) : 0
+
+  const activeAgents = agents.filter((a: any) => a.status === 'active')
+
+  return {
+    tokens: {
+      today: tokensUsed,
+      cost,
+      budget: dailyBudget,
+      budgetUsedPercent,
+      overBudget: budgetUsedPercent > 100
+    },
+    agents: {
+      total: agents.length,
+      active: activeAgents.length,
+      idle: agents.length - activeAgents.length,
+      list: agents.map((a: any) => ({
+        id: a.id,
+        name: a.name,
+        status: a.status || 'idle',
+        currentTask: a.currentTask || null,
+        emoji: a.emoji || null
+      }))
+    }
+  }
+}
 
 async function fetchDashboardData(): Promise<DashboardV3Data | null> {
   // Try live API first
@@ -165,6 +219,10 @@ async function fetchDashboardData(): Promise<DashboardV3Data | null> {
     // Normalize: ensure lastUpdated exists
     if (data.generatedAt && !data.lastUpdated) {
       data.lastUpdated = data.generatedAt
+    }
+    // Derive systemHealth from static JSON fields if missing
+    if (!data.systemHealth) {
+      data.systemHealth = deriveSystemHealth(data)
     }
     return data
   } catch {
@@ -230,6 +288,46 @@ export function useDashboardData() {
     return `${Math.floor(hours / 24)}d ago`
   }, [data?.lastUpdated])
 
+  // Extract system tasks from katoQueue and enrich with metadata
+  const systemTasks = useMemo((): SystemTaskInfo[] => {
+    const katoSystemTasks = data?.katoQueue?.tasks?.filter(t => t.type === 'system') || []
+    // Also check for systemTasks array at top level (if backend provides it)
+    const topLevelTasks: SystemTaskInfo[] = (data as any)?.systemTasks || []
+
+    const fromKato: SystemTaskInfo[] = katoSystemTasks.map(t => ({
+      id: t.id,
+      title: t.title,
+      status: t.status,
+      lastRunAt: t.startedAt,
+      lastStatus: t.status === 'queued' ? undefined : t.status === 'error' ? 'error' as const : 'ok' as const,
+      nextRunAt: t.plannedFor,
+      interval: t.reason === 'Regular maintenance' ? '30m' : undefined,
+      detail: t.reason
+    }))
+
+    // Merge, preferring top-level tasks (more detailed) over kato-derived ones
+    const merged = [...topLevelTasks]
+    for (const task of fromKato) {
+      if (!merged.find(t => t.id === task.id)) {
+        merged.push(task)
+      }
+    }
+    return merged
+  }, [data])
+
+  // Token stats for SystemPanel
+  const tokenStatsForPanel = useMemo(() => {
+    const meta = (data as any)?.meta?.tokenStats?.today
+    const health = data?.systemHealth?.tokens
+    return {
+      todayCost: health?.cost || 0,
+      tokensUsed: health?.today || meta?.tokensUsed || 0,
+      requests: meta?.requests || 0,
+      inputTokens: meta?.inputTokens || 0,
+      outputTokens: meta?.outputTokens || 0
+    }
+  }, [data])
+
   return {
     data,
     loading,
@@ -245,6 +343,8 @@ export function useDashboardData() {
     systemHealth: data?.systemHealth || null,
     opportunities: data?.opportunities,
     katoQueue: data?.katoQueue,
+    systemTasks,
+    tokenStatsForPanel,
     lastUpdated: data?.lastUpdated || '',
     lastUpdatedAgo,
     activeCount: activeProjects.length,
