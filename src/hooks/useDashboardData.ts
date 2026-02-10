@@ -315,6 +315,27 @@ export function useDashboardData() {
     return merged
   }, [data])
 
+  // Completed tasks from all projects (for HistoryView)
+  const completedTasks = useMemo(() => {
+    const projects = (data as any)?.projects || []
+    const tasks: Array<{ id: string; type: string; title: string; project?: string; status: string; completedAt?: string }> = []
+    for (const proj of projects) {
+      for (const task of proj.tasks || []) {
+        if (task.status === 'done' && task.completed_at) {
+          tasks.push({
+            id: task.id,
+            type: 'task',
+            title: task.title,
+            project: proj.name,
+            status: 'done',
+            completedAt: task.completed_at
+          })
+        }
+      }
+    }
+    return tasks.sort((a, b) => new Date(b.completedAt || '').getTime() - new Date(a.completedAt || '').getTime())
+  }, [data])
+
   // Token stats for SystemPanel
   const tokenStatsForPanel = useMemo(() => {
     const meta = (data as any)?.meta?.tokenStats?.today
@@ -344,6 +365,7 @@ export function useDashboardData() {
     opportunities: data?.opportunities,
     katoQueue: data?.katoQueue,
     systemTasks,
+    completedTasks,
     tokenStatsForPanel,
     lastUpdated: data?.lastUpdated || '',
     lastUpdatedAgo,

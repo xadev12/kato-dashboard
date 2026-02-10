@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { OpportunityScan, KatoQueue } from '../components/OpportunityScan'
 import { ActionsPanel } from '../components/ActionsPanel'
 import { SystemPanel } from '../components/SystemPanel'
+import { HistoryView } from '../components/HistoryView'
 
 export function MissionControl() {
   const {
@@ -16,6 +17,7 @@ export function MissionControl() {
     opportunities,
     katoQueue,
     systemTasks,
+    completedTasks,
     tokenStatsForPanel,
     lastUpdatedAgo,
     activeCount,
@@ -98,6 +100,18 @@ export function MissionControl() {
         >
           <KatoQueue data={katoQueue} />
         </div>
+      </div>
+
+      {/* Third Row: Historical Archive */}
+      <div
+        className="p-4 rounded-2xl"
+        style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-subtle)' }}
+      >
+        <HistoryView
+          opportunities={opportunities?.items}
+          completedTasks={completedTasks}
+          metrics={opportunities?.metrics}
+        />
       </div>
     </div>
   )
