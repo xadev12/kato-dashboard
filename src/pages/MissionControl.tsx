@@ -61,12 +61,18 @@ export function MissionControl() {
       {/* Second Row: Opportunity Scan & Kato's Queue */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* LEFT: Opportunity Scan */}
-        <div className="p-4 rounded-2xl bg-[#0a0a0a] border border-white/[0.06] min-w-0">
+        <div
+          className="p-4 rounded-2xl min-w-0"
+          style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-subtle)' }}
+        >
           <OpportunityScan data={opportunities} />
         </div>
 
         {/* RIGHT: Kato's Queue */}
-        <div className="p-4 rounded-2xl bg-[#0a0a0a] border border-white/[0.06] min-w-0">
+        <div
+          className="p-4 rounded-2xl min-w-0"
+          style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-subtle)' }}
+        >
           <KatoQueue data={katoQueue} />
         </div>
       </div>
@@ -93,64 +99,85 @@ function Header({
   onRefresh: () => void
 }) {
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-white/[0.06]">
+    <div
+      className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4"
+      style={{ borderBottom: '1px solid var(--border-subtle)' }}
+    >
       <div className="space-y-1">
         <div className="flex items-center gap-3">
-          <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">KATO DASHBOARD</h1>
-          <span className="hidden sm:inline-block px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 text-xs font-medium border border-cyan-500/20">
-            v3
+          <h1
+            className="text-2xl sm:text-3xl font-bold tracking-tight"
+            style={{ color: 'var(--text-primary)' }}
+          >
+            KATO DASHBOARD
+          </h1>
+          <span
+            className="hidden sm:inline-block px-2 py-0.5 rounded text-xs font-medium"
+            style={{ background: 'rgba(139, 115, 85, 0.08)', color: 'var(--accent-primary)', border: '1px solid rgba(139, 115, 85, 0.15)' }}
+          >
+            v4
           </span>
           {/* Connection Status */}
-          <div 
-            className={`flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-medium border ${
-              isApiConnected 
-                ? 'bg-green-500/10 text-green-400 border-green-500/20' 
-                : 'bg-amber-500/10 text-amber-400 border-amber-500/20'
-            }`}
+          <div
+            className="flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-medium"
+            style={{
+              background: isApiConnected ? 'var(--success-muted)' : 'var(--warning-muted)',
+              color: isApiConnected ? 'var(--success)' : 'var(--warning)',
+              border: `1px solid ${isApiConnected ? 'rgba(122, 158, 126, 0.2)' : 'rgba(201, 169, 89, 0.2)'}`
+            }}
             title={isApiConnected ? 'Live API connection' : 'Static data (API unavailable)'}
           >
-            <span className={`w-1.5 h-1.5 rounded-full ${isApiConnected ? 'bg-green-400 animate-pulse' : 'bg-amber-400'}`} />
+            <span
+              className={`w-1.5 h-1.5 rounded-full ${isApiConnected ? 'animate-pulse' : ''}`}
+              style={{ background: isApiConnected ? 'var(--success)' : 'var(--warning)' }}
+            />
             {isApiConnected ? 'Live' : 'Cached'}
           </div>
         </div>
         {sprint && (
-          <p className="text-sm text-gray-400">
-            {sprint.name}: <span className="text-cyan-400 font-medium">Day {sprint.day}</span> of {sprint.totalDays}
+          <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+            {sprint.name}: <span className="font-medium" style={{ color: 'var(--accent-primary)' }}>Day {sprint.day}</span> of {sprint.totalDays}
           </p>
         )}
       </div>
 
       <div className="flex items-center gap-3 flex-wrap">
         {/* Quick Stats */}
-        <div className="flex items-center gap-2 px-3 py-1.5 bg-white/[0.03] rounded-lg border border-white/[0.06]">
-          <span className="text-xs text-gray-400">Active:</span>
-          <span className="text-sm font-semibold text-cyan-400">{activeCount}</span>
+        <div
+          className="flex items-center gap-2 px-3 py-1.5 rounded-lg"
+          style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-subtle)' }}
+        >
+          <span className="text-xs" style={{ color: 'var(--text-tertiary)' }}>Active:</span>
+          <span className="text-sm font-semibold" style={{ color: 'var(--accent-primary)' }}>{activeCount}</span>
         </div>
         {blockedCount > 0 && (
-          <div className="flex items-center gap-2 px-3 py-1.5 bg-amber-500/10 rounded-lg border border-amber-500/20">
-            <span className="text-xs text-amber-400">Blocked:</span>
-            <span className="text-sm font-semibold text-amber-400">{blockedCount}</span>
+          <div
+            className="flex items-center gap-2 px-3 py-1.5 rounded-lg"
+            style={{ background: 'var(--warning-muted)', border: '1px solid rgba(201, 169, 89, 0.2)' }}
+          >
+            <span className="text-xs" style={{ color: 'var(--warning)' }}>Blocked:</span>
+            <span className="text-sm font-semibold" style={{ color: 'var(--warning)' }}>{blockedCount}</span>
           </div>
         )}
 
         {/* Last Updated with Refresh */}
         <div className="flex items-center gap-2">
-          <span className="text-xs text-gray-500">Updated {lastUpdated}</span>
+          <span className="text-xs" style={{ color: 'var(--text-tertiary)' }}>Updated {lastUpdated}</span>
           <button
             onClick={onRefresh}
             disabled={isRefreshing}
-            className={`p-1.5 rounded-lg transition-colors text-gray-500 hover:text-cyan-400 ${
-              isRefreshing 
-                ? 'cursor-not-allowed opacity-50' 
-                : 'hover:bg-white/[0.05]'
+            className={`p-1.5 rounded-lg transition-all duration-200 ${
+              isRefreshing ? 'cursor-not-allowed opacity-50' : ''
             }`}
+            style={{ color: 'var(--text-tertiary)' }}
             title={isRefreshing ? 'Refreshing...' : 'Refresh data'}
           >
             <RefreshIcon className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin' : ''}`} />
           </button>
           <button
             onClick={() => window.location.reload()}
-            className="p-1.5 rounded-lg transition-colors text-gray-500 hover:text-cyan-400 hover:bg-white/[0.05]"
+            className="p-1.5 rounded-lg transition-all duration-200"
+            style={{ color: 'var(--text-tertiary)' }}
             title="Full page reload"
           >
             <ReloadIcon className="w-3.5 h-3.5" />
@@ -166,8 +193,8 @@ function SectionHeader({ title, subtitle }: { title: string; subtitle: string })
   return (
     <div className="flex items-baseline justify-between">
       <div>
-        <h2 className="text-lg font-semibold text-white">{title}</h2>
-        <p className="text-xs text-gray-500">{subtitle}</p>
+        <h2 className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>{title}</h2>
+        <p className="text-xs" style={{ color: 'var(--text-tertiary)' }}>{subtitle}</p>
       </div>
     </div>
   )
@@ -180,7 +207,7 @@ function ActiveWorkColumn({ projects, blockedProjects }: { projects: any[]; bloc
   if (allProjects.length === 0) {
     return (
       <EmptyState
-        icon={<CheckIcon className="w-6 h-6 text-emerald-400" />}
+        icon={<CheckIcon className="w-6 h-6" style={{ color: 'var(--success)' }} />}
         title="All clear"
         subtitle="No active projects right now"
       />
@@ -203,57 +230,65 @@ function ProjectCard({ project }: { project: any }) {
   return (
     <Link
       to={`/projects/${project.id}`}
-      className={`block p-4 rounded-xl border transition-all duration-200 hover:border-white/[0.15] ${
-        isBlocked
-          ? 'bg-amber-500/5 border-amber-500/20 hover:bg-amber-500/10'
-          : 'bg-[#111111] border-white/[0.06] hover:bg-white/[0.03]'
-      }`}
+      className="block p-4 rounded-xl transition-all duration-300"
+      style={{
+        background: isBlocked ? 'var(--warning-muted)' : 'var(--bg-secondary)',
+        border: `1px solid ${isBlocked ? 'rgba(201, 169, 89, 0.2)' : 'var(--border-subtle)'}`,
+        boxShadow: 'var(--shadow-sm)'
+      }}
     >
       <div className="flex items-start justify-between gap-3 mb-3">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium uppercase ${
-              isBlocked
-                ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
-                : 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20'
-            }`}>
+            <span
+              className="px-1.5 py-0.5 rounded text-[10px] font-medium uppercase"
+              style={{
+                background: isBlocked ? 'rgba(201, 169, 89, 0.1)' : 'rgba(139, 115, 85, 0.08)',
+                color: isBlocked ? 'var(--warning)' : 'var(--accent-primary)',
+                border: `1px solid ${isBlocked ? 'rgba(201, 169, 89, 0.2)' : 'rgba(139, 115, 85, 0.15)'}`
+              }}
+            >
               {isBlocked ? 'Blocked' : 'In Progress'}
             </span>
-            <span className="text-[10px] text-gray-500">{project.priority}</span>
+            <span className="text-[10px]" style={{ color: 'var(--text-tertiary)' }}>{project.priority}</span>
           </div>
-          <h3 className="font-medium text-white truncate">{project.name}</h3>
+          <h3 className="font-medium truncate" style={{ color: 'var(--text-primary)' }}>{project.name}</h3>
         </div>
       </div>
 
       {/* Progress Bar */}
       <div className="mb-3">
         <div className="flex items-center justify-between text-xs mb-1">
-          <span className="text-gray-500">Progress</span>
-          <span className={isBlocked ? 'text-amber-400' : 'text-cyan-400'}>{project.progress}%</span>
+          <span style={{ color: 'var(--text-tertiary)' }}>Progress</span>
+          <span style={{ color: isBlocked ? 'var(--warning)' : 'var(--accent-primary)' }}>{project.progress}%</span>
         </div>
-        <div className="h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
+        <div className="h-1.5 rounded-full overflow-hidden" style={{ background: 'var(--bg-muted)' }}>
           <div
-            className={`h-full rounded-full transition-all duration-500 ${
-              isBlocked ? 'bg-amber-500' : 'bg-gradient-to-r from-cyan-500 to-cyan-400'
-            }`}
-            style={{ width: `${project.progress}%` }}
+            className="h-full rounded-full transition-all duration-500"
+            style={{
+              width: `${project.progress}%`,
+              background: isBlocked ? 'var(--warning)' : 'linear-gradient(90deg, var(--accent-primary), var(--accent-primary-light))'
+            }}
           />
         </div>
       </div>
 
       {/* Blocker */}
       {project.blocker && (
-        <div className="p-2.5 bg-amber-500/10 rounded-lg border border-amber-500/10">
+        <div
+          className="p-2.5 rounded-lg"
+          style={{ background: 'var(--warning-muted)', border: '1px solid rgba(201, 169, 89, 0.15)' }}
+        >
           <div className="flex items-start gap-2">
-            <WarningIcon className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
-            <p className="text-xs text-amber-200 line-clamp-2">{project.blocker}</p>
+            <WarningIcon className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: 'var(--warning)' }} />
+            <p className="text-xs line-clamp-2" style={{ color: 'var(--text-secondary)' }}>{project.blocker}</p>
           </div>
         </div>
       )}
 
       {/* Assigned Agent */}
       {project.assignedQueen && (
-        <div className="mt-3 flex items-center gap-2 text-xs text-gray-500">
+        <div className="mt-3 flex items-center gap-2 text-xs" style={{ color: 'var(--text-tertiary)' }}>
           <AgentIcon className="w-3.5 h-3.5" />
           <span>{project.assignedQueen}</span>
         </div>
@@ -267,7 +302,7 @@ function QueueColumn({ items }: { items: any[] }) {
   if (items.length === 0) {
     return (
       <EmptyState
-        icon={<QueueIcon className="w-6 h-6 text-gray-400" />}
+        icon={<QueueIcon className="w-6 h-6" style={{ color: 'var(--text-tertiary)' }} />}
         title="Queue empty"
         subtitle="No P1 items in the roadmap"
       />
@@ -282,7 +317,8 @@ function QueueColumn({ items }: { items: any[] }) {
 
       <Link
         to="/projects"
-        className="block text-center py-3 text-xs text-gray-500 hover:text-cyan-400 transition-colors"
+        className="block text-center py-3 text-xs transition-colors"
+        style={{ color: 'var(--text-tertiary)' }}
       >
         View full roadmap
       </Link>
@@ -293,19 +329,28 @@ function QueueColumn({ items }: { items: any[] }) {
 // Queue Item
 function QueueItem({ item, index }: { item: any; index: number }) {
   return (
-    <div className="flex items-start gap-3 p-3 rounded-xl bg-[#111111] border border-white/[0.06] hover:border-white/[0.1] transition-all">
-      <span className="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full bg-white/[0.05] text-xs text-gray-400 font-medium">
+    <div
+      className="flex items-start gap-3 p-3 rounded-xl transition-all duration-300"
+      style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-subtle)', boxShadow: 'var(--shadow-sm)' }}
+    >
+      <span
+        className="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full text-xs font-medium"
+        style={{ background: 'var(--bg-muted)', color: 'var(--text-tertiary)' }}
+      >
         {index}
       </span>
       <div className="flex-1 min-w-0">
-        <h4 className="text-sm font-medium text-gray-200 truncate">{item.feature}</h4>
-        <p className="text-xs text-gray-500">{item.project}</p>
+        <h4 className="text-sm font-medium truncate" style={{ color: 'var(--text-primary)' }}>{item.feature}</h4>
+        <p className="text-xs" style={{ color: 'var(--text-tertiary)' }}>{item.project}</p>
       </div>
-      <span className={`flex-shrink-0 px-1.5 py-0.5 rounded text-[10px] font-medium ${
-        item.priority === 'P1'
-          ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
-          : 'bg-gray-500/10 text-gray-400 border border-gray-500/20'
-      }`}>
+      <span
+        className="flex-shrink-0 px-1.5 py-0.5 rounded text-[10px] font-medium"
+        style={{
+          background: item.priority === 'P1' ? 'var(--error-muted)' : 'var(--bg-muted)',
+          color: item.priority === 'P1' ? 'var(--error)' : 'var(--text-tertiary)',
+          border: `1px solid ${item.priority === 'P1' ? 'rgba(184, 122, 122, 0.2)' : 'var(--border-subtle)'}`
+        }}
+      >
         {item.priority}
       </span>
     </div>
@@ -320,44 +365,54 @@ function SystemHealthColumn({ health }: { health: any }) {
   return (
     <div className="space-y-4">
       {/* Token Usage */}
-      <div className={`p-4 rounded-xl border ${
-        tokens.overBudget
-          ? 'bg-rose-500/5 border-rose-500/20'
-          : 'bg-[#111111] border-white/[0.06]'
-      }`}>
+      <div
+        className="p-4 rounded-xl"
+        style={{
+          background: tokens.overBudget ? 'var(--error-muted)' : 'var(--bg-secondary)',
+          border: `1px solid ${tokens.overBudget ? 'rgba(184, 122, 122, 0.2)' : 'var(--border-subtle)'}`,
+          boxShadow: 'var(--shadow-sm)'
+        }}
+      >
         <div className="flex items-center justify-between mb-3">
-          <span className="text-sm font-medium text-white">Tokens Today</span>
-          <span className={`text-lg font-bold ${tokens.overBudget ? 'text-rose-400' : 'text-cyan-400'}`}>
+          <span className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Tokens Today</span>
+          <span
+            className="text-lg font-bold"
+            style={{ color: tokens.overBudget ? 'var(--error)' : 'var(--accent-primary)' }}
+          >
             ${tokens.cost.toFixed(2)}
           </span>
         </div>
 
         <div className="mb-2">
-          <div className="h-2 bg-white/[0.06] rounded-full overflow-hidden">
+          <div className="h-2 rounded-full overflow-hidden" style={{ background: 'var(--bg-muted)' }}>
             <div
-              className={`h-full rounded-full transition-all duration-500 ${
-                tokens.overBudget
-                  ? 'bg-rose-500'
+              className="h-full rounded-full transition-all duration-500"
+              style={{
+                width: `${Math.min(tokens.budgetUsedPercent, 100)}%`,
+                background: tokens.overBudget
+                  ? 'var(--error)'
                   : tokens.budgetUsedPercent > 75
-                  ? 'bg-amber-500'
-                  : 'bg-gradient-to-r from-cyan-500 to-emerald-400'
-              }`}
-              style={{ width: `${Math.min(tokens.budgetUsedPercent, 100)}%` }}
+                  ? 'var(--warning)'
+                  : 'linear-gradient(90deg, var(--accent-primary), var(--success))'
+              }}
             />
           </div>
         </div>
 
-        <div className="flex items-center justify-between text-xs text-gray-500">
+        <div className="flex items-center justify-between text-xs" style={{ color: 'var(--text-tertiary)' }}>
           <span>{tokens.budgetUsedPercent}% used</span>
           <span>Budget: ${tokens.budget}/day</span>
         </div>
       </div>
 
       {/* Active Agents */}
-      <div className="p-4 rounded-xl bg-[#111111] border border-white/[0.06]">
+      <div
+        className="p-4 rounded-xl"
+        style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-subtle)', boxShadow: 'var(--shadow-sm)' }}
+      >
         <div className="flex items-center justify-between mb-3">
-          <span className="text-sm font-medium text-white">Active Agents</span>
-          <span className="text-xs text-gray-500">{agents.active} of {agents.total}</span>
+          <span className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Active Agents</span>
+          <span className="text-xs" style={{ color: 'var(--text-tertiary)' }}>{agents.active} of {agents.total}</span>
         </div>
 
         <div className="space-y-2">
@@ -368,7 +423,8 @@ function SystemHealthColumn({ health }: { health: any }) {
 
         <Link
           to="/roster"
-          className="block text-center py-2 mt-3 text-xs text-gray-500 hover:text-cyan-400 transition-colors border-t border-white/[0.06]"
+          className="block text-center py-2 mt-3 text-xs transition-colors"
+          style={{ color: 'var(--text-tertiary)', borderTop: '1px solid var(--border-subtle)' }}
         >
           View all agents
         </Link>
@@ -382,22 +438,26 @@ function AgentRow({ agent }: { agent: any }) {
   const isActive = agent.status === 'active'
 
   return (
-    <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/[0.03] transition-colors">
+    <div className="flex items-center gap-3 p-2 rounded-lg transition-all duration-200">
       <div className="relative">
-        <span className={`w-2 h-2 rounded-full ${
-          isActive ? 'bg-amber-400' : 'bg-emerald-400'
-        }`} />
+        <span
+          className="block w-2 h-2 rounded-full"
+          style={{ background: isActive ? 'var(--warning)' : 'var(--success)' }}
+        />
         {isActive && (
-          <span className="absolute inset-0 w-2 h-2 rounded-full bg-amber-400 animate-ping opacity-75" />
+          <span
+            className="absolute inset-0 w-2 h-2 rounded-full animate-ping opacity-75"
+            style={{ background: 'var(--warning)' }}
+          />
         )}
       </div>
       <div className="flex-1 min-w-0">
-        <span className="text-sm text-gray-200">{agent.name}</span>
+        <span className="text-sm" style={{ color: 'var(--text-primary)' }}>{agent.name}</span>
         {agent.currentTask && (
-          <p className="text-xs text-gray-500 truncate">{agent.currentTask}</p>
+          <p className="text-xs truncate" style={{ color: 'var(--text-tertiary)' }}>{agent.currentTask}</p>
         )}
       </div>
-      <span className={`text-xs ${isActive ? 'text-amber-400' : 'text-emerald-400'}`}>
+      <span className="text-xs" style={{ color: isActive ? 'var(--warning)' : 'var(--success)' }}>
         {isActive ? 'busy' : 'idle'}
       </span>
     </div>
@@ -407,12 +467,18 @@ function AgentRow({ agent }: { agent: any }) {
 // Empty State
 function EmptyState({ icon, title, subtitle }: { icon: React.ReactNode; title: string; subtitle: string }) {
   return (
-    <div className="p-8 rounded-xl bg-[#111111] border border-white/[0.06] text-center">
-      <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-white/[0.05] flex items-center justify-center">
+    <div
+      className="p-8 rounded-xl text-center"
+      style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-subtle)', boxShadow: 'var(--shadow-sm)' }}
+    >
+      <div
+        className="w-12 h-12 mx-auto mb-3 rounded-full flex items-center justify-center"
+        style={{ background: 'var(--bg-muted)' }}
+      >
         {icon}
       </div>
-      <h3 className="text-sm font-medium text-white mb-1">{title}</h3>
-      <p className="text-xs text-gray-500">{subtitle}</p>
+      <h3 className="text-sm font-medium mb-1" style={{ color: 'var(--text-primary)' }}>{title}</h3>
+      <p className="text-xs" style={{ color: 'var(--text-tertiary)' }}>{subtitle}</p>
     </div>
   )
 }
@@ -421,28 +487,28 @@ function EmptyState({ icon, title, subtitle }: { icon: React.ReactNode; title: s
 function LoadingSkeleton() {
   return (
     <div className="space-y-6 animate-pulse">
-      <div className="h-20 bg-white/[0.03] rounded-xl" />
+      <div className="h-20 rounded-xl" style={{ background: 'var(--bg-muted)' }} />
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="space-y-4">
-          <div className="h-8 bg-white/[0.03] rounded-lg w-32" />
-          <div className="h-40 bg-white/[0.03] rounded-xl" />
-          <div className="h-40 bg-white/[0.03] rounded-xl" />
+          <div className="h-8 rounded-lg w-32" style={{ background: 'var(--bg-muted)' }} />
+          <div className="h-40 rounded-xl" style={{ background: 'var(--bg-muted)' }} />
+          <div className="h-40 rounded-xl" style={{ background: 'var(--bg-muted)' }} />
         </div>
         <div className="space-y-4">
-          <div className="h-8 bg-white/[0.03] rounded-lg w-32" />
-          <div className="h-16 bg-white/[0.03] rounded-xl" />
-          <div className="h-16 bg-white/[0.03] rounded-xl" />
-          <div className="h-16 bg-white/[0.03] rounded-xl" />
+          <div className="h-8 rounded-lg w-32" style={{ background: 'var(--bg-muted)' }} />
+          <div className="h-16 rounded-xl" style={{ background: 'var(--bg-muted)' }} />
+          <div className="h-16 rounded-xl" style={{ background: 'var(--bg-muted)' }} />
+          <div className="h-16 rounded-xl" style={{ background: 'var(--bg-muted)' }} />
         </div>
         <div className="space-y-4">
-          <div className="h-8 bg-white/[0.03] rounded-lg w-32" />
-          <div className="h-32 bg-white/[0.03] rounded-xl" />
-          <div className="h-48 bg-white/[0.03] rounded-xl" />
+          <div className="h-8 rounded-lg w-32" style={{ background: 'var(--bg-muted)' }} />
+          <div className="h-32 rounded-xl" style={{ background: 'var(--bg-muted)' }} />
+          <div className="h-48 rounded-xl" style={{ background: 'var(--bg-muted)' }} />
         </div>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="h-48 bg-white/[0.03] rounded-2xl" />
-        <div className="h-48 bg-white/[0.03] rounded-2xl" />
+        <div className="h-48 rounded-2xl" style={{ background: 'var(--bg-muted)' }} />
+        <div className="h-48 rounded-2xl" style={{ background: 'var(--bg-muted)' }} />
       </div>
     </div>
   )
@@ -471,17 +537,17 @@ function ReloadIcon({ className }: { className?: string }) {
   )
 }
 
-function CheckIcon({ className }: { className?: string }) {
+function CheckIcon({ className, style }: { className?: string; style?: React.CSSProperties }) {
   return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <polyline points="20 6 9 17 4 12" />
     </svg>
   )
 }
 
-function WarningIcon({ className }: { className?: string }) {
+function WarningIcon({ className, style }: { className?: string; style?: React.CSSProperties }) {
   return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
       <line x1="12" y1="9" x2="12" y2="13" />
       <line x1="12" y1="17" x2="12.01" y2="17" />
@@ -498,9 +564,9 @@ function AgentIcon({ className }: { className?: string }) {
   )
 }
 
-function QueueIcon({ className }: { className?: string }) {
+function QueueIcon({ className, style }: { className?: string; style?: React.CSSProperties }) {
   return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <line x1="8" y1="6" x2="21" y2="6" />
       <line x1="8" y1="12" x2="21" y2="12" />
       <line x1="8" y1="18" x2="21" y2="18" />
