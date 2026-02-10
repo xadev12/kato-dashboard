@@ -1,6 +1,7 @@
 import { useDashboardData } from '../hooks/useDashboardData'
 import { Link } from 'react-router-dom'
 import { OpportunityScan, KatoQueue } from '../components/OpportunityScan'
+import { ActionsPanel } from '../components/ActionsPanel'
 
 export function MissionControl() {
   const {
@@ -58,9 +59,21 @@ export function MissionControl() {
         </div>
       </div>
 
-      {/* Second Row: Opportunity Scan & Kato's Queue */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* LEFT: Opportunity Scan */}
+      {/* Second Row: Actions, Opportunity Scan & Kato's Queue */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* LEFT: Actions Panel */}
+        <div
+          className="p-4 rounded-2xl min-w-0"
+          style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-subtle)' }}
+        >
+          <ActionsPanel
+            opportunities={opportunities?.items}
+            blockedProjects={blockedProjects}
+            katoTasks={katoQueue?.tasks}
+          />
+        </div>
+
+        {/* CENTER: Opportunity Scan */}
         <div
           className="p-4 rounded-2xl min-w-0"
           style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-subtle)' }}
