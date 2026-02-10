@@ -17,9 +17,9 @@ export function AgentIndicator() {
           </span>
         </div>
       ) : (
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/[0.03] border border-white/[0.06]">
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[var(--bg-muted)] border border-[var(--border-subtle)]">
           <span className="h-2 w-2 rounded-full bg-gray-500"></span>
-          <span className="text-xs font-medium text-gray-500">idle</span>
+          <span className="text-xs font-medium text-[var(--text-tertiary)]">idle</span>
         </div>
       )}
     </div>

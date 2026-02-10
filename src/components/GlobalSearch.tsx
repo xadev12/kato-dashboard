@@ -159,7 +159,7 @@ export function GlobalSearch() {
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 rounded-lg text-sm text-gray-400 transition-colors"
+        className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 rounded-lg text-sm text-[var(--text-secondary)] transition-colors"
       >
         <Search className="w-4 h-4" />
         <span>Search...</span>
@@ -177,10 +177,10 @@ export function GlobalSearch() {
       />
 
       {/* Search Modal */}
-      <div className="relative w-full max-w-2xl bg-[#111111] rounded-xl border border-white/[0.06] shadow-2xl overflow-hidden">
+      <div className="relative w-full max-w-2xl bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-subtle)] shadow-2xl overflow-hidden">
         {/* Search Input */}
-        <div className="flex items-center gap-3 p-4 border-b border-white/[0.06]">
-          <Search className="w-5 h-5 text-gray-500" />
+        <div className="flex items-center gap-3 p-4 border-b border-[var(--border-subtle)]">
+          <Search className="w-5 h-5 text-[var(--text-tertiary)]" />
           <input
             ref={inputRef}
             type="text"
@@ -188,40 +188,40 @@ export function GlobalSearch() {
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Search memories, projects, tasks..."
-            className="flex-1 bg-transparent text-lg placeholder:text-gray-600 focus:outline-none"
+            className="flex-1 bg-transparent text-lg placeholder:text-[var(--text-tertiary)] focus:outline-none"
           />
           {query && (
             <button
               onClick={() => setQuery('')}
               className="p-1 hover:bg-white/10 rounded"
             >
-              <X className="w-4 h-4 text-gray-500" />
+              <X className="w-4 h-4 text-[var(--text-tertiary)]" />
             </button>
           )}
-          <kbd className="px-2 py-1 bg-white/10 rounded text-xs text-gray-500">ESC</kbd>
+          <kbd className="px-2 py-1 bg-white/10 rounded text-xs text-[var(--text-tertiary)]">ESC</kbd>
         </div>
 
         {/* Results */}
         <div className="max-h-[60vh] overflow-y-auto">
           {loading ? (
-            <div className="p-8 text-center text-gray-500">
+            <div className="p-8 text-center text-[var(--text-tertiary)]">
               <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-400 mx-auto mb-2" />
               Searching...
             </div>
           ) : results.length === 0 ? (
             query ? (
-              <div className="p-8 text-center text-gray-500">
+              <div className="p-8 text-center text-[var(--text-tertiary)]">
                 No results found for "{query}"
               </div>
             ) : (
               <div className="p-4">
-                <div className="text-xs text-gray-500 uppercase tracking-wider mb-3">Recent</div>
+                <div className="text-xs text-[var(--text-tertiary)] uppercase tracking-wider mb-3">Recent</div>
                 <div className="space-y-1">
                   {['Move iOS Pipeline', 'Kato Dashboard', '60-Day Sprint', 'CLI-Direct Pattern'].map((item, i) => (
                     <button
                       key={i}
                       onClick={() => setQuery(item)}
-                      className="w-full flex items-center gap-3 px-3 py-2 hover:bg-white/5 rounded-lg text-left text-gray-400 hover:text-gray-200 transition-colors"
+                      className="w-full flex items-center gap-3 px-3 py-2 hover:bg-white/5 rounded-lg text-left text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
                     >
                       <Clock className="w-4 h-4" />
                       {item}
@@ -251,16 +251,16 @@ export function GlobalSearch() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <span className="font-medium text-gray-200">{result.title}</span>
+                        <span className="font-medium text-[var(--text-primary)]">{result.title}</span>
                         <span className={`text-xs ${source?.color}`}>{source?.label}</span>
                       </div>
-                      <p className="text-sm text-gray-500 mt-0.5 line-clamp-2">{result.content}</p>
+                      <p className="text-sm text-[var(--text-tertiary)] mt-0.5 line-clamp-2">{result.content}</p>
                       {result.path && (
-                        <p className="text-xs text-gray-600 mt-1 truncate">{result.path}</p>
+                        <p className="text-xs text-[var(--text-tertiary)] mt-1 truncate">{result.path}</p>
                       )}
                     </div>
                     {isSelected && (
-                      <ArrowRight className="w-4 h-4 text-gray-500 mt-1" />
+                      <ArrowRight className="w-4 h-4 text-[var(--text-tertiary)] mt-1" />
                     )}
                   </button>
                 )
@@ -270,7 +270,7 @@ export function GlobalSearch() {
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between px-4 py-2 bg-[#0a0a0a] border-t border-white/[0.06] text-xs text-gray-500">
+        <div className="flex items-center justify-between px-4 py-2 bg-[var(--bg-primary)] border-t border-[var(--border-subtle)] text-xs text-[var(--text-tertiary)]">
           <div className="flex items-center gap-4">
             <span className="flex items-center gap-1">
               <kbd className="px-1 bg-white/10 rounded">↑↓</kbd> Navigate

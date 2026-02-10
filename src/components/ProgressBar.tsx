@@ -17,7 +17,7 @@ export const ProgressBar = memo(function ProgressBar({ value, variant = 'low' }:
   const gradient = variantStyles[variant]
   
   return (
-    <div className="relative h-1.5 bg-white/[0.03] rounded-full overflow-hidden">
+    <div className="relative h-1.5 bg-[var(--bg-muted)] rounded-full overflow-hidden">
       <div
         className={`h-full bg-gradient-to-r ${gradient} rounded-full transition-all duration-500 ease-out`}
         style={{ width: `${clampedValue}%` }}

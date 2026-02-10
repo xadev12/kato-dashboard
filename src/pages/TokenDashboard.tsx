@@ -61,16 +61,16 @@ export function TokenDashboard() {
   return (
     <div className="space-y-6 animate-fade-in pb-8">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 pb-4 border-b border-white/[0.06]">
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 pb-4 border-b border-[var(--border-subtle)]">
         <div className="space-y-1">
-          <h1 className="text-2xl sm:text-3xl font-bold text-white">Token Usage</h1>
-          <p className="text-sm text-gray-400">Track spending across projects and agents</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-[var(--text-primary)]">Token Usage</h1>
+          <p className="text-sm text-[var(--text-secondary)]">Track spending across projects and agents</p>
         </div>
-        <div className="flex items-center gap-2 text-xs text-gray-500">
+        <div className="flex items-center gap-2 text-xs text-[var(--text-tertiary)]">
           <span>Updated {lastUpdatedAgo}</span>
           <button
             onClick={refresh}
-            className="p-1.5 rounded-lg hover:bg-white/[0.05] transition-colors"
+            className="p-1.5 rounded-lg hover:bg-[var(--bg-muted)] transition-colors"
             title="Refresh"
           >
             <RefreshIcon className="w-3.5 h-3.5" />
@@ -115,13 +115,13 @@ export function TokenDashboard() {
       {/* Breakdowns */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Cost by Project */}
-        <div className="p-5 rounded-xl bg-[#111111] border border-white/[0.06]">
+        <div className="p-5 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-subtle)]">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold text-white flex items-center gap-2">
-              <ProjectIcon className="w-4 h-4 text-cyan-400" />
+            <h3 className="font-semibold text-[var(--text-primary)] flex items-center gap-2">
+              <ProjectIcon className="w-4 h-4 text-[var(--accent-primary)]" />
               Cost by Project
             </h3>
-            <span className="text-xs text-gray-500">Today</span>
+            <span className="text-xs text-[var(--text-tertiary)]">Today</span>
           </div>
 
           {projectBreakdown.length === 0 ? (
@@ -142,13 +142,13 @@ export function TokenDashboard() {
         </div>
 
         {/* Cost by Agent */}
-        <div className="p-5 rounded-xl bg-[#111111] border border-white/[0.06]">
+        <div className="p-5 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-subtle)]">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold text-white flex items-center gap-2">
+            <h3 className="font-semibold text-[var(--text-primary)] flex items-center gap-2">
               <AgentIcon className="w-4 h-4 text-violet-400" />
               Cost by Agent
             </h3>
-            <span className="text-xs text-gray-500">Today</span>
+            <span className="text-xs text-[var(--text-tertiary)]">Today</span>
           </div>
 
           {agentBreakdown.length === 0 ? (
@@ -190,9 +190,9 @@ function StatCard({
 }) {
   const colorClasses = {
     cyan: {
-      text: 'text-cyan-400',
+      text: 'text-[var(--accent-primary)]',
       bg: 'bg-cyan-500',
-      gradient: 'from-cyan-500 to-cyan-400'
+      gradient: 'from-[var(--accent-primary)] to-[var(--accent-primary-light)]'
     },
     amber: {
       text: 'text-amber-400',
@@ -214,21 +214,21 @@ function StatCard({
   const colors = colorClasses[color]
 
   return (
-    <div className="p-5 rounded-xl bg-[#111111] border border-white/[0.06]">
+    <div className="p-5 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-subtle)]">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <span className={colors.text}>{icon}</span>
-          <span className="text-sm font-medium text-white">{title}</span>
+          <span className="text-sm font-medium text-[var(--text-primary)]">{title}</span>
         </div>
         <span className={`text-xs ${colors.text}`}>{percent}%</span>
       </div>
 
       <div className="mb-4">
         <span className={`text-3xl font-bold ${colors.text}`}>{value}</span>
-        <p className="text-sm text-gray-500 mt-1">{subtitle}</p>
+        <p className="text-sm text-[var(--text-tertiary)] mt-1">{subtitle}</p>
       </div>
 
-      <div className="h-2 bg-white/[0.06] rounded-full overflow-hidden">
+      <div className="h-2 bg-[var(--bg-muted)] rounded-full overflow-hidden">
         <div
           className={`h-full rounded-full bg-gradient-to-r ${colors.gradient} transition-all duration-500`}
           style={{ width: `${Math.min(percent, 100)}%` }}
@@ -251,15 +251,15 @@ function BreakdownRow({
   color: 'cyan' | 'violet'
 }) {
   const barColor = color === 'cyan' ? 'bg-cyan-500' : 'bg-violet-500'
-  const textColor = color === 'cyan' ? 'text-cyan-400' : 'text-violet-400'
+  const textColor = color === 'cyan' ? 'text-[var(--accent-primary)]' : 'text-violet-400'
 
   return (
     <div>
       <div className="flex items-center justify-between mb-1">
-        <span className="text-sm text-gray-200 truncate pr-2">{name}</span>
+        <span className="text-sm text-[var(--text-primary)] truncate pr-2">{name}</span>
         <span className={`text-sm font-medium ${textColor}`}>{formatCurrency(cost)}</span>
       </div>
-      <div className="h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
+      <div className="h-1.5 bg-[var(--bg-muted)] rounded-full overflow-hidden">
         <div
           className={`h-full rounded-full ${barColor} transition-all duration-500`}
           style={{ width: `${percent}%` }}
@@ -273,7 +273,7 @@ function BreakdownRow({
 function EmptyBreakdown({ message }: { message: string }) {
   return (
     <div className="py-8 text-center">
-      <p className="text-sm text-gray-500">{message}</p>
+      <p className="text-sm text-[var(--text-tertiary)]">{message}</p>
     </div>
   )
 }
@@ -282,14 +282,14 @@ function EmptyBreakdown({ message }: { message: string }) {
 function LoadingSkeleton() {
   return (
     <div className="space-y-6 animate-pulse">
-      <div className="h-16 bg-white/[0.03] rounded-xl" />
+      <div className="h-16 bg-[var(--bg-muted)] rounded-xl" />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="h-40 bg-white/[0.03] rounded-xl" />
-        <div className="h-40 bg-white/[0.03] rounded-xl" />
+        <div className="h-40 bg-[var(--bg-muted)] rounded-xl" />
+        <div className="h-40 bg-[var(--bg-muted)] rounded-xl" />
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="h-64 bg-white/[0.03] rounded-xl" />
-        <div className="h-64 bg-white/[0.03] rounded-xl" />
+        <div className="h-64 bg-[var(--bg-muted)] rounded-xl" />
+        <div className="h-64 bg-[var(--bg-muted)] rounded-xl" />
       </div>
     </div>
   )

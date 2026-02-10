@@ -69,18 +69,18 @@ export function AgentRoster() {
   return (
     <div className="space-y-6 animate-fade-in pb-8">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 pb-4 border-b border-white/[0.06]">
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 pb-4 border-b border-[var(--border-subtle)]">
         <div className="space-y-1">
-          <h1 className="text-2xl sm:text-3xl font-bold text-white">Agent Roster</h1>
-          <p className="text-sm text-gray-400">
+          <h1 className="text-2xl sm:text-3xl font-bold text-[var(--text-primary)]">Agent Roster</h1>
+          <p className="text-sm text-[var(--text-secondary)]">
             {activeAgents.length} active, {idleAgents.length} available
           </p>
         </div>
-        <div className="flex items-center gap-2 text-xs text-gray-500">
+        <div className="flex items-center gap-2 text-xs text-[var(--text-tertiary)]">
           <span>Updated {lastUpdatedAgo}</span>
           <button
             onClick={refresh}
-            className="p-1.5 rounded-lg hover:bg-white/[0.05] transition-colors"
+            className="p-1.5 rounded-lg hover:bg-[var(--bg-muted)] transition-colors"
             title="Refresh"
           >
             <RefreshIcon className="w-3.5 h-3.5" />
@@ -135,7 +135,7 @@ export function AgentRoster() {
             color="cyan"
           />
 
-          <div className="p-4 rounded-xl bg-[#111111] border border-white/[0.06]">
+          <div className="p-4 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-subtle)]">
             <div className="space-y-4">
               {RECENT_ACTIVITY.map((activity) => (
                 <ActivityItem key={activity.id} activity={activity} />
@@ -153,12 +153,12 @@ function SectionHeader({ title, count, color }: { title: string; count: number; 
   const colorClasses: Record<string, string> = {
     amber: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
     emerald: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
-    cyan: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20'
+    cyan: 'bg-cyan-500/10 text-[var(--accent-primary)] border-[var(--accent-primary)]/20'
   }
 
   return (
     <div className="flex items-center gap-2">
-      <h2 className="text-lg font-semibold text-white">{title}</h2>
+      <h2 className="text-lg font-semibold text-[var(--text-primary)]">{title}</h2>
       <span className={`px-2 py-0.5 rounded text-xs font-medium border ${colorClasses[color]}`}>
         {count}
       </span>
@@ -171,11 +171,11 @@ function AgentCard({ agent }: { agent: QueenAgent }) {
   const status = statusConfig[agent.status]
 
   return (
-    <div className="p-4 rounded-xl bg-[#111111] border border-amber-500/20 hover:border-amber-500/30 transition-all">
+    <div className="p-4 rounded-xl bg-[var(--bg-secondary)] border border-amber-500/20 hover:border-amber-500/30 transition-all">
       <div className="flex items-start gap-4">
         {/* Avatar */}
         <div className="relative flex-shrink-0">
-          <div className="w-12 h-12 rounded-xl bg-white/[0.05] flex items-center justify-center text-lg font-semibold text-gray-400 border border-white/[0.06]">
+          <div className="w-12 h-12 rounded-xl bg-[var(--bg-muted)] flex items-center justify-center text-lg font-semibold text-[var(--text-secondary)] border border-[var(--border-subtle)]">
             {agent.name.charAt(0)}
           </div>
           <span className="absolute -top-1 -right-1 flex h-3 w-3">
@@ -187,7 +187,7 @@ function AgentCard({ agent }: { agent: QueenAgent }) {
         {/* Info */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <h3 className="font-semibold text-white">{agent.name}</h3>
+            <h3 className="font-semibold text-[var(--text-primary)]">{agent.name}</h3>
             <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${status.bg} ${status.color} ${status.border} border`}>
               {status.label}
             </span>
@@ -195,7 +195,7 @@ function AgentCard({ agent }: { agent: QueenAgent }) {
 
           {agent.currentTask && (
             <div className="p-2.5 bg-amber-500/5 rounded-lg border border-amber-500/10 mt-2">
-              <p className="text-xs text-gray-500 mb-0.5">Current Task</p>
+              <p className="text-xs text-[var(--text-tertiary)] mb-0.5">Current Task</p>
               <p className="text-sm text-amber-200">{agent.currentTask}</p>
             </div>
           )}
@@ -205,13 +205,13 @@ function AgentCard({ agent }: { agent: QueenAgent }) {
             {agent.skills.slice(0, 3).map(skill => (
               <span
                 key={skill}
-                className="px-2 py-0.5 rounded bg-white/[0.05] text-gray-400 text-[10px] border border-white/[0.06]"
+                className="px-2 py-0.5 rounded bg-[var(--bg-muted)] text-[var(--text-secondary)] text-[10px] border border-[var(--border-subtle)]"
               >
                 {skill}
               </span>
             ))}
             {agent.skills.length > 3 && (
-              <span className="px-2 py-0.5 rounded bg-white/[0.05] text-gray-500 text-[10px]">
+              <span className="px-2 py-0.5 rounded bg-[var(--bg-muted)] text-[var(--text-tertiary)] text-[10px]">
                 +{agent.skills.length - 3}
               </span>
             )}
@@ -225,17 +225,17 @@ function AgentCard({ agent }: { agent: QueenAgent }) {
 // Agent Card Compact (for idle agents)
 function AgentCardCompact({ agent }: { agent: QueenAgent }) {
   return (
-    <div className="p-3 rounded-xl bg-[#111111] border border-white/[0.06] hover:border-emerald-500/20 transition-all">
+    <div className="p-3 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-subtle)] hover:border-emerald-500/20 transition-all">
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-lg bg-white/[0.05] flex items-center justify-center text-sm font-semibold text-gray-400 border border-white/[0.06]">
+        <div className="w-10 h-10 rounded-lg bg-[var(--bg-muted)] flex items-center justify-center text-sm font-semibold text-[var(--text-secondary)] border border-[var(--border-subtle)]">
           {agent.name.charAt(0)}
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <h3 className="font-medium text-white text-sm">{agent.name}</h3>
+            <h3 className="font-medium text-[var(--text-primary)] text-sm">{agent.name}</h3>
             <span className="w-2 h-2 rounded-full bg-emerald-400" />
           </div>
-          <p className="text-xs text-gray-500 truncate">{agent.description.slice(0, 50)}...</p>
+          <p className="text-xs text-[var(--text-tertiary)] truncate">{agent.description.slice(0, 50)}...</p>
         </div>
       </div>
     </div>
@@ -256,12 +256,12 @@ function ActivityItem({ activity }: { activity: any }) {
         {typeIcon}
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-sm text-gray-200">
-          <span className="font-medium text-white">{activity.agent}</span>
+        <p className="text-sm text-[var(--text-primary)]">
+          <span className="font-medium text-[var(--text-primary)]">{activity.agent}</span>
           {' '}
           {activity.action}
         </p>
-        <p className="text-xs text-gray-500 mt-0.5">{activity.time}</p>
+        <p className="text-xs text-[var(--text-tertiary)] mt-0.5">{activity.time}</p>
       </div>
     </div>
   )
@@ -270,12 +270,12 @@ function ActivityItem({ activity }: { activity: any }) {
 // Empty State
 function EmptyState({ icon, title, subtitle }: { icon: React.ReactNode; title: string; subtitle: string }) {
   return (
-    <div className="p-8 rounded-xl bg-[#111111] border border-white/[0.06] text-center">
-      <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-white/[0.05] flex items-center justify-center">
+    <div className="p-8 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-subtle)] text-center">
+      <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-[var(--bg-muted)] flex items-center justify-center">
         {icon}
       </div>
-      <h3 className="text-sm font-medium text-white mb-1">{title}</h3>
-      <p className="text-xs text-gray-500">{subtitle}</p>
+      <h3 className="text-sm font-medium text-[var(--text-primary)] mb-1">{title}</h3>
+      <p className="text-xs text-[var(--text-tertiary)]">{subtitle}</p>
     </div>
   )
 }
@@ -284,16 +284,16 @@ function EmptyState({ icon, title, subtitle }: { icon: React.ReactNode; title: s
 function LoadingSkeleton() {
   return (
     <div className="space-y-6 animate-pulse">
-      <div className="h-16 bg-white/[0.03] rounded-xl" />
+      <div className="h-16 bg-[var(--bg-muted)] rounded-xl" />
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-4">
-          <div className="h-8 bg-white/[0.03] rounded-lg w-40" />
-          <div className="h-32 bg-white/[0.03] rounded-xl" />
-          <div className="h-32 bg-white/[0.03] rounded-xl" />
+          <div className="h-8 bg-[var(--bg-muted)] rounded-lg w-40" />
+          <div className="h-32 bg-[var(--bg-muted)] rounded-xl" />
+          <div className="h-32 bg-[var(--bg-muted)] rounded-xl" />
         </div>
         <div className="space-y-4">
-          <div className="h-8 bg-white/[0.03] rounded-lg w-40" />
-          <div className="h-64 bg-white/[0.03] rounded-xl" />
+          <div className="h-8 bg-[var(--bg-muted)] rounded-lg w-40" />
+          <div className="h-64 bg-[var(--bg-muted)] rounded-xl" />
         </div>
       </div>
     </div>

@@ -64,12 +64,12 @@ const getTypeColor = (type: string) => {
     config: 'text-amber-400',
     security: 'text-red-400',
     database: 'text-emerald-400',
-    setup: 'text-cyan-400',
+    setup: 'text-[var(--accent-primary)]',
     automation: 'text-indigo-400',
     social: 'text-green-400',
-    update: 'text-gray-400'
+    update: 'text-[var(--text-secondary)]'
   }
-  return colors[type] || 'text-gray-400'
+  return colors[type] || 'text-[var(--text-secondary)]'
 }
 
 const formatTimestamp = (timestamp: string) => {
@@ -94,10 +94,10 @@ export const ActivityFeed = memo(function ActivityFeed() {
       <div className="space-y-3">
         {[...Array(5)].map((_, i) => (
           <div key={i} className="flex items-start gap-3 animate-pulse">
-            <div className="w-8 h-8 bg-white/[0.03] rounded-lg" />
+            <div className="w-8 h-8 bg-[var(--bg-muted)] rounded-lg" />
             <div className="flex-1 space-y-2">
-              <div className="h-4 w-3/4 bg-white/[0.03] rounded" />
-              <div className="h-3 w-1/4 bg-white/[0.03] rounded" />
+              <div className="h-4 w-3/4 bg-[var(--bg-muted)] rounded" />
+              <div className="h-3 w-1/4 bg-[var(--bg-muted)] rounded" />
             </div>
           </div>
         ))}
@@ -107,7 +107,7 @@ export const ActivityFeed = memo(function ActivityFeed() {
 
   if (!activities || activities.length === 0) {
     return (
-      <div className="text-center py-8 text-gray-500 text-sm">
+      <div className="text-center py-8 text-[var(--text-tertiary)] text-sm">
         No recent activity
       </div>
     )
@@ -120,14 +120,14 @@ export const ActivityFeed = memo(function ActivityFeed() {
           key={activity.id}
           className="flex items-start gap-3 p-3 rounded-lg hover:bg-white/[0.02] transition-colors"
         >
-          <div className={`w-8 h-8 flex items-center justify-center rounded-lg bg-white/[0.03] ${getTypeColor(activity.type)}`}>
+          <div className={`w-8 h-8 flex items-center justify-center rounded-lg bg-[var(--bg-muted)] ${getTypeColor(activity.type)}`}>
             {activityIcons[activity.type] || activityIcons.update}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm text-gray-300 leading-relaxed">
+            <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
               {activity.description}
             </p>
-            <p className="text-xs text-gray-600 mt-1">
+            <p className="text-xs text-[var(--text-tertiary)] mt-1">
               {formatTimestamp(activity.timestamp)}
             </p>
           </div>

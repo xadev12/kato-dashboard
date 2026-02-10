@@ -41,18 +41,18 @@ export function TaskCard({ task, onStatusChange }: Props) {
         <div className={`mt-1.5 h-2 w-2 rounded-full flex-shrink-0 ${priorityDot[task.priority || 'low']}`} />
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-2">
-            <p className={`text-sm font-medium ${task.status === 'done' ? 'text-gray-500 line-through' : 'text-gray-200'}`}>
+            <p className={`text-sm font-medium ${task.status === 'done' ? 'text-[var(--text-tertiary)] line-through' : 'text-[var(--text-primary)]'}`}>
               {task.title}
             </p>
             <StatusBadge status={task.status} />
           </div>
           {task.assigned_to && (
-            <p className="text-xs text-gray-600 mt-1">
+            <p className="text-xs text-[var(--text-tertiary)] mt-1">
               → {task.assigned_to}
             </p>
           )}
           {timestamp && (
-            <p className="text-[10px] text-gray-500 mt-1">
+            <p className="text-[10px] text-[var(--text-tertiary)] mt-1">
               {formatDateTime(timestamp)}
             </p>
           )}

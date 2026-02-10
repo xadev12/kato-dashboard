@@ -111,13 +111,13 @@ export function ActivityFeed() {
       case 'cron_run': return 'text-blue-400 bg-blue-400/10'
       case 'pipeline_stage': return 'text-amber-400 bg-amber-400/10'
       case 'agent_action': return 'text-purple-400 bg-purple-400/10'
-      case 'commit': return 'text-gray-400 bg-gray-400/10'
-      default: return 'text-gray-400 bg-gray-400/10'
+      case 'commit': return 'text-[var(--text-secondary)] bg-gray-400/10'
+      default: return 'text-[var(--text-secondary)] bg-gray-400/10'
     }
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-gray-100 p-6">
+    <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
@@ -126,7 +126,7 @@ export function ActivityFeed() {
               <Activity className="w-6 h-6 text-blue-400" />
               Activity Feed
             </h1>
-            <p className="text-gray-400 mt-1">Real-time tracking of everything your OpenClaw system does</p>
+            <p className="text-[var(--text-secondary)] mt-1">Real-time tracking of everything your OpenClaw system does</p>
           </div>
           <div className="flex items-center gap-3">
             <button
@@ -147,16 +147,16 @@ export function ActivityFeed() {
         </div>
 
         {/* Filters */}
-        <div className="bg-[#111111] rounded-xl border border-white/[0.06] p-4 mb-6">
+        <div className="bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-subtle)] p-4 mb-6">
           <div className="flex items-center gap-2 mb-4">
-            <Filter className="w-4 h-4 text-gray-400" />
+            <Filter className="w-4 h-4 text-[var(--text-secondary)]" />
             <span className="text-sm font-medium">Filters</span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Agent Filter */}
             <div>
-              <label className="text-xs text-gray-500 uppercase tracking-wider mb-2 block">Agents</label>
+              <label className="text-xs text-[var(--text-tertiary)] uppercase tracking-wider mb-2 block">Agents</label>
               <div className="flex flex-wrap gap-2">
                 {AGENTS.map(agent => (
                   <button
@@ -165,7 +165,7 @@ export function ActivityFeed() {
                     className={`px-3 py-1.5 rounded-full text-xs transition-colors ${
                       filters.agents.includes(agent)
                         ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
-                        : 'bg-white/5 text-gray-400 border border-white/10 hover:bg-white/10'
+                        : 'bg-white/5 text-[var(--text-secondary)] border border-white/10 hover:bg-white/10'
                     }`}
                   >
                     {agent}
@@ -176,7 +176,7 @@ export function ActivityFeed() {
 
             {/* Project Filter */}
             <div>
-              <label className="text-xs text-gray-500 uppercase tracking-wider mb-2 block">Projects</label>
+              <label className="text-xs text-[var(--text-tertiary)] uppercase tracking-wider mb-2 block">Projects</label>
               <div className="flex flex-wrap gap-2 max-h-24 overflow-y-auto">
                 {projects.map(project => (
                   <button
@@ -185,7 +185,7 @@ export function ActivityFeed() {
                     className={`px-3 py-1.5 rounded-full text-xs transition-colors ${
                       filters.projects.includes(project.id)
                         ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-                        : 'bg-white/5 text-gray-400 border border-white/10 hover:bg-white/10'
+                        : 'bg-white/5 text-[var(--text-secondary)] border border-white/10 hover:bg-white/10'
                     }`}
                   >
                     {project.name}
@@ -196,7 +196,7 @@ export function ActivityFeed() {
 
             {/* Type Filter */}
             <div>
-              <label className="text-xs text-gray-500 uppercase tracking-wider mb-2 block">Event Types</label>
+              <label className="text-xs text-[var(--text-tertiary)] uppercase tracking-wider mb-2 block">Event Types</label>
               <div className="flex flex-wrap gap-2">
                 {TYPES.map(type => {
                   const Icon = type.icon
@@ -207,7 +207,7 @@ export function ActivityFeed() {
                       className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs transition-colors ${
                         filters.types.includes(type.id)
                           ? 'bg-purple-500/20 text-purple-400 border border-purple-500/30'
-                          : 'bg-white/5 text-gray-400 border border-white/10 hover:bg-white/10'
+                          : 'bg-white/5 text-[var(--text-secondary)] border border-white/10 hover:bg-white/10'
                       }`}
                     >
                       <Icon className="w-3 h-3" />
@@ -226,10 +226,10 @@ export function ActivityFeed() {
             <RefreshCw className="w-8 h-8 animate-spin text-blue-400" />
           </div>
         ) : events.length === 0 ? (
-          <div className="bg-[#111111] rounded-xl border border-white/[0.06] p-12 text-center">
-            <Activity className="w-12 h-12 text-gray-600 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-300 mb-2">No activity yet</h3>
-            <p className="text-gray-500">Activity will appear here as your agents work</p>
+          <div className="bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-subtle)] p-12 text-center">
+            <Activity className="w-12 h-12 text-[var(--text-tertiary)] mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-[var(--text-secondary)] mb-2">No activity yet</h3>
+            <p className="text-[var(--text-tertiary)]">Activity will appear here as your agents work</p>
           </div>
         ) : (
           <div className="space-y-4">
@@ -241,7 +241,7 @@ export function ActivityFeed() {
               return (
                 <div
                   key={event.id}
-                  className="bg-[#111111] rounded-xl border border-white/[0.06] overflow-hidden hover:border-white/[0.1] transition-colors"
+                  className="bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-subtle)] overflow-hidden hover:border-[var(--border-medium)] transition-colors"
                 >
                   <button
                     onClick={() => setExpandedEvent(isExpanded ? null : event.id)}
@@ -254,47 +254,47 @@ export function ActivityFeed() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-4">
                         <div>
-                          <h3 className="font-medium text-gray-200">{event.title}</h3>
-                          <p className="text-sm text-gray-500 mt-0.5 line-clamp-1">{event.description}</p>
+                          <h3 className="font-medium text-[var(--text-primary)]">{event.title}</h3>
+                          <p className="text-sm text-[var(--text-tertiary)] mt-0.5 line-clamp-1">{event.description}</p>
                         </div>
-                        <span className="text-xs text-gray-500 whitespace-nowrap">
+                        <span className="text-xs text-[var(--text-tertiary)] whitespace-nowrap">
                           {formatDistanceToNow(event.timestamp)}
                         </span>
                       </div>
 
                       <div className="flex items-center gap-3 mt-2">
                         {event.agentId && (
-                          <span className="text-xs px-2 py-0.5 bg-white/5 rounded text-gray-400">
+                          <span className="text-xs px-2 py-0.5 bg-white/5 rounded text-[var(--text-secondary)]">
                             @{event.agentId}
                           </span>
                         )}
                         {event.projectId && (
-                          <span className="text-xs px-2 py-0.5 bg-white/5 rounded text-gray-400">
+                          <span className="text-xs px-2 py-0.5 bg-white/5 rounded text-[var(--text-secondary)]">
                             {event.projectId}
                           </span>
                         )}
-                        <span className="text-xs px-2 py-0.5 bg-white/5 rounded text-gray-400 uppercase">
+                        <span className="text-xs px-2 py-0.5 bg-white/5 rounded text-[var(--text-secondary)] uppercase">
                           {event.type}
                         </span>
                       </div>
                     </div>
 
                     {isExpanded ? (
-                      <ChevronUp className="w-5 h-5 text-gray-500" />
+                      <ChevronUp className="w-5 h-5 text-[var(--text-tertiary)]" />
                     ) : (
-                      <ChevronDown className="w-5 h-5 text-gray-500" />
+                      <ChevronDown className="w-5 h-5 text-[var(--text-tertiary)]" />
                     )}
                   </button>
 
                   {isExpanded && (
-                    <div className="px-4 pb-4 pt-2 border-t border-white/[0.06]">
-                      <div className="bg-[#0a0a0a] rounded-lg p-4 mt-2">
-                        <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-3">Metadata</h4>
-                        <pre className="text-xs text-gray-400 overflow-x-auto">
+                    <div className="px-4 pb-4 pt-2 border-t border-[var(--border-subtle)]">
+                      <div className="bg-[var(--bg-primary)] rounded-lg p-4 mt-2">
+                        <h4 className="text-xs font-medium text-[var(--text-tertiary)] uppercase tracking-wider mb-3">Metadata</h4>
+                        <pre className="text-xs text-[var(--text-secondary)] overflow-x-auto">
                           {JSON.stringify(event.metadata, null, 2)}
                         </pre>
                       </div>
-                      <div className="mt-3 text-xs text-gray-500">
+                      <div className="mt-3 text-xs text-[var(--text-tertiary)]">
                         <span>ID: {event.id}</span>
                         <span className="mx-2">•</span>
                         <span>{new Date(event.timestamp).toLocaleString()}</span>

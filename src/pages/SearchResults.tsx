@@ -116,7 +116,7 @@ export function SearchResults() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-gray-100 p-6">
+    <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] p-6">
       <div className="max-w-5xl mx-auto">
         {/* Header */}
         <div className="mb-8">
@@ -127,13 +127,13 @@ export function SearchResults() {
 
           {/* Search Input */}
           <form onSubmit={handleSearch} className="relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--text-tertiary)]" />
             <input
               type="text"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               placeholder="Search across all your OpenClaw data..."
-              className="w-full pl-12 pr-4 py-3 bg-[#111111] border border-white/[0.06] rounded-xl focus:outline-none focus:border-blue-500/50"
+              className="w-full pl-12 pr-4 py-3 bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-xl focus:outline-none focus:border-blue-500/50"
             />
           </form>
         </div>
@@ -141,8 +141,8 @@ export function SearchResults() {
         {/* Source Filters */}
         <div className="flex flex-wrap gap-2 mb-6">
           <div className="flex items-center gap-2 mr-4">
-            <Filter className="w-4 h-4 text-gray-500" />
-            <span className="text-sm text-gray-400">Filter by source:</span>
+            <Filter className="w-4 h-4 text-[var(--text-tertiary)]" />
+            <span className="text-sm text-[var(--text-secondary)]">Filter by source:</span>
           </div>
           {SOURCES.map(source => {
             const Icon = source.icon
@@ -154,7 +154,7 @@ export function SearchResults() {
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs transition-colors ${
                   isSelected
                     ? `${source.bg} ${source.color} border border-current`
-                    : 'bg-white/5 text-gray-400 border border-white/10 hover:bg-white/10'
+                    : 'bg-white/5 text-[var(--text-secondary)] border border-white/10 hover:bg-white/10'
                 }`}
               >
                 <Icon className="w-3 h-3" />
@@ -170,12 +170,12 @@ export function SearchResults() {
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-400" />
           </div>
         ) : results.length === 0 ? (
-          <div className="bg-[#111111] rounded-xl border border-white/[0.06] p-12 text-center">
-            <Search className="w-12 h-12 text-gray-600 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-300 mb-2">
+          <div className="bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-subtle)] p-12 text-center">
+            <Search className="w-12 h-12 text-[var(--text-tertiary)] mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-[var(--text-secondary)] mb-2">
               {query ? `No results for "${query}"` : 'Enter a search term'}
             </h3>
-            <p className="text-gray-500">
+            <p className="text-[var(--text-tertiary)]">
               {query 
                 ? 'Try different keywords or filters'
                 : 'Search across memories, projects, tasks, and more'}
@@ -183,7 +183,7 @@ export function SearchResults() {
           </div>
         ) : (
           <div className="space-y-4">
-            <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
+            <div className="flex items-center justify-between text-sm text-[var(--text-tertiary)] mb-4">
               <span>{results.length} results for "{query}"</span>
               <span>Sorted by relevance</span>
             </div>
@@ -196,7 +196,7 @@ export function SearchResults() {
                 <div
                   key={result.id}
                   onClick={() => openResult(result)}
-                  className="bg-[#111111] rounded-xl border border-white/[0.06] p-4 hover:border-white/[0.1] cursor-pointer group transition-colors"
+                  className="bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-subtle)] p-4 hover:border-[var(--border-medium)] cursor-pointer group transition-colors"
                 >
                   <div className="flex items-start gap-4">
                     <div className={`p-2 rounded-lg ${source?.bg} ${source?.color}`}>
@@ -205,20 +205,20 @@ export function SearchResults() {
 
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-medium text-gray-200 group-hover:text-blue-400 transition-colors">
+                        <h3 className="font-medium text-[var(--text-primary)] group-hover:text-blue-400 transition-colors">
                           {result.title}
                         </h3>
                         <span className={`text-xs px-2 py-0.5 rounded-full ${source?.bg} ${source?.color}`}>
                           {source?.label}
                         </span>
-                        <span className="text-xs text-gray-600">
+                        <span className="text-xs text-[var(--text-tertiary)]">
                           {(result.relevance * 100).toFixed(0)}% match
                         </span>
                       </div>
 
-                      <p className="text-sm text-gray-400 mb-2">{result.content}</p>
+                      <p className="text-sm text-[var(--text-secondary)] mb-2">{result.content}</p>
 
-                      <div className="flex items-center gap-3 text-xs text-gray-500">
+                      <div className="flex items-center gap-3 text-xs text-[var(--text-tertiary)]">
                         {result.path && (
                           <span className="truncate max-w-md">{result.path}</span>
                         )}
@@ -231,7 +231,7 @@ export function SearchResults() {
                       </div>
                     </div>
 
-                    <ArrowRight className="w-5 h-5 text-gray-600 group-hover:text-gray-400 transition-colors" />
+                    <ArrowRight className="w-5 h-5 text-[var(--text-tertiary)] group-hover:text-[var(--text-secondary)] transition-colors" />
                   </div>
                 </div>
               )

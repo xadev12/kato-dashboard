@@ -582,7 +582,7 @@ function AgentAvatar({ name }: { name: string }) {
       className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0"
       style={{ background: color }}
     >
-      <span className="text-[9px] font-bold text-white">{initial}</span>
+      <span className="text-[9px] font-bold text-[var(--text-primary)]">{initial}</span>
     </div>
   );
 }

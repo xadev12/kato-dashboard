@@ -58,18 +58,18 @@ export function Projects() {
   return (
     <div className="space-y-6 animate-fade-in pb-8">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 pb-4 border-b border-white/[0.06]">
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 pb-4 border-b border-[var(--border-subtle)]">
         <div className="space-y-1">
-          <h1 className="text-2xl sm:text-3xl font-bold text-white">Projects</h1>
-          <p className="text-sm text-gray-400">
+          <h1 className="text-2xl sm:text-3xl font-bold text-[var(--text-primary)]">Projects</h1>
+          <p className="text-sm text-[var(--text-secondary)]">
             {stats.inProgress} active, {stats.blocked} blocked, {stats.done} completed
           </p>
         </div>
-        <div className="flex items-center gap-2 text-xs text-gray-500">
+        <div className="flex items-center gap-2 text-xs text-[var(--text-tertiary)]">
           <span>Updated {lastUpdatedAgo}</span>
           <button
             onClick={refresh}
-            className="p-1.5 rounded-lg hover:bg-white/[0.05] transition-colors"
+            className="p-1.5 rounded-lg hover:bg-[var(--bg-muted)] transition-colors"
             title="Refresh"
           >
             <RefreshIcon className="w-3.5 h-3.5" />
@@ -81,18 +81,18 @@ export function Projects() {
       <div className="flex flex-col sm:flex-row gap-4">
         {/* Search */}
         <div className="relative flex-1">
-          <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+          <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-tertiary)]" />
           <input
             type="text"
             placeholder="Search projects..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 bg-[#111111] border border-white/[0.06] rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/20 transition-all"
+            className="w-full pl-10 pr-4 py-2.5 bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-xl text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[var(--accent-primary)]/50 focus:ring-1 focus:ring-[var(--accent-primary)] transition-all"
           />
         </div>
 
         {/* Status Filters */}
-        <div className="flex items-center gap-2 p-1 bg-white/[0.03] rounded-lg border border-white/[0.06]">
+        <div className="flex items-center gap-2 p-1 bg-[var(--bg-muted)] rounded-lg border border-[var(--border-subtle)]">
           <FilterButton
             active={statusFilter === 'all'}
             onClick={() => setStatusFilter('all')}
@@ -159,11 +159,11 @@ function FilterButton({
 }) {
   const activeClasses = color
     ? {
-        cyan: 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30',
+        cyan: 'bg-cyan-500/20 text-[var(--accent-primary)] border-[var(--accent-primary)]/30',
         amber: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
         emerald: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
       }[color]
-    : 'bg-white/10 text-white border-white/20'
+    : 'bg-white/10 text-[var(--text-primary)] border-white/20'
 
   return (
     <button
@@ -171,7 +171,7 @@ function FilterButton({
       className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
         active
           ? activeClasses
-          : 'text-gray-400 hover:text-white hover:bg-white/[0.05]'
+          : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-muted)]'
       }`}
     >
       {label} <span className="opacity-60 ml-1">{count}</span>
@@ -185,10 +185,10 @@ function ProjectCard({ project }: { project: any }) {
   const isDone = project.status === 'done'
 
   const statusColors = {
-    in_progress: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20',
+    in_progress: 'bg-cyan-500/10 text-[var(--accent-primary)] border-[var(--accent-primary)]/20',
     blocked: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
     done: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
-    not_started: 'bg-gray-500/10 text-gray-400 border-gray-500/20'
+    not_started: 'bg-gray-500/10 text-[var(--text-secondary)] border-gray-500/20'
   }
 
   const statusLabels = {
@@ -205,8 +205,8 @@ function ProjectCard({ project }: { project: any }) {
         isBlocked
           ? 'bg-amber-500/5 border-amber-500/20 hover:border-amber-500/30'
           : isDone
-          ? 'bg-[#111111] border-emerald-500/20 hover:border-emerald-500/30'
-          : 'bg-[#111111] border-white/[0.06] hover:border-cyan-500/30'
+          ? 'bg-[var(--bg-secondary)] border-emerald-500/20 hover:border-emerald-500/30'
+          : 'bg-[var(--bg-secondary)] border-[var(--border-subtle)] hover:border-[var(--accent-primary)]/30'
       }`}
     >
       {/* Header */}
@@ -217,34 +217,34 @@ function ProjectCard({ project }: { project: any }) {
               {statusLabels[project.status as keyof typeof statusLabels] || 'Unknown'}
             </span>
             {project.priority && (
-              <span className="text-[10px] text-gray-500">{project.priority}</span>
+              <span className="text-[10px] text-[var(--text-tertiary)]">{project.priority}</span>
             )}
           </div>
-          <h3 className="font-medium text-white truncate">{project.name}</h3>
+          <h3 className="font-medium text-[var(--text-primary)] truncate">{project.name}</h3>
         </div>
       </div>
 
       {/* Description */}
       {project.description && (
-        <p className="text-xs text-gray-500 line-clamp-2 mb-3">{project.description}</p>
+        <p className="text-xs text-[var(--text-tertiary)] line-clamp-2 mb-3">{project.description}</p>
       )}
 
       {/* Progress Bar */}
       <div className="mb-3">
         <div className="flex items-center justify-between text-xs mb-1">
-          <span className="text-gray-500">Progress</span>
-          <span className={isBlocked ? 'text-amber-400' : isDone ? 'text-emerald-400' : 'text-cyan-400'}>
+          <span className="text-[var(--text-tertiary)]">Progress</span>
+          <span className={isBlocked ? 'text-amber-400' : isDone ? 'text-emerald-400' : 'text-[var(--accent-primary)]'}>
             {project.progress || 0}%
           </span>
         </div>
-        <div className="h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
+        <div className="h-1.5 bg-[var(--bg-muted)] rounded-full overflow-hidden">
           <div
             className={`h-full rounded-full transition-all duration-500 ${
               isBlocked
                 ? 'bg-amber-500'
                 : isDone
                 ? 'bg-emerald-500'
-                : 'bg-gradient-to-r from-cyan-500 to-cyan-400'
+                : 'bg-gradient-to-r from-[var(--accent-primary)] to-[var(--accent-primary-light)]'
             }`}
             style={{ width: `${project.progress || 0}%` }}
           />
@@ -262,11 +262,11 @@ function ProjectCard({ project }: { project: any }) {
       )}
 
       {/* Footer */}
-      <div className="flex items-center justify-between mt-3 pt-3 border-t border-white/[0.06]">
-        <span className="text-xs text-gray-500">
+      <div className="flex items-center justify-between mt-3 pt-3 border-t border-[var(--border-subtle)]">
+        <span className="text-xs text-[var(--text-tertiary)]">
           {project.currentStage && `Stage: ${project.currentStage}`}
         </span>
-        <ChevronRightIcon className="w-4 h-4 text-gray-500" />
+        <ChevronRightIcon className="w-4 h-4 text-[var(--text-tertiary)]" />
       </div>
     </Link>
   )
@@ -275,23 +275,23 @@ function ProjectCard({ project }: { project: any }) {
 // Empty State
 function EmptyState({ hasFilters, onClear }: { hasFilters: boolean; onClear: () => void }) {
   return (
-    <div className="p-12 rounded-xl bg-[#111111] border border-white/[0.06] text-center">
+    <div className="p-12 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-subtle)] text-center">
       <div className="max-w-md mx-auto space-y-4">
-        <div className="w-16 h-16 mx-auto bg-white/[0.03] rounded-full flex items-center justify-center border border-white/[0.06]">
-          <FolderIcon className="w-8 h-8 text-gray-600" />
+        <div className="w-16 h-16 mx-auto bg-[var(--bg-muted)] rounded-full flex items-center justify-center border border-[var(--border-subtle)]">
+          <FolderIcon className="w-8 h-8 text-[var(--text-tertiary)]" />
         </div>
         <div className="space-y-2">
-          <h3 className="text-lg font-semibold text-white">
+          <h3 className="text-lg font-semibold text-[var(--text-primary)]">
             {hasFilters ? 'No projects found' : 'No projects yet'}
           </h3>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-[var(--text-tertiary)]">
             {hasFilters ? 'Try adjusting your search or filters' : 'Create your first project to get started'}
           </p>
         </div>
         {hasFilters && (
           <button
             onClick={onClear}
-            className="px-4 py-2 rounded-lg bg-white/[0.03] hover:bg-white/[0.06] text-gray-300 text-sm font-medium border border-white/[0.06] transition-colors"
+            className="px-4 py-2 rounded-lg bg-[var(--bg-muted)] hover:bg-[var(--bg-muted)] text-[var(--text-secondary)] text-sm font-medium border border-[var(--border-subtle)] transition-colors"
           >
             Clear Filters
           </button>
@@ -305,11 +305,11 @@ function EmptyState({ hasFilters, onClear }: { hasFilters: boolean; onClear: () 
 function LoadingSkeleton() {
   return (
     <div className="space-y-6 animate-pulse">
-      <div className="h-16 bg-white/[0.03] rounded-xl" />
-      <div className="h-12 bg-white/[0.03] rounded-xl" />
+      <div className="h-16 bg-[var(--bg-muted)] rounded-xl" />
+      <div className="h-12 bg-[var(--bg-muted)] rounded-xl" />
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         {[...Array(6)].map((_, i) => (
-          <div key={i} className="h-48 bg-white/[0.03] rounded-xl" />
+          <div key={i} className="h-48 bg-[var(--bg-muted)] rounded-xl" />
         ))}
       </div>
     </div>

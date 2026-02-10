@@ -90,7 +90,7 @@ export const AgentStatusCard = memo(function AgentStatusCard({ agent }: Props) {
     : null
 
   return (
-    <div className={`group relative overflow-hidden rounded-xl border border-white/[0.06] bg-[#111111] p-4 transition-all duration-300 hover:border-white/[0.1] hover:shadow-lg ${colors.glow}`}>
+    <div className={`group relative overflow-hidden rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-4 transition-all duration-300 hover:border-[var(--border-medium)] hover:shadow-lg ${colors.glow}`}>
       {/* Background gradient on hover */}
       <div className={`absolute inset-0 bg-gradient-to-br ${colors.gradient} opacity-0 transition-opacity duration-300 group-hover:opacity-100`} />
       
@@ -98,19 +98,19 @@ export const AgentStatusCard = memo(function AgentStatusCard({ agent }: Props) {
         {/* Header with icon and status */}
         <div className="flex items-start justify-between mb-3">
           <div className="flex items-center gap-3">
-            <div className={`flex h-10 w-10 items-center justify-center rounded-xl bg-white/[0.05] text-sm font-semibold ${colors.text} border border-white/[0.06]`}>
+            <div className={`flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--bg-muted)] text-sm font-semibold ${colors.text} border border-[var(--border-subtle)]`}>
               {initial}
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-semibold text-white text-sm">{agent.name}</h3>
+                <h3 className="font-semibold text-[var(--text-primary)] text-sm">{agent.name}</h3>
                 {taskCount > 0 && (
                   <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${status.bg} ${status.color} border ${status.border}`}>
                     {taskCount} task{taskCount > 1 ? 's' : ''}
                   </span>
                 )}
               </div>
-              <span className="text-xs text-gray-500 capitalize">{agent.id}</span>
+              <span className="text-xs text-[var(--text-tertiary)] capitalize">{agent.id}</span>
             </div>
           </div>
           
@@ -126,15 +126,15 @@ export const AgentStatusCard = memo(function AgentStatusCard({ agent }: Props) {
           {agent.currentTask ? (
             <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <span className="text-[10px] uppercase tracking-wider text-gray-500 font-medium">Current Task</span>
+                <span className="text-[10px] uppercase tracking-wider text-[var(--text-tertiary)] font-medium">Current Task</span>
                 {timeActive && (
                   <span className="text-[10px] text-amber-400">{timeActive}</span>
                 )}
               </div>
-              <p className="text-sm text-gray-300 truncate">{agent.currentTask}</p>
+              <p className="text-sm text-[var(--text-secondary)] truncate">{agent.currentTask}</p>
             </div>
           ) : (
-            <div className="flex items-center gap-2 text-gray-500">
+            <div className="flex items-center gap-2 text-[var(--text-tertiary)]">
               <span className="text-xs">Waiting for assignment...</span>
             </div>
           )}
@@ -142,18 +142,18 @@ export const AgentStatusCard = memo(function AgentStatusCard({ agent }: Props) {
         
         {/* Stats Row */}
         {stats && (
-          <div className="grid grid-cols-3 gap-2 pt-3 border-t border-white/[0.06]">
+          <div className="grid grid-cols-3 gap-2 pt-3 border-t border-[var(--border-subtle)]">
             <div className="text-center">
-              <div className="text-sm font-bold text-white">{stats.tasksCompleted}</div>
-              <div className="text-[10px] text-gray-500 uppercase tracking-wide">Done</div>
+              <div className="text-sm font-bold text-[var(--text-primary)]">{stats.tasksCompleted}</div>
+              <div className="text-[10px] text-[var(--text-tertiary)] uppercase tracking-wide">Done</div>
             </div>
-            <div className="text-center border-x border-white/[0.06]">
+            <div className="text-center border-x border-[var(--border-subtle)]">
               <div className="text-sm font-bold text-emerald-400">{stats.successRate}%</div>
-              <div className="text-[10px] text-gray-500 uppercase tracking-wide">Win Rate</div>
+              <div className="text-[10px] text-[var(--text-tertiary)] uppercase tracking-wide">Win Rate</div>
             </div>
             <div className="text-center">
               <div className="text-sm font-bold text-amber-400">{stats.currentStreak}</div>
-              <div className="text-[10px] text-gray-500 uppercase tracking-wide">Streak</div>
+              <div className="text-[10px] text-[var(--text-tertiary)] uppercase tracking-wide">Streak</div>
             </div>
           </div>
         )}

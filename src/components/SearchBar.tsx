@@ -10,7 +10,7 @@ export const SearchBar = memo(function SearchBar({ value, onChange, placeholder 
   return (
     <div className="relative">
       <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-        <svg className="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg className="w-4 h-4 text-[var(--text-tertiary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -29,7 +29,7 @@ export const SearchBar = memo(function SearchBar({ value, onChange, placeholder 
       {value && (
         <button
           onClick={() => onChange('')}
-          className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-500 hover:text-gray-300 transition-colors"
+          className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] transition-colors"
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

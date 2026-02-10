@@ -67,14 +67,14 @@ export function Dashboard() {
       <div className="space-y-6">
         <div className="flex items-start justify-between gap-4">
           <div className="space-y-2">
-            <h1 className="text-3xl font-bold text-white">Kato's Progress</h1>
-            <p className="text-sm text-gray-400">
+            <h1 className="text-3xl font-bold text-[var(--text-primary)]">Kato's Progress</h1>
+            <p className="text-sm text-[var(--text-secondary)]">
               Real-time status of active tasks and sub-agents
             </p>
           </div>
-          <div className="flex items-center gap-2 px-3 py-1.5 bg-white/[0.03] border border-white/[0.06] rounded-lg">
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-[var(--bg-muted)] border border-[var(--border-subtle)] rounded-lg">
             <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
-            <span className="text-xs text-gray-400">Live</span>
+            <span className="text-xs text-[var(--text-secondary)]">Live</span>
           </div>
         </div>
 
@@ -162,12 +162,12 @@ export function Dashboard() {
       {/* Sub-Agents Section */}
       {subAgents && subAgents.length > 0 && (
         <div className="space-y-4">
-          <h2 className="text-lg font-semibold text-white">Background Tasks</h2>
+          <h2 className="text-lg font-semibold text-[var(--text-primary)]">Background Tasks</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {subAgents.map((agent: any) => (
               <div key={agent.id} className="card">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-white">{agent.label}</span>
+                  <span className="text-sm font-medium text-[var(--text-primary)]">{agent.label}</span>
                   <span className={`badge ${
                     agent.status === 'running' ? 'badge-blue' :
                     agent.status === 'complete' ? 'badge-green' :
@@ -176,13 +176,13 @@ export function Dashboard() {
                     {agent.status}
                   </span>
                 </div>
-                <p className="text-xs text-gray-500">{agent.task}</p>
+                <p className="text-xs text-[var(--text-tertiary)]">{agent.task}</p>
                 {agent.progress && (
                   <div className="mt-3">
                     <div className="progress-bar">
                       <div className="progress-fill" style={{ width: `${agent.progress}%` }} />
                     </div>
-                    <span className="text-xs text-gray-600 mt-1">{agent.progress}%</span>
+                    <span className="text-xs text-[var(--text-tertiary)] mt-1">{agent.progress}%</span>
                   </div>
                 )}
               </div>
@@ -194,8 +194,8 @@ export function Dashboard() {
       {/* Activity Feed */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-white">Recent Activity</h2>
-          <span className="text-xs text-gray-600">Auto-refreshes every 10s</span>
+          <h2 className="text-lg font-semibold text-[var(--text-primary)]">Recent Activity</h2>
+          <span className="text-xs text-[var(--text-tertiary)]">Auto-refreshes every 10s</span>
         </div>
         <div className="card !p-4">
           <ActivityFeed />
@@ -223,7 +223,7 @@ const FilterButton = memo(function FilterButton({
       className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-150 border ${
         active
           ? 'bg-blue-500/10 text-blue-400 border-blue-500/30'
-          : 'bg-white/[0.03] text-gray-400 border-white/[0.06] hover:bg-white/[0.05] hover:text-gray-300'
+          : 'bg-[var(--bg-muted)] text-[var(--text-secondary)] border-[var(--border-subtle)] hover:bg-[var(--bg-muted)] hover:text-[var(--text-secondary)]'
       }`}
     >
       {label} <span className="opacity-60">·</span> {count}
@@ -251,20 +251,20 @@ const StatCard = memo(function StatCard({
       style={{ animationDelay: `${delay}ms` }}
     >
       <div className="relative z-10 space-y-2 text-center">
-        <div className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+        <div className="text-xs font-semibold text-[var(--text-tertiary)] uppercase tracking-wide">
           {label}
         </div>
         <div
           className={`text-3xl font-bold transition-colors duration-200 ${
             accent
               ? 'text-blue-400 group-hover:text-blue-300'
-              : 'text-white group-hover:text-gray-100'
+              : 'text-[var(--text-primary)] group-hover:text-[var(--text-primary)]'
           }`}
         >
           {value}
         </div>
         {subtitle && (
-          <div className="text-xs text-gray-600">{subtitle}</div>
+          <div className="text-xs text-[var(--text-tertiary)]">{subtitle}</div>
         )}
       </div>
     </div>
@@ -282,16 +282,16 @@ function EmptyState({
   return (
     <div className="card !p-12 text-center">
       <div className="max-w-md mx-auto space-y-4">
-        <div className="w-16 h-16 mx-auto bg-white/[0.03] rounded-full flex items-center justify-center border border-white/[0.06]">
-          <svg className="w-8 h-8 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div className="w-16 h-16 mx-auto bg-[var(--bg-muted)] rounded-full flex items-center justify-center border border-[var(--border-subtle)]">
+          <svg className="w-8 h-8 text-[var(--text-tertiary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
         </div>
         <div className="space-y-2">
-          <h3 className="text-lg font-semibold text-white">
+          <h3 className="text-lg font-semibold text-[var(--text-primary)]">
             {hasSearch ? 'No projects found' : 'All caught up'}
           </h3>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-[var(--text-tertiary)]">
             {hasSearch
               ? 'Try adjusting your search or filters'
               : 'No active tasks at the moment'}
@@ -313,12 +313,12 @@ function LoadingKanban() {
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       {[...Array(3)].map((_, i) => (
         <div key={i} className="space-y-4 animate-fade-in" style={{ animationDelay: `${i * 100}ms` }}>
-          <div className="h-5 w-24 bg-white/[0.03] rounded animate-pulse" />
+          <div className="h-5 w-24 bg-[var(--bg-muted)] rounded animate-pulse" />
           <div className="space-y-3">
             {[...Array(2)].map((_, j) => (
               <div
                 key={j}
-                className="h-40 bg-white/[0.03] border border-white/[0.06] rounded-xl animate-pulse"
+                className="h-40 bg-[var(--bg-muted)] border border-[var(--border-subtle)] rounded-xl animate-pulse"
               />
             ))}
           </div>

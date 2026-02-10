@@ -41,7 +41,7 @@ export function ProjectDetail() {
   if (!project) {
     return (
       <div className="text-center py-20">
-        <p className="text-gray-500">Project not found</p>
+        <p className="text-[var(--text-tertiary)]">Project not found</p>
         <Link to="/" className="text-blue-400 text-sm mt-2 inline-block hover:underline">
           ← Back to dashboard
         </Link>
@@ -65,11 +65,11 @@ export function ProjectDetail() {
     <div className="space-y-6">
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-sm">
-        <Link to="/" className="text-gray-500 hover:text-gray-300 transition-colors">
+        <Link to="/" className="text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] transition-colors">
           Projects
         </Link>
         <span className="text-gray-700">/</span>
-        <span className="text-gray-300">{project.name}</span>
+        <span className="text-[var(--text-secondary)]">{project.name}</span>
       </div>
 
       {/* Project Header */}
@@ -77,10 +77,10 @@ export function ProjectDetail() {
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
           <div className="space-y-2">
             <div className="flex items-center gap-3">
-              <h1 className="text-xl font-bold text-white">{project.name}</h1>
+              <h1 className="text-xl font-bold text-[var(--text-primary)]">{project.name}</h1>
               <StatusBadge status={project.status} />
             </div>
-            <p className="text-sm text-gray-500">{project.description}</p>
+            <p className="text-sm text-[var(--text-tertiary)]">{project.description}</p>
           </div>
           {project.repo_url && (
             <a
@@ -103,7 +103,7 @@ export function ProjectDetail() {
 
       {/* Task Kanban */}
       <div>
-        <h2 className="text-lg font-semibold text-white mb-4">Tasks</h2>
+        <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-4">Tasks</h2>
         {tasksLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {[...Array(3)].map((_, i) => (
@@ -115,11 +115,11 @@ export function ProjectDetail() {
             {columns.map(col => (
               <div key={col.key} className="space-y-3">
                 <div className="flex items-center gap-2 px-1">
-                  <span className="text-gray-500 text-sm">{col.icon}</span>
-                  <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider">
+                  <span className="text-[var(--text-tertiary)] text-sm">{col.icon}</span>
+                  <h3 className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wider">
                     {col.label}
                   </h3>
-                  <span className="ml-auto text-xs text-gray-600 tabular-nums bg-gray-800 px-2 py-0.5 rounded-full">
+                  <span className="ml-auto text-xs text-[var(--text-tertiary)] tabular-nums bg-gray-800 px-2 py-0.5 rounded-full">
                     {tasksByStatus[col.key].length}
                   </span>
                 </div>

@@ -16,7 +16,7 @@ const columns = [
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
       </svg>
     ),
-    color: 'text-gray-500'
+    color: 'text-[var(--text-tertiary)]'
   },
   { 
     key: 'in_progress' as const, 
@@ -59,11 +59,11 @@ export const KanbanBoard = memo(function KanbanBoard({ projects }: Props) {
                 <div className={col.color}>
                   {col.icon}
                 </div>
-                <span className="text-gray-400">
+                <span className="text-[var(--text-secondary)]">
                   {col.label}
                 </span>
               </div>
-              <span className="text-gray-600 tabular-nums">
+              <span className="text-[var(--text-tertiary)] tabular-nums">
                 {colProjects.length}
               </span>
             </div>
@@ -80,12 +80,12 @@ export const KanbanBoard = memo(function KanbanBoard({ projects }: Props) {
                 </div>
               ))}
               {colProjects.length === 0 && (
-                <div className="border border-dashed border-white/[0.06] rounded-xl p-8 text-center">
+                <div className="border border-dashed border-[var(--border-subtle)] rounded-xl p-8 text-center">
                   <div className="space-y-2">
                     <div className={`w-8 h-8 mx-auto ${col.color} opacity-20`}>
                       {col.icon}
                     </div>
-                    <p className="text-xs text-gray-600">No projects</p>
+                    <p className="text-xs text-[var(--text-tertiary)]">No projects</p>
                   </div>
                 </div>
               )}

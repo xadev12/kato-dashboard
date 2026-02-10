@@ -176,7 +176,7 @@ export function Calendar() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-gray-100 p-6">
+    <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
@@ -185,7 +185,7 @@ export function Calendar() {
               <CalendarIcon className="w-6 h-6 text-emerald-400" />
               Calendar
             </h1>
-            <p className="text-gray-400 mt-1">View all scheduled tasks and cron jobs</p>
+            <p className="text-[var(--text-secondary)] mt-1">View all scheduled tasks and cron jobs</p>
           </div>
           <div className="flex items-center gap-3">
             <button
@@ -198,9 +198,9 @@ export function Calendar() {
         </div>
 
         {/* Category Filters */}
-        <div className="bg-[#111111] rounded-xl border border-white/[0.06] p-4 mb-6">
+        <div className="bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-subtle)] p-4 mb-6">
           <div className="flex items-center gap-2 mb-3">
-            <Filter className="w-4 h-4 text-gray-400" />
+            <Filter className="w-4 h-4 text-[var(--text-secondary)]" />
             <span className="text-sm font-medium">Filter by Category</span>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -213,7 +213,7 @@ export function Calendar() {
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs transition-colors ${
                     filterCategories.includes(cat.id)
                       ? `${cat.color} border border-current`
-                      : 'bg-white/5 text-gray-400 border border-white/10 hover:bg-white/10'
+                      : 'bg-white/5 text-[var(--text-secondary)] border border-white/10 hover:bg-white/10'
                   }`}
                 >
                   <Icon className="w-3 h-3" />
@@ -259,10 +259,10 @@ export function Calendar() {
                 
                 return (
                   <div key={day} className="text-center">
-                    <div className={`text-xs uppercase tracking-wider mb-2 ${isToday ? 'text-emerald-400' : 'text-gray-500'}`}>
+                    <div className={`text-xs uppercase tracking-wider mb-2 ${isToday ? 'text-emerald-400' : 'text-[var(--text-tertiary)]'}`}>
                       {day}
                     </div>
-                    <div className={`text-2xl font-bold mb-2 ${isToday ? 'text-emerald-400' : 'text-gray-300'}`}>
+                    <div className={`text-2xl font-bold mb-2 ${isToday ? 'text-emerald-400' : 'text-[var(--text-secondary)]'}`}>
                       {date.getDate()}
                     </div>
                     <div className="min-h-[200px] space-y-2">
@@ -273,13 +273,13 @@ export function Calendar() {
                           return (
                             <div
                               key={event.id}
-                              className="p-2 rounded-lg bg-white/5 border border-white/[0.06] text-left"
+                              className="p-2 rounded-lg bg-white/5 border border-[var(--border-subtle)] text-left"
                             >
                               <div className="flex items-center gap-1.5 mb-1">
                                 {cat && <cat.icon className={`w-3 h-3 ${cat.color.split(' ')[0]}`} />}
                                 <span className="text-xs font-medium truncate">{event.title}</span>
                               </div>
-                              <div className="text-[10px] text-gray-500">
+                              <div className="text-[10px] text-[var(--text-tertiary)]">
                                 {new Date(event.nextRun).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
                               </div>
                             </div>
@@ -294,30 +294,30 @@ export function Calendar() {
         ) : (
           /* List View */
           <div className="space-y-3">
-            <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-4">
+            <h3 className="text-sm font-medium text-[var(--text-tertiary)] uppercase tracking-wider mb-4">
               Upcoming Events ({filteredEvents.length})
             </h3>
             {filteredEvents.map(event => {
               const cat = CATEGORIES.find(c => c.id === event.category)
               const Icon = cat?.icon || CalendarIcon
-              const colorClass = cat?.color || 'text-gray-400 bg-gray-400/10'
+              const colorClass = cat?.color || 'text-[var(--text-secondary)] bg-gray-400/10'
               
               return (
                 <div
                   key={event.id}
-                  className="bg-[#111111] rounded-xl border border-white/[0.06] p-4 flex items-center gap-4"
+                  className="bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-subtle)] p-4 flex items-center gap-4"
                 >
                   <div className={`p-2 rounded-lg ${colorClass}`}>
                     <Icon className="w-5 h-5" />
                   </div>
                   <div className="flex-1">
                     <h3 className="font-medium">{event.title}</h3>
-                    <p className="text-sm text-gray-500">{event.description}</p>
+                    <p className="text-sm text-[var(--text-tertiary)]">{event.description}</p>
                     <div className="flex items-center gap-3 mt-2">
-                      <span className="text-xs px-2 py-0.5 bg-white/5 rounded text-gray-400">
+                      <span className="text-xs px-2 py-0.5 bg-white/5 rounded text-[var(--text-secondary)]">
                         @{event.agentId}
                       </span>
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs text-[var(--text-tertiary)]">
                         {formatCron(event.cronExpression)}
                       </span>
                     </div>
@@ -327,7 +327,7 @@ export function Calendar() {
                       <Clock className="w-4 h-4" />
                       {formatDistanceToNow(event.nextRun)}
                     </div>
-                    <div className="text-xs text-gray-500 mt-1">
+                    <div className="text-xs text-[var(--text-tertiary)] mt-1">
                       {new Date(event.nextRun).toLocaleString()}
                     </div>
                   </div>

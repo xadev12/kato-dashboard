@@ -34,7 +34,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
             <div className="flex items-center gap-4">
               <Link to="/" className="flex items-center gap-2.5">
                 <div 
-                  className="flex h-8 w-8 items-center justify-center rounded-lg text-sm font-bold text-white"
+                  className="flex h-8 w-8 items-center justify-center rounded-lg text-sm font-bold text-[var(--text-primary)]"
                   style={{ background: 'var(--accent-primary)' }}
                 >
                   K

@@ -49,24 +49,24 @@ const WorkerItemRow = memo(function WorkerItemRow({ worker, isActive }: { worker
         ? 'bg-emerald-500/5 border-emerald-500/20'
         : 'bg-white/[0.02] border-white/[0.04] hover:bg-white/[0.04]'
     }`}>
-      <div className={`flex h-8 w-8 items-center justify-center rounded-lg text-xs font-medium text-gray-400 ${
-        isActive ? 'bg-emerald-500/10' : 'bg-white/[0.05]'
+      <div className={`flex h-8 w-8 items-center justify-center rounded-lg text-xs font-medium text-[var(--text-secondary)] ${
+        isActive ? 'bg-emerald-500/10' : 'bg-[var(--bg-muted)]'
       }`}>
         {label}
       </div>
       
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-white truncate">{worker.specialist}</span>
+          <span className="text-sm font-medium text-[var(--text-primary)] truncate">{worker.specialist}</span>
           {isActive && (
             <span className="flex h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
           )}
         </div>
-        <span className="text-xs text-gray-500 truncate block">{worker.taskId}</span>
+        <span className="text-xs text-[var(--text-tertiary)] truncate block">{worker.taskId}</span>
       </div>
       
       <div className="text-right">
-        <span className="text-xs text-gray-600 tabular-nums block">
+        <span className="text-xs text-[var(--text-tertiary)] tabular-nums block">
           {formatTimeAgo(timestamp)}
         </span>
         {(worker as any).eta && isActive && (
@@ -82,12 +82,12 @@ export const WorkerQueuePanel = memo(function WorkerQueuePanel({ workers }: Prop
 
   if (totalWorkers === 0) {
     return (
-      <div className="rounded-xl border border-white/[0.06] bg-[#111111] p-6">
+      <div className="rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-6">
         <div className="flex items-center gap-2 mb-4">
-          <h3 className="font-semibold text-white">Worker Queue</h3>
-          <span className="ml-auto text-xs text-gray-500">Empty</span>
+          <h3 className="font-semibold text-[var(--text-primary)]">Worker Queue</h3>
+          <span className="ml-auto text-xs text-[var(--text-tertiary)]">Empty</span>
         </div>
-        <div className="text-center py-8 text-gray-500">
+        <div className="text-center py-8 text-[var(--text-tertiary)]">
           <p className="text-sm">No workers in queue</p>
           <p className="text-xs mt-1">All tasks are being handled</p>
         </div>
@@ -96,11 +96,11 @@ export const WorkerQueuePanel = memo(function WorkerQueuePanel({ workers }: Prop
   }
 
   return (
-    <div className="rounded-xl border border-white/[0.06] bg-[#111111] p-5">
+    <div className="rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-5">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <h3 className="font-semibold text-white">Worker Queue</h3>
+          <h3 className="font-semibold text-[var(--text-primary)]">Worker Queue</h3>
         </div>
         <div className="flex items-center gap-2">
           {workers.active.length > 0 && (
@@ -114,7 +114,7 @@ export const WorkerQueuePanel = memo(function WorkerQueuePanel({ workers }: Prop
             </span>
           )}
           {workers.recent.length > 0 && (
-            <span className="px-2 py-1 rounded-md bg-gray-500/10 text-gray-400 text-xs font-medium border border-gray-500/20">
+            <span className="px-2 py-1 rounded-md bg-gray-500/10 text-[var(--text-secondary)] text-xs font-medium border border-gray-500/20">
               {workers.recent.length} Recent
             </span>
           )}
@@ -125,7 +125,7 @@ export const WorkerQueuePanel = memo(function WorkerQueuePanel({ workers }: Prop
         {/* Active workers */}
         {workers.active.length > 0 && (
           <div className="space-y-2">
-            <span className="text-[10px] uppercase tracking-wider text-gray-500 font-medium">Active</span>
+            <span className="text-[10px] uppercase tracking-wider text-[var(--text-tertiary)] font-medium">Active</span>
             {workers.active.map((worker, idx) => (
               <WorkerItemRow key={`active-${idx}`} worker={worker} isActive />
             ))}
@@ -135,7 +135,7 @@ export const WorkerQueuePanel = memo(function WorkerQueuePanel({ workers }: Prop
         {/* Queued workers */}
         {workers.queue.length > 0 && (
           <div className="space-y-2">
-            <span className="text-[10px] uppercase tracking-wider text-gray-500 font-medium">Queued</span>
+            <span className="text-[10px] uppercase tracking-wider text-[var(--text-tertiary)] font-medium">Queued</span>
             {workers.queue.map((worker, idx) => (
               <WorkerItemRow key={`queue-${idx}`} worker={worker} />
             ))}
@@ -145,7 +145,7 @@ export const WorkerQueuePanel = memo(function WorkerQueuePanel({ workers }: Prop
         {/* Recent (completed) workers */}
         {workers.recent.length > 0 && (
           <div className="space-y-2">
-            <span className="text-[10px] uppercase tracking-wider text-gray-500 font-medium">Recent</span>
+            <span className="text-[10px] uppercase tracking-wider text-[var(--text-tertiary)] font-medium">Recent</span>
             {workers.recent.map((worker, idx) => (
               <WorkerItemRow key={`recent-${idx}`} worker={worker} />
             ))}

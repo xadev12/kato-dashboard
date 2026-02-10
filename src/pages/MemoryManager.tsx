@@ -62,8 +62,8 @@ export function MemoryManager() {
       {/* Header */}
       <div className="flex items-start justify-between gap-4">
         <div className="space-y-2">
-          <h1 className="text-3xl font-bold text-white">Memory</h1>
-          <p className="text-sm text-gray-400">
+          <h1 className="text-3xl font-bold text-[var(--text-primary)]">Memory</h1>
+          <p className="text-sm text-[var(--text-secondary)]">
             Recent memory updates, self-review entries, and daily logs from all agents
           </p>
         </div>
@@ -81,7 +81,7 @@ export function MemoryManager() {
       </div>
 
       {/* Tabs */}
-      <div className="flex items-center gap-1 p-1 bg-white/[0.03] rounded-lg border border-white/[0.06] w-fit">
+      <div className="flex items-center gap-1 p-1 bg-[var(--bg-muted)] rounded-lg border border-[var(--border-subtle)] w-fit">
         <TabButton active={activeTab === 'all'} onClick={() => setActiveTab('all')} label="All" count={counts.all} />
         <TabButton active={activeTab === 'self_review'} onClick={() => setActiveTab('self_review')} label="Self-Reviews" count={counts.self_review} />
         <TabButton active={activeTab === 'daily_log'} onClick={() => setActiveTab('daily_log')} label="Daily Logs" count={counts.daily_log} />
@@ -96,7 +96,7 @@ export function MemoryManager() {
             <div 
               key={entry.id}
               onClick={() => setSelectedEntry(entry)}
-              className="group relative overflow-hidden rounded-xl border border-white/[0.06] bg-[#111111] p-5 transition-all duration-200 hover:border-white/[0.1] cursor-pointer"
+              className="group relative overflow-hidden rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-5 transition-all duration-200 hover:border-[var(--border-medium)] cursor-pointer"
             >
               {/* Type indicator bar */}
               <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${config.text.replace('text-', 'from-').replace('400', '500')} to-transparent`} />
@@ -107,18 +107,18 @@ export function MemoryManager() {
                     <span className={`px-2 py-0.5 rounded-md ${config.bg} ${config.text} ${config.border} border text-[10px] font-medium uppercase tracking-wide`}>
                       {config.label}
                     </span>
-                    <span className="text-xs text-gray-500">{agentNames[entry.agentId] || entry.agentId}</span>
+                    <span className="text-xs text-[var(--text-tertiary)]">{agentNames[entry.agentId] || entry.agentId}</span>
                   </div>
-                  <h3 className="font-medium text-white mb-2 group-hover:text-violet-400 transition-colors">
+                  <h3 className="font-medium text-[var(--text-primary)] mb-2 group-hover:text-violet-400 transition-colors">
                     {entry.title}
                   </h3>
-                  <p className="text-sm text-gray-400 line-clamp-2">{entry.content}</p>
+                  <p className="text-sm text-[var(--text-secondary)] line-clamp-2">{entry.content}</p>
                 </div>
               </div>
               
-              <div className="flex items-center justify-between mt-4 pt-4 border-t border-white/[0.06]">
-                <span className="text-xs text-gray-500">{formatRelativeTime(entry.timestamp)}</span>
-                <svg className="w-4 h-4 text-gray-600 group-hover:text-violet-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="flex items-center justify-between mt-4 pt-4 border-t border-[var(--border-subtle)]">
+                <span className="text-xs text-[var(--text-tertiary)]">{formatRelativeTime(entry.timestamp)}</span>
+                <svg className="w-4 h-4 text-[var(--text-tertiary)] group-hover:text-violet-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
               </div>
@@ -147,7 +147,7 @@ function TabButton({ active, onClick, label, count }: { active: boolean; onClick
       className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
         active
           ? 'bg-violet-500/20 text-violet-300 border border-violet-500/20'
-          : 'text-gray-400 hover:text-gray-200 hover:bg-white/[0.03]'
+          : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-muted)]'
       }`}
     >
       {label} <span className="opacity-60">·</span> {count}
@@ -166,9 +166,9 @@ function StatCard({ label, value, color }: { label: string; value: string; color
   }
 
   return (
-    <div className="rounded-xl border border-white/[0.06] bg-[#111111] p-4 text-center">
+    <div className="rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-4 text-center">
       <div className={`text-2xl font-bold ${colorClasses[color]}`}>{value}</div>
-      <div className="text-xs uppercase tracking-wider text-gray-500 font-medium mt-1">{label}</div>
+      <div className="text-xs uppercase tracking-wider text-[var(--text-tertiary)] font-medium mt-1">{label}</div>
     </div>
   )
 }
@@ -180,13 +180,13 @@ function EntryDetailModal({ entry, onClose }: { entry: MemoryUpdate; onClose: ()
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={onClose}>
       <div 
-        className="relative w-full max-w-lg rounded-2xl border border-white/[0.1] bg-[#111111] p-6 shadow-2xl animate-fade-in"
+        className="relative w-full max-w-lg rounded-2xl border border-[var(--border-medium)] bg-[var(--bg-secondary)] p-6 shadow-2xl animate-fade-in"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close button */}
         <button 
           onClick={onClose}
-          className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-lg bg-white/[0.05] text-gray-400 hover:text-white transition-colors"
+          className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-lg bg-[var(--bg-muted)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
         >
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -198,23 +198,23 @@ function EntryDetailModal({ entry, onClose }: { entry: MemoryUpdate; onClose: ()
           <span className={`px-3 py-1 rounded-lg ${config.bg} ${config.text} ${config.border} border text-xs font-medium uppercase tracking-wide`}>
             {config.label}
           </span>
-          <span className="text-xs text-gray-500">{agentNames[entry.agentId] || entry.agentId}</span>
+          <span className="text-xs text-[var(--text-tertiary)]">{agentNames[entry.agentId] || entry.agentId}</span>
         </div>
 
         {/* Title */}
-        <h2 className="text-xl font-bold text-white mb-4">{entry.title}</h2>
+        <h2 className="text-xl font-bold text-[var(--text-primary)] mb-4">{entry.title}</h2>
 
         {/* Content */}
         <div className="prose prose-invert prose-sm max-w-none">
-          <p className="text-gray-300 leading-relaxed whitespace-pre-wrap">{entry.content}</p>
+          <p className="text-[var(--text-secondary)] leading-relaxed whitespace-pre-wrap">{entry.content}</p>
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between mt-6 pt-4 border-t border-white/[0.06]">
-          <span className="text-sm text-gray-500">{new Date(entry.timestamp).toLocaleString()}</span>
+        <div className="flex items-center justify-between mt-6 pt-4 border-t border-[var(--border-subtle)]">
+          <span className="text-sm text-[var(--text-tertiary)]">{new Date(entry.timestamp).toLocaleString()}</span>
           <button 
             onClick={onClose}
-            className="px-4 py-2 rounded-lg bg-violet-600 text-white font-medium hover:bg-violet-500 transition-colors"
+            className="px-4 py-2 rounded-lg bg-violet-600 text-[var(--text-primary)] font-medium hover:bg-violet-500 transition-colors"
           >
             Close
           </button>
@@ -227,14 +227,14 @@ function EntryDetailModal({ entry, onClose }: { entry: MemoryUpdate; onClose: ()
 // Empty State Component
 function EmptyState({ message }: { message: string }) {
   return (
-    <div className="rounded-xl border border-white/[0.06] bg-[#111111] p-12 text-center col-span-full">
+    <div className="rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-12 text-center col-span-full">
       <div className="max-w-md mx-auto space-y-4">
-        <div className="w-16 h-16 mx-auto bg-white/[0.03] rounded-full flex items-center justify-center border border-white/[0.06]">
-          <svg className="w-8 h-8 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div className="w-16 h-16 mx-auto bg-[var(--bg-muted)] rounded-full flex items-center justify-center border border-[var(--border-subtle)]">
+          <svg className="w-8 h-8 text-[var(--text-tertiary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
           </svg>
         </div>
-        <p className="text-gray-500">{message}</p>
+        <p className="text-[var(--text-tertiary)]">{message}</p>
       </div>
     </div>
   )
@@ -244,15 +244,15 @@ function EmptyState({ message }: { message: string }) {
 function LoadingState() {
   return (
     <div className="space-y-6 pb-8">
-      <div className="h-8 w-48 bg-white/[0.05] rounded animate-pulse" />
+      <div className="h-8 w-48 bg-[var(--bg-muted)] rounded animate-pulse" />
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[...Array(4)].map((_, i) => (
-          <div key={i} className="h-20 bg-white/[0.03] border border-white/[0.06] rounded-xl animate-pulse" />
+          <div key={i} className="h-20 bg-[var(--bg-muted)] border border-[var(--border-subtle)] rounded-xl animate-pulse" />
         ))}
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {[...Array(4)].map((_, i) => (
-          <div key={i} className="h-40 bg-white/[0.03] border border-white/[0.06] rounded-xl animate-pulse" />
+          <div key={i} className="h-40 bg-[var(--bg-muted)] border border-[var(--border-subtle)] rounded-xl animate-pulse" />
         ))}
       </div>
     </div>
