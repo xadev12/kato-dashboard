@@ -5,14 +5,19 @@ Started: Wed Feb 11 02:33:27 +08 2026
 ## Codebase Patterns
 - OpportunityScan.tsx contains both `OpportunityScan` and `KatoQueue` components plus all SVG icons
 - All SVG icons are defined as inline function components at the bottom of OpportunityScan.tsx
-- Dark theme uses `bg-[#111111]` for card backgrounds, `bg-[#0a0a0a]` for section containers
-- Border pattern: `border border-white/[0.06]` for subtle borders, `hover:border-white/[0.1]` for hover
-- Type color mapping: blocker=rose, ready=emerald, deadline=amber, opportunity=cyan, suggestion=gray
-- Priority color mapping: high=rose, medium=amber, low=gray
-- Agent color mapping: kato=cyan, yuki=violet, koji=amber, sora=emerald, karin=rose (AGENT_COLORS const)
+- **Wabi-Sabi theme** (v4): warm beige/granola light theme, NOT dark
+- CSS variables in index.css: `--bg-primary: #FAF9F7`, `--bg-secondary: #FFFFFF`, `--accent-primary: #8B7355`
+- Colors use CSS variables via inline `style={{}}` props, NOT Tailwind color classes
+- Card bg: `var(--bg-secondary)` (white), section bg: `var(--bg-tertiary)`, muted bg: `var(--bg-muted)`
+- Borders use `var(--border-subtle)`, `var(--border-medium)`, `var(--border-strong)`
+- Shadows: `var(--shadow-sm)`, `var(--shadow-md)`, `var(--shadow-lg)`
+- Semantic colors: success=#7A9E7E, warning=#C9A959, error=#B87A7A, primary=#8B7355
+- Agent color mapping: kato=#8B7355, yuki=#8B7DB8, koji=#C9A959, sora=#7A9E7E, karin=#B87A7A (AGENT_COLORS const)
 - MissionControl.tsx is the main page component that orchestrates all sections
 - `useDashboardData` hook handles API fetch with polling (5s) and JSON fallback
-- Progress bars use `h-1` or `h-1.5` with `bg-white/[0.06]` track and colored fill with rounded-full
+- Progress bars use `h-1` or `h-1.5` with `var(--bg-muted)` track and colored fill with rounded-full
+- Layout.tsx uses `style={{}}` for theming, with `var()` CSS custom properties
+- All transitions use `cubic-bezier(0.4, 0, 0.2, 1)` easing and 300ms duration
 
 ---
 

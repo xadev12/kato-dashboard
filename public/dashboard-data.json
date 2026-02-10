@@ -1,6 +1,6 @@
 {
   "schemaVersion": "3.0",
-  "lastUpdated": "2026-02-10T00:04:04.552Z",
+  "lastUpdated": "2026-02-10T18:42:55.905Z",
   "agents": {
     "queens": [
       {
@@ -726,5 +726,144 @@
       "totalRequests": 912
     }
   },
-  "syncTimestamp": "2026-02-09T13:31:55Z"
+  "syncTimestamp": "2026-02-09T13:31:55Z",
+  "opportunities": {
+    "lastScan": "2026-02-10T18:42:55.905Z",
+    "items": [
+      {
+        "id": "blocked-horoscope-app",
+        "type": "blocker",
+        "category": "project",
+        "priority": "high",
+        "title": "Unblock: Horoscope/MBTI App",
+        "description": "Stage blocked",
+        "project": "horoscope-app",
+        "source": "Project",
+        "action": "Resolve blocker",
+        "discoveredAt": "2026-02-10T18:42:55.904Z",
+        "expiresAt": "2026-02-11T18:42:55.904Z"
+      },
+      {
+        "id": "idle-agents-2026-02-10T18:42:55.904Z",
+        "type": "suggestion",
+        "category": "system",
+        "priority": "low",
+        "title": "5 agent(s) available",
+        "description": "Agents ready for task assignment",
+        "agents": [
+          "main",
+          "yuki",
+          "koji",
+          "sora",
+          "karin"
+        ],
+        "source": "System",
+        "action": "Assign tasks from backlog",
+        "discoveredAt": "2026-02-10T18:42:55.904Z",
+        "expiresAt": "2026-02-10T22:42:55.904Z"
+      }
+    ],
+    "scanCount": 1,
+    "metrics": {
+      "conversionRate": 0,
+      "totalSeen": 0,
+      "totalConverted": 0,
+      "totalIgnored": 0,
+      "currentActive": 2
+    }
+  },
+  "katoQueue": {
+    "lastUpdated": "2026-02-10T18:42:55.905Z",
+    "tasks": [
+      {
+        "id": "current-aura-revenuecat",
+        "type": "current",
+        "title": "Integrate RevenueCat for freemium monetization (Paywall, SubscriptionManager)",
+        "project": "Colosseum Hackathon Submission",
+        "projectId": "hackathon-prize",
+        "status": "pending",
+        "assignedAgent": "claude",
+        "hasSubtasks": false,
+        "subtaskCount": 0,
+        "subtaskProgress": null,
+        "startedAt": "2026-02-10T18:42:55.905Z",
+        "estimatedComplete": "2026-02-10T20:42:55.905Z"
+      },
+      {
+        "id": "current-submission-form",
+        "type": "current",
+        "title": "Complete Colosseum submission form with all materials",
+        "project": "Colosseum Hackathon Submission",
+        "projectId": "hackathon-prize",
+        "status": "pending",
+        "hasSubtasks": false,
+        "subtaskCount": 0,
+        "subtaskProgress": null,
+        "startedAt": "2026-02-10T18:42:55.905Z",
+        "estimatedComplete": "2026-02-10T20:42:55.905Z"
+      },
+      {
+        "id": "current-dashboard-deploy",
+        "type": "current",
+        "title": "Configure Vercel deployment and responsive styling",
+        "project": "Pipeline Status Dashboard",
+        "projectId": "pipeline-dashboard",
+        "status": "pending",
+        "assignedAgent": "kimi",
+        "hasSubtasks": false,
+        "subtaskCount": 0,
+        "subtaskProgress": null,
+        "startedAt": "2026-02-10T18:42:55.905Z",
+        "estimatedComplete": "2026-02-10T20:42:55.905Z"
+      },
+      {
+        "id": "current-aura-analytics",
+        "type": "current",
+        "title": "Add PostHog analytics tracking (AnalyticsService, key events)",
+        "project": "Post-Hackathon Monetization",
+        "projectId": "post-hack-monetize",
+        "status": "in_progress",
+        "assignedAgent": "kimi",
+        "hasSubtasks": false,
+        "subtaskCount": 0,
+        "subtaskProgress": null,
+        "startedAt": "2026-02-10T18:42:55.905Z",
+        "estimatedComplete": "2026-02-10T20:42:55.905Z"
+      },
+      {
+        "id": "current-aura-backend-edge",
+        "type": "current",
+        "title": "Create Supabase edge functions for referrals, shares, and webhooks",
+        "project": "Post-Hackathon Monetization",
+        "projectId": "post-hack-monetize",
+        "status": "in_progress",
+        "assignedAgent": "claude",
+        "hasSubtasks": false,
+        "subtaskCount": 0,
+        "subtaskProgress": null,
+        "startedAt": "2026-02-10T18:42:55.905Z",
+        "estimatedComplete": "2026-02-10T20:42:55.905Z"
+      },
+      {
+        "id": "planned-blocker-horoscope-app",
+        "type": "planned",
+        "title": "Resolve blocker: Stage blocked...",
+        "project": "Horoscope/MBTI App",
+        "projectId": "horoscope-app",
+        "status": "planned",
+        "reason": "Blocker resolution",
+        "plannedFor": "2026-02-10T19:42:55.905Z"
+      },
+      {
+        "id": "system-health-2026-02-10T18:42:55.905Z",
+        "type": "system",
+        "title": "System health check",
+        "status": "queued",
+        "reason": "Regular maintenance",
+        "plannedFor": "2026-02-10T19:12:55.905Z"
+      }
+    ],
+    "mode": "autonomous"
+  },
+  "lastKatoCheck": "2026-02-10T18:42:55.905Z"
 }
