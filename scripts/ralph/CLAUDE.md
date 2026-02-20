@@ -5,7 +5,13 @@ You are an autonomous coding agent working on a software project.
 ## Your Task
 
 1. Read the PRD at `prd.json` (in the same directory as this file)
-2. Read the progress log at `progress.txt` (check Codebase Patterns section first)
+2. Check for `vibe-brief.md` in the project root — if it exists, read it FIRST
+3. If NO vibe-brief exists, describe the visual style in 2-3 sentences before coding:
+   - Target feel (e.g., "calm and premium")
+   - Reference apps (e.g., "Linear, Calm")
+   - What to avoid
+4. Generate a matching Tailwind theme based on the vibe
+5. Read the progress log at `progress.txt` (check Codebase Patterns section first)
 3. Check you're on the correct branch from PRD `branchName`. If not, check it out or create from main.
 4. Pick the **highest priority** user story where `passes: false`
 5. Implement that single user story
@@ -76,6 +82,15 @@ Only update CLAUDE.md if you have **genuinely reusable knowledge** that would he
 - Do NOT commit broken code
 - Keep changes focused and minimal
 - Follow existing code patterns
+
+## Screenshot Validation (MUST DO for UI changes)
+
+For any story that modifies UI:
+1. Run the dev server
+2. Take a screenshot of the changed UI
+3. Verify it matches the vibe-brief style (colors, spacing, feel)
+4. If it doesn't match, iterate until it does
+5. Report in progress.txt: "Screenshot validated against vibe-brief ✓"
 
 ## Browser Testing (If Available)
 

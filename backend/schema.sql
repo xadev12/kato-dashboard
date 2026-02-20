@@ -189,6 +189,32 @@ ALTER TABLE projects ADD COLUMN open_issues_count INTEGER DEFAULT 0;
 ALTER TABLE projects ADD COLUMN last_release_date DATETIME;
 ALTER TABLE projects ADD COLUMN recent_activity TEXT; -- JSON array of recent events
 
+-- Add pipeline tracking columns to tokens table (if not exists)
+ALTER TABLE tokens ADD COLUMN project_id TEXT;
+ALTER TABLE tokens ADD COLUMN stage TEXT;
+
+-- Pipeline events table (populated by scripts/ingest-events-to-db.js)
+CREATE TABLE IF NOT EXISTS pipeline_events (
+  id TEXT PRIMARY KEY,
+  event_type TEXT NOT NULL,
+  project_id TEXT,
+  stage TEXT,
+  model TEXT,
+  tool TEXT,
+  success INTEGER,
+  duration_ms INTEGER,
+  input_tokens INTEGER,
+  output_tokens INTEGER,
+  estimated_cost REAL,
+  complexity TEXT,
+  error TEXT,
+  metadata TEXT,
+  timestamp DATETIME NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_pipeline_events_project ON pipeline_events(project_id);
+CREATE INDEX IF NOT EXISTS idx_pipeline_events_type ON pipeline_events(event_type);
+CREATE INDEX IF NOT EXISTS idx_pipeline_events_timestamp ON pipeline_events(timestamp);
+
 -- Indexes for performance
 CREATE INDEX IF NOT EXISTS idx_tasks_project_id ON tasks(project_id);
 CREATE INDEX IF NOT EXISTS idx_tasks_status ON tasks(status);
