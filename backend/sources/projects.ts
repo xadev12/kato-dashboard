@@ -204,7 +204,7 @@ export async function readAllPipelines(): Promise<Pipeline[]> {
  */
 function calculateProgress(pipeline: Pipeline): number {
   const stageOrder = pipeline.stageOrder || [
-    'idea', 'prd', 'prd_review', 'tech_spec', 'spec_review',
+    'idea', 'prd', 'prd_review', 'design_spec', 'taste_review', 'tech_spec', 'spec_review',
     'implementation', 'qa', 'deploy', 'iterate'
   ]
 
@@ -232,7 +232,7 @@ function mapStatus(pipeline: Pipeline): Project['status'] {
   if (currentStage?.status === 'active' || currentStage?.status === 'pending') return 'in_progress'
 
   // Check if all stages are completed
-  const stageOrder = pipeline.stageOrder || ['idea', 'prd', 'prd_review', 'tech_spec', 'spec_review', 'implementation', 'qa', 'deploy', 'iterate']
+  const stageOrder = pipeline.stageOrder || ['idea', 'prd', 'prd_review', 'design_spec', 'taste_review', 'tech_spec', 'spec_review', 'implementation', 'qa', 'deploy', 'iterate']
   const allCompleted = stageOrder.every(s => pipeline.stages[s]?.status === 'completed')
   if (allCompleted) return 'done'
 

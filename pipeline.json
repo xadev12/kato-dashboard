@@ -1,0 +1,24 @@
+{
+  "id": "kato-dashboard",
+  "name": "Kato Dashboard v3",
+  "emoji": "📊",
+  "status": "implementation",
+  "stage": "implementation",
+  "started_at": "2026-02-21T00:00:00Z",
+  "day": 1,
+  "total_days": 7,
+  "tasks": [],
+  "blockers": [],
+  "gate_results": {},
+  "artifacts": {
+    "prd": "prd.md"
+  },
+  "githubRepo": "xadev12/kato-dashboard",
+  "githubRepoUrl": "https://github.com/xadev12/kato-dashboard",
+  "linearProjectId": "121a0d9c-9b55-4544-bd91-126d2e7342d7",
+  "linearProject": "121a0d9c-9b55-4544-bd91-126d2e7342d7",
+  "linearProjectName": "kato-dashboard",
+  "stages": {},
+  "linearSyncLastAt": "2026-02-26T17:00:34.576Z",
+  "lastLinearSync": "ok"
+}

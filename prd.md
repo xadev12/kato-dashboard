@@ -119,7 +119,7 @@ Clicking a task card opens a **detail drawer** (slide-in from right) showing:
 - Current agent activity (worktree, branch, files touched)
 - Blocker details + suggested next steps (if blocked)
 - Time in current stage
-- Token cost so far for this task
+- Token cost estimate for this task (sessions may span multiple tasks; this is an approximation)
 
 ---
 
@@ -325,6 +325,7 @@ Empty state: "No recent research. Koji runs competitive scans on a monthly caden
 2. **ROADMAP parser** — Parse `ROADMAP.md` into structured rows (rank, name, score, status, stage, revenue target). Already partially implemented in `scripts/build-dashboard-data.cjs`.
 3. **Koji output scanner** — Index research docs from `agents/koji/output/` and strategic entries from Koji's MEMORY.md.
 4. **Linear API poller** — Pull issues into dashboard DB. Map Linear states to pipeline stages. Detect Xavier-assigned items for "Needs You" section. Foundation exists in `scripts/linear-sync-issues.js`.
+5. **Collector health monitor** — Meta-collector that tracks last-run timestamps for all other collectors. Emits alerts when any collector exceeds 2x its expected interval.
 
 ### Existing Collectors (no changes needed)
 
@@ -332,6 +333,25 @@ Empty state: "No recent research. Koji runs competitive scans on a monthly caden
 - GitHub collector (`backend/collectors/github.ts`)
 - Session collector (`backend/collectors/sessions.ts`)
 - Memory collector (`backend/collectors/memory.ts`)
+
+### "Needs You" Signal Validation (Pre-Phase 1)
+
+Before building Phase 1, validate that these signal sources exist in current data:
+
+| Signal | Source | Validation Needed |
+|--------|--------|-------------------|
+| `action_required` flag | `pipeline.json` tasks | Does this field currently exist? If not, add to schema |
+| `decision_pending` | `open-questions.md` files | Confirm file exists in each project; parse structure |
+| Budget alerts | Gateway logs | Define daily budget limit source; confirm cost data available |
+| Day 7 decisions | `pipeline.json` stage timestamps | Calculate day X from stage entry time |
+| Linear issues assigned to Xavier | Linear API | Verify API access; test query for assignee filter |
+
+**Phase 1 approach:** Start with only 2-3 unambiguous signals:
+1. Projects in `deploy` stage (hard signal)
+2. Linear issues assigned to Xavier (hard signal)
+3. Explicit blockers in `pipeline.json` (hard signal)
+
+Add heuristic-based signals (budget alerts, Day 7, decision pending) in Phase 2 after validating false-positive rates.
 
 ---
 
@@ -356,10 +376,12 @@ Empty state: "No recent research. Koji runs competitive scans on a monthly caden
 | **Backend down** (Mac mini offline) | No live data | `dashboard-data.json` fallback keeps Now tab readable; static export captures enough for read-only awareness; frontend detects offline and shows banner |
 | **Information overload** | Too much on screen defeats "at a glance" | Strict hierarchy: Needs You pinned top; everything else progressively disclosed via collapsed sections and drawers; 2 tabs not 5 |
 | **Pipeline schema drift** | New stages or fields break the parser | Defensive parsing with fallback defaults; schema version check in `pipeline.json` |
-| **Collector failures go silent** | Data goes stale without warning | Per-source "last collected" timestamp in footer; amber alert if any collector hasn't run in > 2x its interval |
+| **Collector failures go silent** | Data goes stale without warning | Per-source "last collected" timestamp in footer; amber alert if any collector hasn't run in > 2x its interval; **meta-collector** monitors all other collectors |
 | **Linear API rate limits** | Over-polling hits caps | 15-min interval well within limits; response caching; exponential backoff on 429 |
-| **Mobile layout breaks** | iOS Safari is primary but complex layouts are dense | Design mobile-first for Now tab (stack columns vertically); Pipeline board scrolls horizontally; all sections stack on narrow viewports |
-| **Needs You false positives** | Too many non-urgent items in the top section erode trust | Strict qualification criteria; only items that truly block pipeline progress surface here; add "dismiss" action to snooze non-critical items |
+| **Mobile layout breaks** | iOS Safari is primary but complex layouts are dense | Design mobile-first for Now tab (stack columns vertically); Pipeline board scrolls horizontally; all sections stack on narrow viewports; **validate mobile layout in Week 1, not Week 3** |
+| **Needs You false positives** | Too many non-urgent items in the top section erode trust | Strict qualification criteria; only items that truly block pipeline progress surface here; add "dismiss" action to snooze non-critical items; start with 2-3 hard signals only |
+| **Needs You signal gaps** | Critical items don't appear in top section | Validate signal sources exist before Phase 1; add heuristic signals only after false-positive testing |
+| **Search performance at scale** | Full-text search on 30-day activity log is slow | Implement SQLite FTS5 from day one; add proper indexes on project/agent/date fields |
 
 ---
 
@@ -369,7 +391,9 @@ Empty state: "No recent research. Koji runs competitive scans on a monthly caden
 
 Replace current MissionControl with the new Now tab. This is the core experience.
 
-- [ ] **Needs You section**: detect `action_required`, `decision_pending`, deploy-ready projects, budget alerts, Day 7 decisions
+**Prerequisite:** Validate "Needs You" signal sources exist before starting (see signal validation section above).
+
+- [ ] **Needs You section**: Start with only 2-3 hard signals: deploy-stage projects, Linear issues assigned to Xavier, explicit blockers. Heuristic signals (budget alerts, Day 7, decision pending) deferred to Phase 2.
 - [ ] **Active Work Kanban**: individual task cards in In Progress / Blocked / Ready for Review columns
 - [ ] **Project summary rows** above Kanban
 - [ ] **Ready for Deploy strip**: items that passed QA awaiting deploy action
@@ -384,6 +408,9 @@ Replace current MissionControl with the new Now tab. This is the core experience
 - [ ] **Keyboard shortcuts**: `1`–`2` tabs, `/` search, `r` refresh, `?` help
 - [ ] **JSON fallback** for when backend is offline
 - [ ] **Backend: Pipeline file watcher collector**
+- [ ] **Backend: Collector health monitor** (meta-collector)
+- [ ] **SQLite FTS5** for search (implement from day one)
+- [ ] **Mobile prototype test**: Validate Now tab layout works on iPhone before Week 1 ends
 
 ### Phase 2: Pipeline Tab (Week 2)
 
@@ -401,7 +428,7 @@ Refinement and external data.
 
 - [ ] **Linear API poller**: pull issues, detect Xavier-assigned items, map states to pipeline stages
 - [ ] **Linear issue links** on project/task cards
-- [ ] **Mobile Safari responsive pass**: Now tab stacks vertically, Pipeline scrolls horizontally
+- [ ] **Extended "Needs You" signals**: Add budget alerts, Day 7 decisions, decision pending from `open-questions.md` (validate false-positive rates first)
 - [ ] **Performance**: virtualized lists for activity feed and roadmap table
 - [ ] Cross-browser testing (Safari, Chrome, Firefox)
 - [ ] Accessibility pass (keyboard nav, screen reader labels, color contrast)
@@ -410,7 +437,8 @@ Refinement and external data.
 
 ## Open Questions
 
-1. **WebSocket vs polling?** Backend has WebSocket infra. Is reliable WebSocket worth the complexity, or is 5-second polling adequate for Xavier's usage pattern?
+1. **WebSocket vs polling?** ~~Backend has WebSocket infra. Is reliable WebSocket worth the complexity, or is 5-second polling adequate for Xavier's usage pattern?~~
+   - **Decision:** Use hybrid approach. WebSocket for "Needs You" section (critical, sub-second latency needed). 10-30s polling for everything else. Prioritized polling: Gateway logs at 5s, all other sources at 30s+.
 2. **Inline actions vs deep links?** Should "Approve deploy" trigger the action from the dashboard, or deep-link to the right tool/file?
 3. **Koji interactivity?** Read-only research feed, or can Xavier trigger research tasks from the dashboard?
 4. **Linear as source of truth?** Should Linear replace pipeline.json as the canonical task tracker, or remain a mirror?

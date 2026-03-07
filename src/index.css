@@ -359,6 +359,39 @@
   background: var(--border-strong);
 }
 
+/* Stale data indicators */
+.stale-warning {
+  border: 2px solid var(--warning) !important;
+}
+
+.stale-critical {
+  border: 2px solid var(--error) !important;
+}
+
+/* Line clamp utilities */
+.line-clamp-1 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+}
+
+.line-clamp-2 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+/* Hide scrollbar utility */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 /* Selection color */
 ::selection {
   background: rgba(139, 115, 85, 0.15);

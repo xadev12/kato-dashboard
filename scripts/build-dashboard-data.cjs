@@ -13,7 +13,7 @@ const ROADMAP_PATH = '/Users/devl/clawd/ROADMAP.md';
 const OUTPUT_PATH = process.argv[2] || path.join(__dirname, '../public/dashboard-data.json');
 
 // Stage order for progress calculation
-const STAGE_ORDER = ['idea', 'prd', 'design_spec', 'tech_spec', 'implementation', 'qa', 'deploy', 'iterate'];
+const STAGE_ORDER = ['idea', 'prd', 'prd_review', 'design_spec', 'taste_review', 'tech_spec', 'spec_review', 'implementation', 'qa', 'deploy', 'iterate'];
 
 // Calculate sprint day (Feb 6 - Apr 6, 2026)
 function getSprintDay() {

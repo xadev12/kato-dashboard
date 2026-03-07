@@ -1,72 +1,124 @@
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { useState, useCallback } from 'react'
 import { AgentIndicator } from './AgentIndicator'
 import { GlobalSearch } from './GlobalSearch'
+import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts'
 
-const navItems = [
-  { path: '/', label: 'Dashboard', icon: 'dashboard' },
-  { path: '/projects', label: 'Projects', icon: 'projects' },
-  { path: '/tokens', label: 'Tokens', icon: 'tokens' },
-  { path: '/roster', label: 'Roster', icon: 'roster' },
+const TAB_ITEMS = [
+  { path: '/', label: 'Now' },
+  { path: '/pipeline', label: 'Pipeline' },
+]
+
+// Secondary nav items (accessible from header)
+const SECONDARY_NAV = [
+  { path: '/projects', label: 'Projects' },
+  { path: '/tokens', label: 'Tokens' },
+  { path: '/roster', label: 'Roster' },
 ]
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation()
+  const navigate = useNavigate()
   const currentPath = location.pathname
+  const [showShortcuts, setShowShortcuts] = useState(false)
 
-  // Check if path matches (exact for /, prefix for others)
-  const isActive = (path: string) => {
-    if (path === '/') return currentPath === '/'
+  const isTabActive = (path: string) => {
+    if (path === '/') return currentPath === '/' || currentPath === '/now'
     return currentPath.startsWith(path)
   }
+
+  const isSecondaryActive = (path: string) => currentPath.startsWith(path)
+
+  const handleSwitchTab = useCallback((index: number) => {
+    const tab = TAB_ITEMS[index]
+    if (tab) navigate(tab.path)
+  }, [navigate])
+
+  const handleFocusSearch = useCallback(() => {
+    // Try to focus the GlobalSearch input
+    const searchInput = document.querySelector('[data-search-input]') as HTMLInputElement
+    searchInput?.focus()
+  }, [])
+
+  useKeyboardShortcuts({
+    onSwitchTab: handleSwitchTab,
+    onFocusSearch: handleFocusSearch,
+    onRefresh: () => window.location.reload(),
+    onToggleHelp: () => setShowShortcuts(v => !v),
+  })
 
   return (
     <div className="min-h-screen" style={{ background: 'var(--bg-primary)' }}>
       {/* Header */}
-      <header 
+      <header
         className="sticky top-0 z-50 backdrop-blur-xl"
-        style={{ 
+        style={{
           background: 'rgba(250, 249, 247, 0.85)',
-          borderBottom: '1px solid var(--border-subtle)'
+          borderBottom: '1px solid var(--border-subtle)',
         }}
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-14 items-center justify-between">
+            {/* Left: Logo + Tab Nav */}
             <div className="flex items-center gap-4">
               <Link to="/" className="flex items-center gap-2.5">
-                <div 
+                <div
                   className="flex h-8 w-8 items-center justify-center rounded-lg text-sm font-bold text-[var(--text-primary)]"
                   style={{ background: 'var(--accent-primary)' }}
                 >
                   K
                 </div>
-                <span 
-                  className="text-lg font-semibold"
+                <span
+                  className="text-lg font-semibold hidden sm:inline"
                   style={{ color: 'var(--text-primary)' }}
                 >
                   Kato
                 </span>
               </Link>
 
-              {/* Desktop Navigation */}
-              <nav 
-                className="hidden lg:flex items-center gap-1 p-1 rounded-lg ml-4"
-                style={{ 
+              {/* Tab Navigation */}
+              <nav
+                className="flex items-center gap-0.5 p-1 rounded-lg"
+                style={{
                   background: 'var(--bg-tertiary)',
-                  border: '1px solid var(--border-subtle)'
+                  border: '1px solid var(--border-subtle)',
                 }}
               >
-                {navItems.map((item) => (
-                  <NavLink
-                    key={item.path}
-                    to={item.path}
-                    active={isActive(item.path)}
-                    label={item.label}
-                    icon={item.icon}
-                  />
+                {TAB_ITEMS.map((tab) => (
+                  <Link
+                    key={tab.path}
+                    to={tab.path}
+                    className="px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200"
+                    style={{
+                      background: isTabActive(tab.path) ? 'rgba(139, 115, 85, 0.1)' : 'transparent',
+                      color: isTabActive(tab.path) ? 'var(--accent-primary)' : 'var(--text-secondary)',
+                      border: isTabActive(tab.path) ? '1px solid rgba(139, 115, 85, 0.15)' : '1px solid transparent',
+                      boxShadow: isTabActive(tab.path) ? 'var(--shadow-sm)' : 'none',
+                    }}
+                  >
+                    {tab.label}
+                  </Link>
                 ))}
               </nav>
+
+              {/* Secondary Nav (desktop) */}
+              <div className="hidden lg:flex items-center gap-1">
+                {SECONDARY_NAV.map((item) => (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    className="px-2 py-1 rounded text-xs font-medium transition-all duration-200"
+                    style={{
+                      color: isSecondaryActive(item.path) ? 'var(--accent-primary)' : 'var(--text-tertiary)',
+                    }}
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
             </div>
 
+            {/* Right: Search + Agent Indicator */}
             <div className="flex items-center gap-3">
               <GlobalSearch />
               <AgentIndicator />
@@ -74,19 +126,22 @@ export function Layout({ children }: { children: React.ReactNode }) {
           </div>
 
           {/* Mobile Navigation */}
-          <nav 
-            className="lg:hidden flex items-center gap-1 py-2 overflow-x-auto scrollbar-hide"
+          <nav
+            className="lg:hidden flex items-center gap-2 py-2 overflow-x-auto scrollbar-hide"
             style={{ borderTop: '1px solid var(--border-subtle)' }}
           >
-            {navItems.map((item) => (
-              <NavLink
+            {SECONDARY_NAV.map((item) => (
+              <Link
                 key={item.path}
                 to={item.path}
-                active={isActive(item.path)}
-                label={item.label}
-                icon={item.icon}
-                mobile
-              />
+                className="flex-shrink-0 px-2 py-1 rounded text-xs font-medium whitespace-nowrap"
+                style={{
+                  color: isSecondaryActive(item.path) ? 'var(--accent-primary)' : 'var(--text-tertiary)',
+                  background: isSecondaryActive(item.path) ? 'rgba(139, 115, 85, 0.06)' : 'transparent',
+                }}
+              >
+                {item.label}
+              </Link>
             ))}
           </nav>
         </div>
@@ -96,90 +151,60 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6">
         {children}
       </main>
+
+      {/* Keyboard Shortcuts Overlay */}
+      {showShortcuts && (
+        <ShortcutsOverlay onClose={() => setShowShortcuts(false)} />
+      )}
     </div>
   )
 }
 
-// Nav Link Component
-function NavLink({
-  to,
-  active,
-  label,
-  icon,
-  mobile
-}: {
-  to: string
-  active: boolean
-  label: string
-  icon: string
-  mobile?: boolean
-}) {
+function ShortcutsOverlay({ onClose }: { onClose: () => void }) {
   return (
-    <Link
-      to={to}
-      className={`${mobile ? 'flex-shrink-0' : ''} px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap`}
-      style={{
-        background: active ? 'rgba(139, 115, 85, 0.1)' : 'transparent',
-        color: active ? 'var(--accent-primary)' : 'var(--text-secondary)',
-        border: active ? '1px solid rgba(139, 115, 85, 0.15)' : '1px solid transparent',
-        boxShadow: active ? 'var(--shadow-sm)' : 'none'
-      }}
-      onMouseEnter={(e) => {
-        if (!active) {
-          e.currentTarget.style.color = 'var(--text-primary)'
-          e.currentTarget.style.background = 'var(--bg-muted)'
-        }
-      }}
-      onMouseLeave={(e) => {
-        if (!active) {
-          e.currentTarget.style.color = 'var(--text-secondary)'
-          e.currentTarget.style.background = 'transparent'
-        }
-      }}
-    >
-      <NavIcon name={icon} className="w-4 h-4" />
-      <span>{label}</span>
-    </Link>
-  )
-}
+    <>
+      <div className="fixed inset-0 z-50 bg-black/20 backdrop-blur-sm" onClick={onClose} />
+      <div
+        className="fixed z-50 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-6 rounded-xl w-80"
+        style={{
+          background: 'var(--bg-secondary)',
+          border: '1px solid var(--border-medium)',
+          boxShadow: 'var(--shadow-xl)',
+        }}
+      >
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>Keyboard Shortcuts</h3>
+          <button onClick={onClose} className="icon-btn" style={{ width: 28, height: 28 }}>
+            <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+        </div>
 
-// Nav Icons
-function NavIcon({ name, className }: { name: string; className?: string }) {
-  switch (name) {
-    case 'dashboard':
-      return (
-        <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <rect x="3" y="3" width="7" height="7" rx="1" />
-          <rect x="14" y="3" width="7" height="7" rx="1" />
-          <rect x="3" y="14" width="7" height="7" rx="1" />
-          <rect x="14" y="14" width="7" height="7" rx="1" />
-        </svg>
-      )
-    case 'projects':
-      return (
-        <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
-        </svg>
-      )
-    case 'tokens':
-      return (
-        <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="12" cy="12" r="10" />
-          <path d="M12 6v12" />
-          <path d="M8 10c2-1 6-1 8 0" />
-          <path d="M8 14c2 1 6 1 8 0" />
-        </svg>
-      )
-    case 'roster':
-      return (
-        <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-          <circle cx="9" cy="7" r="4" />
-          <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-          <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-        </svg>
-      )
-    default:
-      return null
-  }
+        <div className="space-y-2">
+          {[
+            { key: '1', desc: 'Now tab' },
+            { key: '2', desc: 'Pipeline tab' },
+            { key: '/', desc: 'Focus search' },
+            { key: 'r', desc: 'Refresh' },
+            { key: '?', desc: 'Toggle shortcuts' },
+          ].map(s => (
+            <div key={s.key} className="flex items-center justify-between py-1">
+              <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>{s.desc}</span>
+              <kbd
+                className="px-2 py-0.5 rounded text-[10px] font-mono font-medium"
+                style={{
+                  background: 'var(--bg-muted)',
+                  color: 'var(--text-secondary)',
+                  border: '1px solid var(--border-subtle)',
+                }}
+              >
+                {s.key}
+              </kbd>
+            </div>
+          ))}
+        </div>
+      </div>
+    </>
+  )
 }
