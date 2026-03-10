@@ -7,7 +7,11 @@ const API_BASE_URL = import.meta.env.VITE_API_URL
 
 export const api = {
   get: async <T>(endpoint: string): Promise<T> => {
-    const res = await fetch(`${API_BASE_URL}${endpoint}`)
+    const res = await fetch(`${API_BASE_URL}${endpoint}`, {
+      headers: {
+        'ngrok-skip-browser-warning': 'true'
+      }
+    })
     if (!res.ok) {
       throw new Error(`API error ${res.status}`)
     }
