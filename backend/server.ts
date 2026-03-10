@@ -909,6 +909,53 @@ app.get('/api/stats', asyncHandler(async (req: express.Request, res: express.Res
   })
 }))
 
+// GET /api/status - Alias for dashboard (frontend expects this)
+app.get('/api/status', asyncHandler(async (req: express.Request, res: express.Response) => {
+  const projectStats = db.prepare(`
+    SELECT 
+      COUNT(*) as total,
+      SUM(CASE WHEN status = 'done' THEN 1 ELSE 0 END) as completed,
+      SUM(CASE WHEN status = 'in_progress' THEN 1 ELSE 0 END) as in_progress
+    FROM projects
+  `).get()
+  
+  const activeAgents = db.prepare(`
+    SELECT COUNT(*) as count FROM agents WHERE status = 'active'
+  `).get()
+  
+  const queuedWorkers = db.prepare(`
+    SELECT COUNT(*) as count FROM workers WHERE status = 'queued'
+  `).get()
+  
+  const tokenStats = db.prepare(`
+    SELECT 
+      SUM(tokens_used) as total_tokens,
+      SUM(cost) as total_cost
+    FROM tokens
+    WHERE date >= date('now', '-7 days')
+  `).get()
+  
+  res.json({
+    schemaVersion: '2.0',
+    lastUpdated: new Date().toISOString(),
+    meta: {
+      totalProjects: projectStats?.total || 0,
+      completedProjects: projectStats?.completed || 0,
+      inProgressProjects: projectStats?.in_progress || 0,
+      activeAgents: activeAgents?.count || 0,
+      queuedWorkers: queuedWorkers?.count || 0,
+      totalTokensUsed: tokenStats?.total_tokens || 0,
+      totalCost: tokenStats?.total_cost || 0,
+      avgTokensPerTask: 0,
+      tokenWastePercent: 0,
+      parallelizationEfficiency: 0
+    },
+    projects: db.prepare('SELECT * FROM projects ORDER BY updated_at DESC LIMIT 20').all(),
+    agents: db.prepare('SELECT * FROM agents').all(),
+    workers: db.prepare('SELECT * FROM workers').all()
+  })
+}))
+
 // POST /api/collect/:source - Trigger data collection
 app.post('/api/collect/:source', asyncHandler(async (req: express.Request, res: express.Response) => {
   const { source } = req.params
