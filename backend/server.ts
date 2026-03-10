@@ -956,6 +956,98 @@ app.get('/api/status', asyncHandler(async (req: express.Request, res: express.Re
   })
 }))
 
+// GET /api/needs-you - Items requiring Xavier's attention
+app.get('/api/needs-you', asyncHandler(async (req: express.Request, res: express.Response) => {
+  // Blockers: projects stuck in code_review or qa for >24h
+  const blockers = db.prepare(`
+    SELECT id, name, status, assigned_queen, updated_at,
+           CASE WHEN status = 'code_review' THEN 'Waiting for code review'
+                WHEN status = 'qa' THEN 'Waiting for QA'
+                ELSE 'Blocked' END as reason
+    FROM projects
+    WHERE status IN ('code_review', 'qa', 'blocked')
+      AND updated_at < datetime('now', '-24 hours')
+    ORDER BY updated_at ASC
+  `).all()
+  
+  // Decisions needed: pipeline items with pending decisions
+  const decisions = db.prepare(`
+    SELECT 'pipeline' as type, id as item_id, name, 'Pipeline decision needed' as reason
+    FROM projects
+    WHERE status = 'in_progress' AND progress >= 90
+      AND updated_at < datetime('now', '-48 hours')
+  `).all()
+  
+  // Active reviews: PRs waiting for Xavier's review
+  const reviews = db.prepare(`
+    SELECT id, name, repo_url as url, 'PR review needed' as reason
+    FROM projects
+    WHERE status = 'code_review'
+  `).all()
+  
+  res.json({
+    schemaVersion: '2.0',
+    lastUpdated: new Date().toISOString(),
+    summary: {
+      blockers: blockers.length,
+      decisions: decisions.length,
+      reviews: reviews.length,
+      total: blockers.length + decisions.length + reviews.length
+    },
+    items: [
+      ...blockers.map(b => ({ ...b, priority: 'high', type: 'blocker' })),
+      ...decisions.map(d => ({ ...d, priority: 'medium', type: 'decision' })),
+      ...reviews.map(r => ({ ...r, priority: 'medium', type: 'review' }))
+    ]
+  })
+}))
+
+// GET /api/tasks - Active and recent tasks
+app.get('/api/tasks', asyncHandler(async (req: express.Request, res: express.Response) => {
+  // Active workers/tasks
+  const active = db.prepare(`
+    SELECT w.id, w.specialist, w.task_id, w.status, w.queued_at, w.spawned_at,
+           p.name as project_name
+    FROM workers w
+    LEFT JOIN projects p ON w.task_id LIKE '%' || p.id || '%'
+    WHERE w.status = 'active' OR w.status = 'queued'
+    ORDER BY w.queued_at DESC
+    LIMIT 20
+  `).all()
+  
+  // Recent completed (last 7 days)
+  const completed = db.prepare(`
+    SELECT w.id, w.specialist, w.task_id, w.completed_at,
+           p.name as project_name
+    FROM workers w
+    LEFT JOIN projects p ON w.task_id LIKE '%' || p.id || '%'
+    WHERE w.status = 'completed'
+      AND w.completed_at >= datetime('now', '-7 days')
+    ORDER BY w.completed_at DESC
+    LIMIT 20
+  `).all()
+  
+  res.json({
+    schemaVersion: '2.0',
+    lastUpdated: new Date().toISOString(),
+    active: active.map(a => ({
+      ...a,
+      type: 'task',
+      specialist: a.specialist || 'Unknown',
+      status: a.status
+    })),
+    completed: completed.map(c => ({
+      ...c,
+      type: 'task',
+      completedAt: c.completed_at
+    })),
+    summary: {
+      activeCount: active.length,
+      completedLast7Days: completed.length
+    }
+  })
+}))
+
 // POST /api/collect/:source - Trigger data collection
 app.post('/api/collect/:source', asyncHandler(async (req: express.Request, res: express.Response) => {
   const { source } = req.params

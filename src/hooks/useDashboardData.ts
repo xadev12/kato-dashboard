@@ -149,7 +149,12 @@ export interface SystemTaskInfo {
 }
 
 const POLLING_INTERVAL = 5000
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
+// VITE_API_URL should be the base URL without /api suffix
+const API_BASE_URL = import.meta.env.VITE_API_URL 
+  ? (import.meta.env.VITE_API_URL.endsWith('/api') 
+      ? import.meta.env.VITE_API_URL 
+      : `${import.meta.env.VITE_API_URL}/api`)
+  : 'http://localhost:3001/api'
 
 // Estimate cost from token count when actual cost isn't available
 // Blended rate: ~$3/1M tokens (mix of input/output across models)

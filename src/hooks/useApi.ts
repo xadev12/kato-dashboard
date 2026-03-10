@@ -1,8 +1,12 @@
 import { useState, useEffect, useCallback } from 'react'
 import type { Project, QueenAgent, Task, DashboardMeta } from '../types'
 
+// VITE_API_URL should be the base URL without /api suffix
+// e.g., "https://example.ngrok.io" or "http://localhost:3001"
 const API_BASE_URL = import.meta.env.VITE_API_URL 
-  ? `${import.meta.env.VITE_API_URL}/api` 
+  ? (import.meta.env.VITE_API_URL.endsWith('/api') 
+      ? import.meta.env.VITE_API_URL 
+      : `${import.meta.env.VITE_API_URL}/api`)
   : '/api'
 
 interface ApiResponse<T> {

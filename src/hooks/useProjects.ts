@@ -1,7 +1,12 @@
 import { useState, useEffect, useCallback } from 'react'
 import type { Project, DashboardMeta, QueenAgent, Workers, CompletedProject, DashboardAction, MemoryUpdate, TokenStats } from '../types'
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
+// VITE_API_URL should be the base URL without /api suffix
+const API_URL = import.meta.env.VITE_API_URL 
+  ? (import.meta.env.VITE_API_URL.endsWith('/api') 
+      ? import.meta.env.VITE_API_URL 
+      : `${import.meta.env.VITE_API_URL}/api`)
+  : 'http://localhost:3001/api'
 const POLLING_INTERVAL = 5000 // 5 seconds for more real-time feel
 
 // Generic fetch helper with error handling and timeout

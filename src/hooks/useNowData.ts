@@ -6,7 +6,12 @@ import type {
   ProgressEvent, CompletedItem, KanbanColumn
 } from '../types/now'
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3001'
+// VITE_API_URL should be the base URL without /api suffix
+const API_BASE = import.meta.env.VITE_API_URL 
+  ? (import.meta.env.VITE_API_URL.endsWith('/api') 
+      ? import.meta.env.VITE_API_URL 
+      : `${import.meta.env.VITE_API_URL}/api`)
+  : 'http://localhost:3001/api'
 const POLL_INTERVAL = 5000
 
 // Agent metadata (enriches raw agent data)
